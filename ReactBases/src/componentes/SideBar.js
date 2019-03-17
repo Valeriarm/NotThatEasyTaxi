@@ -23,7 +23,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import DraftsIcon from '@material-ui/icons/Drafts';
-import LogIn from './LogIn';
+import {Link} from 'react-router-dom'
+
 
 const drawerWidth = 240;
 
@@ -96,10 +97,6 @@ const styles = theme => ({
 });
 
 
-function ListItemLink(props) {
-  return <ListItem button component="a" {...props} />;
-}  
-
 
 class PersistentDrawerLeft extends React.Component {
   state = {
@@ -116,14 +113,16 @@ class PersistentDrawerLeft extends React.Component {
 
   handleClick = () => {
     this.console.log("funciona");
+    
   };
 
   render() {
+
     const { classes , theme } = this.props;
     const { open } = this.state;
 
     return (
-      <div className={classes.root}>
+      <div>
         <CssBaseline />
         <AppBar
           position="fixed"
@@ -158,9 +157,10 @@ class PersistentDrawerLeft extends React.Component {
             <IconButton onClick={this.handleDrawerClose}>
               {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
             </IconButton>
+
           </div>
           <Divider />
-          <ListItem button>
+          <ListItem button component={Link} to ='/'>
           <ListItemIcon>
           <HomeIcon/>
           </ListItemIcon>
@@ -168,16 +168,23 @@ class PersistentDrawerLeft extends React.Component {
         </ListItem>
         <ListItem button>
           <ListItemIcon>
-            <Person />
+          <Person/>
           </ListItemIcon>
           <ListItemText primary="Perfil" />
         </ListItem>
         <ListItem button>
           <ListItemIcon>
-            <DraftsIcon />
+          <DraftsIcon/>
           </ListItemIcon>
           <ListItemText primary="Kilometros" />
         </ListItem>
+        <ListItem button component={Link} to ='/LogIn/'>
+          <ListItemIcon>
+          <DraftsIcon/>
+          </ListItemIcon>
+          <ListItemText primary="Ingresar" />
+        </ListItem>
+
         </Drawer>
         <main
           className={classNames(classes.content, {
@@ -189,9 +196,9 @@ class PersistentDrawerLeft extends React.Component {
           <LabelOrigen/>
           <LabelDestino/>
           <BotonPedirServicio/>
-
         </main>
       </div>
+      
     );
   }
 }

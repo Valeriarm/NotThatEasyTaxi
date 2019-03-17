@@ -19,6 +19,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import DraftsIcon from '@material-ui/icons/Drafts';
+import {Link} from 'react-router-dom';
 
 const drawerWidth = 240;
 
@@ -90,10 +91,20 @@ const styles = theme => ({
   },
 });
 
+
+
 class LogIn extends React.Component {
   state = {
     open: false,
   };
+
+  static contextTypes = {
+    router: PropTypes.object
+  }
+
+  redirectToTarget = () => {
+    this.context.router.history.push('/target')
+  }
 
   handleDrawerOpen = () => {
     this.setState({ open: true });
@@ -107,11 +118,13 @@ class LogIn extends React.Component {
     this.console.log("funciona");
   };
 
+
   render() {
     const { classes , theme } = this.props;
     const { open } = this.state;
 
     return (
+ 
       <div className={classes.root}>
         <CssBaseline />
         <AppBar
@@ -149,34 +162,13 @@ class LogIn extends React.Component {
             </IconButton>
           </div>
           <Divider />
-          <ListItem button>
+          <ListItem button component={Link} to ='/'>
           <ListItemIcon>
           <HomeIcon/>
           </ListItemIcon>
           <ListItemText primary="Inicio" />
         </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <Person />
-          </ListItemIcon>
-          <ListItemText primary="Perfil" />
-
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <DraftsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Kilometros" />
-        </ListItem>  
         </Drawer>
-        <div
-          className={classNames(classes.content, {
-            [classes.contentShift]: open,
-          })}
-        >
-          <div className={classes.drawerHeader} />
-
-        </div>
       </div>
     );
   }
@@ -185,6 +177,7 @@ class LogIn extends React.Component {
 LogIn.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
+  
 };
 
 export default withStyles(styles, { withTheme: true })(LogIn);
