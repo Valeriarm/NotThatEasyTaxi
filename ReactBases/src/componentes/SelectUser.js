@@ -13,14 +13,16 @@ import 'typeface-oxygen';
 const styles = theme => ({
   main: {
     width: 'auto',
-    display: 'flex', // Fix IE 11 issue.
+    display: 'flex', 
     marginLeft: theme.spacing.unit * 3,
     marginRight: theme.spacing.unit * 3,
     [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
       width: 400,
       marginLeft: 'auto',
       marginRight: 'auto',
+      marginTop: 'auto',
     },
+    alignContent: 'center',
   },
   submit: {
     marginTop: theme.spacing.unit * 10,
@@ -47,8 +49,8 @@ function SelectUser(props) {
     <main className={classes.main}>
       <CssBaseline />
       <div>
-      <Typography component="h2" variant="display4" fontFamily = "Oxigen" className={classes.fuente} >
-          <center> NTET</center>
+      <Typography component="h1" variant="display4" fontFamily = "Oxigen" className={classes.submit} >
+               NTET
         </Typography>
            <Fab
             component={Link} to= '/Ingreso/'

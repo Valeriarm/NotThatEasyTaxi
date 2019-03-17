@@ -45,9 +45,43 @@ const styles = theme => ({
   },
 });
 
-function SignIn(props) {
-  const { classes } = props;
 
+
+
+
+class SignIn extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {email: '', password: ''};
+
+    this.handleChangeEmail = this.handleChangeEmail.bind(this);
+    this.handleChangePassword = this.handleChangePassword.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChangeEmail(event) {
+    this.setState({email: event.target.value});
+  }
+
+  handleChangePassword(event) {
+    this.setState({password: event.target.value});
+  }
+
+  handleSubmit(event) {
+    alert('A email was submitted: ' + this.state.email + 'A email was submitted: ' + this.state.password);
+    event.preventDefault();
+  }
+
+  handleClick (){
+    var user = document.getElementById("email").value
+    var password = document.getElementById("password").value
+    var aux = [user, password]
+    console.log(aux)
+  };
+
+  render(){
+  const { classes } = this.props;
+  
   return (
     <main className={classes.main}>
       <CssBaseline />
@@ -58,15 +92,16 @@ function SignIn(props) {
         <Typography component="h1" variant="h5">
           Ingreso
         </Typography>
-        <form className={classes.form}>
+        <form className={classes.form} onSubmit={this.handleSubmit}>
           <FormControl margin="normal" required fullWidth>
             <InputLabel htmlFor="email">Email</InputLabel>
-            <Input id="email" name="email"/>
+            <Input id="email" name="email" className="formulario" type= "text" value={this.state.email} onChange={this.handleChangeEmail}/>
           </FormControl>
           <FormControl margin="normal" required fullWidth>
             <InputLabel htmlFor="password">Contrasena</InputLabel>
-            <Input name="password" type="password" id="password" />
+            <Input id="password" name="password" className="formulario" type= "password" value={this.state.password} onChange={this.handleChangePassword}/>
           </FormControl>
+          
           
           <Button
             type="submit"
@@ -74,12 +109,14 @@ function SignIn(props) {
             variant="contained"
             color="primary"
             className={classes.submit}
+            onClick={this.handleClick}
             
           >
             Ingresar
           </Button>
         
           <Button
+          component={Link} to= '/FormUsuario/'
             type="submit"
             fullWidth
             variant="contained"
@@ -95,6 +132,7 @@ function SignIn(props) {
       </Paper>
     </main>
   );
+  }
 }
 
 SignIn.propTypes = {
