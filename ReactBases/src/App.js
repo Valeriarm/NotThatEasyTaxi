@@ -2,15 +2,17 @@ import React, { Component } from 'react';
 import './App.css';
 import SideBar from './componentes/SideBar';
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom'
-import LogIn from './componentes/LogIn';
+import LoginTab from './componentes/Ingreso';
+import Ingreso from './componentes/Ingreso';
+
 
 
 function AppRouter() {
   return (
     <Router>
       <div>
-        <Route path="/" exact component={SideBar} />
-        <Route path="/LogIn/" component={LogIn} />
+        <Route path="/" exact component={Ingreso} />
+        <Route path="/SideBar/" exact component={SideBar} />
       </div>
     </Router>
   );
