@@ -8,6 +8,26 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.heading {
+  font-weight: 700;
+  font-family: "Oxygen";
+}
+.subheading {
+  font-weight: 300;
+  font-family: "Oxygen";
+}
+
+
+@font-face {
+  font-family: 'Oxygen';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src:
+    local('Oxygen Regular '),
+    local('Oxygen-Regular'),
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;

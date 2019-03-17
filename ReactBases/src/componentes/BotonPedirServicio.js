@@ -2,28 +2,37 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';
-import Icon from '@material-ui/core/Icon';
+import NavigationIcon from '@material-ui/core/Icon';
 
 const styles = theme => ({
     container: {
-      display: 'flex',
-      flexWrap: 'nowrap',
-      flexDirection: 'row',
+      display: 'block',
     },
     Fab: {
       marginLeft: 10,
       marginRight: 10,
       width: 100,
+
     },
 
-    button: {
-        margin: theme.spacing.unit,
+    Button: {
+        margin: theme.spacing.unit * 3,
         marginLeft: 40,
         marginRight: 40,
       },
-      leftIcon: {
+    leftIcon: {
         marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing.unit,
       },
+    margin:{
+      marginLeft: 350,
+      marginTop: -116,
+    },
+
+    extendedIcon: {
+      marginRight: theme.spacing.unit,
+      color:theme.palette.secondary.main,
+    },
   });
 
   
@@ -39,8 +48,8 @@ function BotonPedir(props) {
           aria-label="Pedir"
           className={classes.margin}
         >
-          <Icon className={classes.leftIcon}></Icon>
-             Pedir Servicio
+        <NavigationIcon className={classes.extendedIcon}/>
+        Pedir Servicio
         </Fab>
         
       </div>
