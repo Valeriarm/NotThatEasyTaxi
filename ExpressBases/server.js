@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const port = 3000
+const port = 5000
 const pgp = require('pg-promise')(/*options*/)
 const db = pgp('postgres://postgres:postgres@localhost:5432/postgres')
 
