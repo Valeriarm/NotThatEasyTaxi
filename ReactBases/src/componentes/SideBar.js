@@ -31,15 +31,11 @@ const drawerWidth = 240;
 const styles = theme => ({
   root: {
     display: 'flex',
-    color: purple,
-    backgroungColor: deepPurple,
   },
   appBar: {
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
-      backgroungColor: purple,
-      color: deepPurple,
     }),
   },
   appBarShift: {
@@ -48,8 +44,6 @@ const styles = theme => ({
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
-      backgroungColor: purple,
-      color: deepPurple,
     }),
   },
   menuButton: {
@@ -98,6 +92,7 @@ const styles = theme => ({
 
 
 
+
 class PersistentDrawerLeft extends React.Component {
   state = {
     open: false,
@@ -122,7 +117,7 @@ class PersistentDrawerLeft extends React.Component {
     const { open } = this.state;
 
     return (
-      <div>
+      <div className={classes.root}>
         <CssBaseline />
         <AppBar
           position="fixed"
@@ -160,7 +155,7 @@ class PersistentDrawerLeft extends React.Component {
 
           </div>
           <Divider />
-          <ListItem button component={Link} to ='/'>
+          <ListItem button component={Link} to ='/SideBar/'>
           <ListItemIcon>
           <HomeIcon/>
           </ListItemIcon>
@@ -177,12 +172,6 @@ class PersistentDrawerLeft extends React.Component {
           <DraftsIcon/>
           </ListItemIcon>
           <ListItemText primary="Kilometros" />
-        </ListItem>
-        <ListItem button component={Link} to ='/LogIn/'>
-          <ListItemIcon>
-          <DraftsIcon/>
-          </ListItemIcon>
-          <ListItemText primary="Ingresar" />
         </ListItem>
 
         </Drawer>
