@@ -1,2 +1,0 @@
-/*LogIn Usuario*/
-SELECT * FROM 

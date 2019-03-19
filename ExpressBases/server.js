@@ -36,6 +36,22 @@ app.get('/drivers/:username/:psword', (req, res) => {
     res.send(JSON.stringify("Credenciales invalidas"))
   })
 })
+/**
+ * Valida cuando un conductor quiera manejar un taxi recibiendo username del conductor
+ * y placa del vehiculo
+ */
+app.get('/drivers/taxi/:username/:placa', (req, res) => {
+  console.log(req.params.userid + "-" + req.params.psword)
+  db.one('SELECT manejarTaxi($1 ,$2)', [req.params.username, req.params.placa])
+  .then(function (data) {
+    console.log('DATA:', data.manejarTaxi)
+    res.send(JSON.stringify(data.manejarTaxi))
+  })
+  .catch(function (error) {
+    console.log('ERROR:', error)
+    res.send(JSON.stringify("Credenciales invalidas"))
+  })
+})
 
 // POST REQUESTS
 
@@ -94,7 +110,7 @@ app.post('/taxi/:placa/:marca/:modelo/:anio/:baul/:soat/:ocupado', (req, res) =>
 
 
 //////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////  EJEMPLOOOOOOOOOOOS      ///////////////////////
+////////////////////////////    EJEMPLOOOOOOOOOOOS   /////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 
 app.get('/', (req, res) => {
