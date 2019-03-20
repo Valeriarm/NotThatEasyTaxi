@@ -107,6 +107,58 @@ app.post('/taxi/:placa/:marca/:modelo/:anio/:baul/:soat/:ocupado', (req, res) =>
     })
 })
 
+// PUT REQUESTS
+
+/**
+ * Actualiza un usuario recibiendo, numero de telefono, nombre de usuario, contraseña, nombre
+ * apellido, fecha de nacimiento, correo y numero de tarjeta
+ */
+app.put('/users/:uname/:psword/:nombre/:apellido/:mail/:tarjeta', (req, res) => {
+  db.one('UPDATE usuario SET contrasenia=$2, nombreUsuario=$3, apellidoUsuario=$4, email=$5, numTarjeta=$6 WHERE username=$1',
+    [req.params.uname, req.params.psword, req.params.nombre, 
+      req.params.apellido, req.params.mail, req.params.tarjeta])
+      .then((data)=>{
+        console.log('DATA: ', data)
+        res.send('Usuario actualizado exitosamente')
+      })
+      .catch((error)=>{
+        console.log('ERROR', error)
+        res.send('Error actualizando el usuario, por favor intentelo de nuevo')
+      })
+    })
+/**
+ * Actualiza un Conductor recibiendo, numero de telefono, nombre de usuario, contraseña, nombre
+ * apellido, fecha de nacimiento, correo y numero de cuenta
+ */
+app.put('/drivers/:uname/:psword/:nombre/:apellido/:mail/:cuenta', (req, res) => {
+  db.one('UPDATE usuario SET contrasenia=$2, nombreConductor=$3, apellidoConductor=$4, email=$5, numCuenta=$6 WHERE username=$1',
+    [req.params.uname, req.params.psword, req.params.nombre, 
+      req.params.apellido, req.params.mail, req.params.cuenta])
+      .then((data)=>{
+        console.log('DATA: ', data)
+        res.send('Conductor actualizado exitosamente')
+      })
+      .catch((error)=>{
+        console.log('ERROR', error)
+        res.send('Error actualizando el conductor, por favor intentelo de nuevo')
+      })
+    })
+/**
+ * Actualiza un Taxi recibiendo, placa, marca, modelo, anio
+ * baul, soat y, ocupado
+ */
+app.put('/taxi/:placa/:soat', (req, res) => {
+  db.one('UPDATE taxi SET soat=$2 WHERE placa=$1',
+    [req.params.placa, req.params.soat])
+    .then((data)=>{
+      console.log('DATA: ', data)
+      res.send('Taxi creado exitosamente')
+    })
+    .catch((error)=>{
+      console.log('ERROR', error)
+      res.send('Error creando el taxi, por favor intentelo de nuevo')
+    })
+})
 
 
 //////////////////////////////////////////////////////////////////////////////////
