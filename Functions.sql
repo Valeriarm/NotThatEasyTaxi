@@ -49,3 +49,16 @@ RETURN placa;
 END;
 $$
 LANGUAGE plpgsql;
+/*Redimir Kilometros Conductor*/
+CREATE OR REPLACE FUNCTION redimirKilometros(Text) RETURNS Text AS $$
+DECLARE
+	uname ALIAS FOR $1;
+BEGIN
+	IF EXISTS(SELECT * FROM conductor WHERE username = uname AND kilometros >= 20)
+	THEN UPDATE conductor SET kilometros = 0;
+        RETURN 'Kilometros redimidos';
+    END IF;
+RETURN 'No tiene kilometros suficientes para redimir';
+END;
+$$
+LANGUAGE plpgsql;

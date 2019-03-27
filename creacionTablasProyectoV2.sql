@@ -24,7 +24,8 @@ PRIMARY KEY (username)
 CREATE TABLE OrigenesFav(
 origen GEOGRAPHY(POINT) NOT NULL,
 username TEXT NOT NULL,
-FOREIGN KEY (username) REFERENCES Usuario(username) ON DELETE CASCADE
+PRIMARY KEY (origen, username),
+FOREIGN KEY (username) REFERENCES Usuario(username) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Conductor(
@@ -36,6 +37,7 @@ apellidoConductor TEXT NOT NULL,
 fechaNacimiento DATE NOT NULL,
 email TEXT NOT NULL,
 numCuenta VARCHAR (30) NOT NULL,
+kilometros Float NOT NULL,
 PRIMARY KEY (username)
 );
 
@@ -71,6 +73,7 @@ FOREIGN KEY (taxi) REFERENCES Taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE
 CREATE TABLE Maneja(
 taxi VARCHAR(6) NOT NULL,
 conductor VARCHAR(30) NOT NULL,
+PRIMARY KEY (taxi, conductor),
 FOREIGN KEY (taxi) REFERENCES Taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE,
 FOREIGN KEY (conductor) REFERENCES Conductor(username) ON DELETE CASCADE ON UPDATE CASCADE
 );
