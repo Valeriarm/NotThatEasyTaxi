@@ -37,7 +37,6 @@ apellidoConductor TEXT NOT NULL,
 fechaNacimiento DATE NOT NULL,
 email TEXT NOT NULL,
 numCuenta VARCHAR (30) NOT NULL,
-kilometros Float NOT NULL,
 PRIMARY KEY (username)
 );
 
@@ -63,6 +62,8 @@ puntoPartida GEOGRAPHY(POINT) NOT NULL,
 puntoLlegada GEOGRAPHY(POINT) NOT NULL,
 horaInicio TIMESTAMP NOT NULL,
 horaFin TIMESTAMP NOT NULL,
+usuario_pago BOOLEAN NOT NULL,
+conductor_pago BOOLEAN NOT NULL,
 PRIMARY KEY (idServicio),
 FOREIGN KEY (usuario) REFERENCES Usuario(username) ON DELETE CASCADE ON UPDATE CASCADE,
 FOREIGN KEY (conductor) REFERENCES Conductor(username) ON DELETE CASCADE ON UPDATE CASCADE,

@@ -54,11 +54,36 @@ CREATE OR REPLACE FUNCTION redimirKilometros(Text) RETURNS Text AS $$
 DECLARE
 	uname ALIAS FOR $1;
 BEGIN
-	IF EXISTS(SELECT * FROM conductor WHERE username = uname AND kilometros >= 20)
-	THEN UPDATE conductor SET kilometros = 0;
-        RETURN 'Kilometros redimidos';
+    IF EXISTS(
+    WITH kilometros_por_servicio AS (
+            SELECT uname, ST_Distance(puntoPartida, puntoLlegada) AS kilometros FROM
+            conductor INNER JOIN servicio ON conductor = username AND conductor_pago = FALSE
+            WHERE username = uname), 
+        kilometros_totales_conductor AS (
+            SELECT uname, SUM(kilometros) AS kilometros_totales FROM kilometros_por_servicio 
+            WHERE username = uname),
+        kilometros_redimir AS(
+            SELECT uname, kilometros_totales FROM kilometros_totales_conductor 
+            WHERE kilometros_totales >= 20 AND username = uname)
+        SELECT kilometros_redimir)
+		THEN UPDATE servicio SET conductor_pago = TRUE 
+        WHERE conductor = username AND conductor_pago = FALSE;
+        RETURN 'Kilometros redimidos con exito';
     END IF;
-RETURN 'No tiene kilometros suficientes para redimir';
+    RETURN 'Kilometros insuficientes, debe tener un minimo de 20 km para redimirlos';
 END;
 $$
 LANGUAGE plpgsql;
+/*No eliminar un usuario si tiene deudas*/
+CREATE OR REPLACE FUNCTION cobrarOnDelete() RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT EXISTS(
+        SELECT username FROM servicio INNER JOIN usuario
+        ON username = new.username WHERE usuario_pago = FALSE
+    )THEN RETURN NEW;
+    END IF;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER delete_usuario_deuda BEFORE DELETE ON usuario FOR EACH ROW EXECUTE PROCEDURE cobrarOnDelete();
