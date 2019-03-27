@@ -1,8 +1,11 @@
 const express = require('express')
+const cors = require('cors')
 const app = express()
 const port = 5000
 const pgp = require('pg-promise')(/*options*/)
 const db = pgp('postgres://Marthox:Marthox2299@localhost:5432/ProyectoBases')
+
+app.use(cors())
 
 // GET REQUESTS
 
