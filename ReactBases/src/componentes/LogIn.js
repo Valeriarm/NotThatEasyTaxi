@@ -95,11 +95,15 @@ const styles = theme => ({
 class LogIn extends React.Component {
   state = {
     open: false,
+    user: ' ',
+    password: ' ',
   };
 
   static contextTypes = {
     router: PropTypes.object
   }
+
+  
 
   redirectToTarget = () => {
     this.context.router.history.push('/target')
@@ -116,6 +120,7 @@ class LogIn extends React.Component {
   handleClick = () => {
     this.console.log("funciona");
   };
+
 
 
   render() {
