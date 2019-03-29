@@ -46,7 +46,7 @@ function SelectUser(props) {
   const { classes } = props;
 
   return (
-    <main className={classes.main}>
+    <div className={classes.main}>
       <CssBaseline />
       <div>
       <Typography component="h1" variant="display4" fontFamily = "Oxigen" className={classes.submit} >
@@ -72,7 +72,7 @@ function SelectUser(props) {
           <LocalTaxi className={classes.icon}/>
           </Fab>
          </div>
-    </main>
+    </div>
   );
 }
 
