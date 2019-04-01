@@ -87,3 +87,8 @@ $$
 LANGUAGE plpgsql;
 
 CREATE TRIGGER delete_usuario_deuda BEFORE DELETE ON usuario FOR EACH ROW EXECUTE PROCEDURE cobrarOnDelete();
+INSERT INTO conductor VALUES ('1234', 'Marthox', '1234', 'Mateo', 'Gregory','1999/07/02', 'magremenez@gmail.com', '123454312');
+INSERT INTO usuario VALUES ('1234', 'Marthox', '1234', 'Mateo', 'Gregory','1999/07/02', 'magremenez@gmail.com', '123454312');
+INSERT INTO conductor VALUES ('12345', 'Valeriarm', '1234', 'Valeria', 'Rivera','1998/11/19', 'valeriarm@gmail.com', '123454312');
+INSERT INTO usuario VALUES ('12345', 'Valeriarm', '1234', 'Valeria', 'Rivera','1998/11/19', 'valeriarm@gmail.com', '123454312');
+SELECT * FROM usuario;

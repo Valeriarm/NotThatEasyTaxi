@@ -47,16 +47,18 @@ const styles = theme => ({
 
 class SignIn extends React.Component {
   state = {
+    type: this.props.location.state.type,
     user: true,
     password: true,
   };
 
-  onChange = e =>{
+  onChange = (e) =>{
     console.log(e.target.value);
+    console.log(this.state.type)
     this.setState({user:e.target.value})
   }
   
-  onChange2 = e =>{
+  onChange2 = (e) =>{
     console.log(e.target.value);
     this.setState({password:e.target.value})
   }
@@ -64,20 +66,34 @@ class SignIn extends React.Component {
   onClickIngresar = (e) => {
     const user = this.state.user;
     const password = this.state.password;
-    axios.get(`http://localhost:5000/users/${user}/${password}`).then(res => {
+    e.preventDefault()
+    if (this.state.type === 'User'){
+      axios.get(`http://localhost:5000/users/${user}/${password}`).then(res => {
         const persons = res.data;
         if(persons === 'Nombre de usuario incorrecto'){
           alert('Nombre de usuario incorrecto')
         } else if (persons === 'Contraseña incorrecta'){
           alert('Contraseña incorrecta')
         } else{
-          alert(persons)
+          this.props.history.push({pathname:"/SideBar/", state:{username:this.state.user}})
         }
       })
+    } else if (this.state.type === 'Driver'){
+      axios.get(`http://localhost:5000/drivers/${user}/${password}`).then(res => {
+        const persons = res.data;
+        if(persons === 'Nombre de usuario incorrecto'){
+          alert('Nombre de usuario incorrecto')
+        } else if (persons === 'Contraseña incorrecta'){
+          alert('Contraseña incorrecta')
+        } else{
+          this.props.history.push({pathname:"/SideBar/", state:{username:this.state.user}})
+        }
+      })
+    }
   }
 
   onClickCrearCuenta = (e) => {
-    
+    this.props.history.push({pathname:"/CreateUser/"})
   }
 
   render(){
