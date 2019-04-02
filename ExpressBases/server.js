@@ -62,9 +62,9 @@ app.get('/drivers/taxi/:username/:placa', (req, res) => {
  * Crea un usuario recibiendo, numero de telefono, nombre de usuario, contraseña, nombre
  * apellido, fecha de nacimiento, correo y numero de tarjeta
  */
-app.post('/users/:tel/:uname/:psword/:nombre/:apellido/:fechanac/:mail/:tarjeta', (req, res) => {
+app.post('/users/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:tarjeta', (req, res) => {
   db.one('INSERT INTO usuario VALUES($1,$2,$3,$4,$5,$6,$7,$8)',
-    [req.params.tel, req.params.uname, req.params.psword, req.params.nombre, 
+    [req.params.tel, req.params.psword, req.params.nombre, 
       req.params.apellido, req.params.fechanac, req.params.mail, req.params.tarjeta])
       .then((data)=>{
         console.log('DATA: ', data)
@@ -79,9 +79,9 @@ app.post('/users/:tel/:uname/:psword/:nombre/:apellido/:fechanac/:mail/:tarjeta'
  * Crea un Conductor recibiendo, numero de telefono, nombre de usuario, contraseña, nombre
  * apellido, fecha de nacimiento, correo y numero de cuenta
  */
-app.post('/drivers/:tel/:uname/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta', (req, res) => {
+app.post('/drivers/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta', (req, res) => {
   db.one('INSERT INTO conductor VALUES($1,$2,$3,$4,$5,$6,$7,$8)',
-    [req.params.tel, req.params.uname, req.params.psword, req.params.nombre, 
+    [req.params.tel, req.params.psword, req.params.nombre, 
       req.params.apellido, req.params.fechanac, req.params.mail, req.params.cuenta])
       .then((data)=>{
         console.log('DATA: ', data)
@@ -116,9 +116,9 @@ app.post('/taxi/:placa/:marca/:modelo/:anio/:baul/:soat/:ocupado', (req, res) =>
  * Actualiza un usuario recibiendo, numero de telefono, nombre de usuario, contraseña, nombre
  * apellido, fecha de nacimiento, correo y numero de tarjeta
  */
-app.put('/users/:uname/:psword/:nombre/:apellido/:mail/:tarjeta', (req, res) => {
-  db.one('UPDATE usuario SET contrasenia=$2, nombreUsuario=$3, apellidoUsuario=$4, email=$5, numTarjeta=$6 WHERE username=$1',
-    [req.params.uname, req.params.psword, req.params.nombre, 
+app.put('/users/:tel/:psword/:nombre/:apellido/:mail/:tarjeta', (req, res) => {
+  db.one('UPDATE usuario SET contrasenia=$2, nombreUsuario=$3, apellidoUsuario=$4, email=$5, numTarjeta=$6 WHERE telefonoUsuario=$1',
+    [req.params.tel, req.params.psword, req.params.nombre, 
       req.params.apellido, req.params.mail, req.params.tarjeta])
       .then((data)=>{
         console.log('DATA: ', data)

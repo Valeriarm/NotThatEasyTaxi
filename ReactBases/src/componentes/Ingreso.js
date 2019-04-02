@@ -10,7 +10,6 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {Link} from 'react-router-dom';
 import axios from 'axios'
 
 const styles = theme => ({
@@ -48,25 +47,24 @@ const styles = theme => ({
 class SignIn extends React.Component {
   state = {
     type: this.props.location.state.type,
-    user: true,
+    phone: true,
     password: true,
   };
 
-  onChange = (e) =>{
+  onChangePhone = (e) =>{
     console.log(e.target.value);
     console.log(this.state.type)
-    this.setState({user:e.target.value})
+    this.setState({phone:e.target.value})
   }
   
-  onChange2 = (e) =>{
+  onChangePassword = (e) =>{
     console.log(e.target.value);
     this.setState({password:e.target.value})
   }
 
-  onClickIngresar = (e) => {
+  onClickIngresar = () => {
     const user = this.state.user;
     const password = this.state.password;
-    e.preventDefault()
     if (this.state.type === 'User'){
       axios.get(`http://localhost:5000/users/${user}/${password}`).then(res => {
         const persons = res.data;
@@ -92,8 +90,14 @@ class SignIn extends React.Component {
     }
   }
 
-  onClickCrearCuenta = (e) => {
-    this.props.history.push({pathname:"/CreateUser/"})
+  onClickCrearCuenta = () => {
+    if(this.state.type === 'User'){
+      this.props.history.push({pathname:"/CreateUser/", state:{type:'User'}})
+    } else if (this.state.type === 'Driver'){
+      this.props.history.push({pathname:"/CreateUser/", state:{type:'Driver'}})
+    } else {
+      alert("Unknown Error")
+    }
   }
 
   render(){
@@ -111,26 +115,23 @@ class SignIn extends React.Component {
           </Typography>
           <form className={classes.form}>
             <FormControl margin="normal" required fullWidth>
-              <InputLabel htmlFor="email">Email</InputLabel>
-              <Input id="email" name="email" onChange={e => this.onChange(e)}/>
+              <InputLabel htmlFor="phone">Phone</InputLabel>
+              <Input id="phone" name="phone" onChange={e => this.onChangePhone(e)}/>
             </FormControl>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="password">Contrasena</InputLabel>
-              <Input name="password" type="password" id="password" onChange={e => this.onChange2(e)}/>
+              <Input name="password" type="password" id="password" onChange={e => this.onChangePassword(e)}/>
             </FormControl>
             
             <Button
               type="submit" fullWidth variant="contained" color="primary"
-              className={classes.submit} onClick={e => this.onClickIngresar(e)}>
+              className={classes.submit} onClick={this.onClickIngresar}>
               Ingresar
             </Button>
           
             <Button type="submit" fullWidth variant="contained" color="primary"
-              className={classes.submit} onClick={e => this.onClickCrearCuenta(e)}>
+              className={classes.submit} onClick={this.onClickCrearCuenta}>
               Crear Cuenta
-            </Button>
-            <Button component={Link} to= '/SideBar/'>
-              Ensayo
             </Button>
           </form>
         </Paper>
