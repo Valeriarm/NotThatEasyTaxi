@@ -52,45 +52,47 @@ class SignIn extends React.Component {
   };
 
   onChangePhone = (e) =>{
+    this.setState({phone:e.target.value})
     console.log(e.target.value);
     console.log(this.state.type)
-    this.setState({phone:e.target.value})
   }
   
   onChangePassword = (e) =>{
-    console.log(e.target.value);
     this.setState({password:e.target.value})
+    console.log(e.target.value);
   }
 
-  onClickIngresar = () => {
-    const user = this.state.user;
+  onClickIngresar = (e) => {
+    const phone = this.state.phone;
     const password = this.state.password;
+    e.preventDefault()
     if (this.state.type === 'User'){
-      axios.get(`http://localhost:5000/users/${user}/${password}`).then(res => {
-        const persons = res.data;
-        if(persons === 'Nombre de usuario incorrecto'){
-          alert('Nombre de usuario incorrecto')
-        } else if (persons === 'Contraseña incorrecta'){
+      axios.get(`http://localhost:5000/users/${phone}/${password}`).then(res => {
+        const validation = res.data;
+        if(validation === 'Telefono incorrecto'){
+          alert('Telefono incorrecto')
+        } else if (validation === 'Contraseña incorrecta'){
           alert('Contraseña incorrecta')
         } else{
-          this.props.history.push({pathname:"/SideBar/", state:{username:this.state.user}})
+          this.props.history.push({pathname:"/SideBar/", state:{phone:this.state.phone}})
         }
       })
     } else if (this.state.type === 'Driver'){
-      axios.get(`http://localhost:5000/drivers/${user}/${password}`).then(res => {
-        const persons = res.data;
-        if(persons === 'Nombre de usuario incorrecto'){
-          alert('Nombre de usuario incorrecto')
-        } else if (persons === 'Contraseña incorrecta'){
+      axios.get(`http://localhost:5000/drivers/${phone}/${password}`).then(res => {
+        const validation = res.data;
+        if(validation === 'Telefono incorrecto'){
+          alert('Telefono incorrecto')
+        } else if (validation === 'Contraseña incorrecta'){
           alert('Contraseña incorrecta')
         } else{
-          this.props.history.push({pathname:"/SideBar/", state:{username:this.state.user}})
+          this.props.history.push({pathname:"/SideBar/", state:{phone:this.state.phone}})
         }
       })
     }
   }
 
-  onClickCrearCuenta = () => {
+  onClickCrearCuenta = (e) => {
+    e.preventDefault()
     if(this.state.type === 'User'){
       this.props.history.push({pathname:"/CreateUser/", state:{type:'User'}})
     } else if (this.state.type === 'Driver'){
@@ -125,12 +127,12 @@ class SignIn extends React.Component {
             
             <Button
               type="submit" fullWidth variant="contained" color="primary"
-              className={classes.submit} onClick={this.onClickIngresar}>
+              className={classes.submit} onClick={e => this.onClickIngresar(e)}>
               Ingresar
             </Button>
           
             <Button type="submit" fullWidth variant="contained" color="primary"
-              className={classes.submit} onClick={this.onClickCrearCuenta}>
+              className={classes.submit} onClick={e => this.onClickCrearCuenta(e)}>
               Crear Cuenta
             </Button>
           </form>

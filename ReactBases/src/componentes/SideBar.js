@@ -95,7 +95,7 @@ const styles = theme => ({
 
 class PersistentDrawerLeft extends React.Component {
   state = {
-    username: this.props.location.state.username,
+    phone: this.props.location.state.phone,
   };
 
   handleDrawerOpen = () => {

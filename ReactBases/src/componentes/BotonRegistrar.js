@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';
-import NavigationIcon from '@material-ui/core/Icon';
+import NavigationIcon from '@material-ui/icons/Check';
 
 const styles = theme => ({
     container: {
@@ -44,6 +44,7 @@ function BotonPedir(props) {
           aria-label="Pedir"
           className={classes.margin}
         >
+        <NavigationIcon/>
         Registrar
         </Fab>
         

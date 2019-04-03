@@ -10,11 +10,11 @@ app.use(cors())
 // GET REQUESTS
 
 /**
- * Valida los usuario recibiendo nombre de usuario y contraseña
+ * Valida los usuario recibiendo telefono y contraseña
  */
-app.get('/users/:userid/:psword', (req, res) => {
-  console.log(req.params.userid + "-" + req.params.psword)
-  db.one('SELECT validarUsuario($1 ,$2)', [req.params.userid, req.params.psword])
+app.get('/users/:phone/:psword', (req, res) => {
+  console.log(req.params.phone + "-" + req.params.psword)
+  db.one('SELECT validarUsuario($1 ,$2)', [escape(req.params.phone), escape(req.params.psword)])
   .then(function (data) {
     console.log('DATA:', data.validarusuario)
     res.send(JSON.stringify(data.validarusuario))
@@ -25,11 +25,11 @@ app.get('/users/:userid/:psword', (req, res) => {
   })
 })
 /**
- * Valida los Conductores recibiendo nombre de usuario y contraseña
+ * Valida los Conductores recibiendo telefono y contraseña
  */
-app.get('/drivers/:username/:psword', (req, res) => {
-  console.log(req.params.userid + "-" + req.params.psword)
-  db.one('SELECT validarConductor($1 ,$2)', [req.params.username, req.params.psword])
+app.get('/drivers/:phone/:psword', (req, res) => {
+  console.log(req.params.phone + "-" + req.params.psword)
+  db.one('SELECT validarConductor($1 ,$2)', [escape(req.params.phone), escape(req.params.psword)])
   .then(function (data) {
     console.log('DATA:', data.validarConductor)
     res.send(JSON.stringify(data.validarConductor))
@@ -40,12 +40,12 @@ app.get('/drivers/:username/:psword', (req, res) => {
   })
 })
 /**
- * Valida cuando un conductor quiera manejar un taxi recibiendo username del conductor
+ * Valida cuando un conductor quiera manejar un taxi recibiendo telefono del conductor
  * y placa del vehiculo
  */
-app.get('/drivers/taxi/:username/:placa', (req, res) => {
-  console.log(req.params.userid + "-" + req.params.psword)
-  db.one('SELECT manejarTaxi($1 ,$2)', [req.params.username, req.params.placa])
+app.get('/drivers/taxi/:phone/:placa', (req, res) => {
+  console.log(req.params.phone + "-" + req.params.psword)
+  db.one('SELECT manejarTaxi($1 ,$2)', [escape(req.params.phone), escape(req.params.placa)])
   .then(function (data) {
     console.log('DATA:', data.manejarTaxi)
     res.send(JSON.stringify(data.manejarTaxi))
@@ -59,13 +59,14 @@ app.get('/drivers/taxi/:username/:placa', (req, res) => {
 // POST REQUESTS
 
 /**
- * Crea un usuario recibiendo, numero de telefono, nombre de usuario, contraseña, nombre
+ * Crea un usuario recibiendo, numero de telefono, contraseña, nombre
  * apellido, fecha de nacimiento, correo y numero de tarjeta
  */
 app.post('/users/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:tarjeta', (req, res) => {
   db.one('INSERT INTO usuario VALUES($1,$2,$3,$4,$5,$6,$7,$8)',
-    [req.params.tel, req.params.psword, req.params.nombre, 
-      req.params.apellido, req.params.fechanac, req.params.mail, req.params.tarjeta])
+    [escape(req.params.tel), escape(req.params.psword), escape(req.params.nombre), 
+      escape(req.params.apellido), escape(req.params.fechanac), escape(req.params.mail), 
+      escape(req.params.tarjeta)])
       .then((data)=>{
         console.log('DATA: ', data)
         res.send('Usuario creado exitosamente')
@@ -76,13 +77,14 @@ app.post('/users/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:tarjeta', (req,
       })
     })
 /**
- * Crea un Conductor recibiendo, numero de telefono, nombre de usuario, contraseña, nombre
+ * Crea un Conductor recibiendo, numero de telefono, contraseña, nombre
  * apellido, fecha de nacimiento, correo y numero de cuenta
  */
 app.post('/drivers/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta', (req, res) => {
   db.one('INSERT INTO conductor VALUES($1,$2,$3,$4,$5,$6,$7,$8)',
-    [req.params.tel, req.params.psword, req.params.nombre, 
-      req.params.apellido, req.params.fechanac, req.params.mail, req.params.cuenta])
+    [escape(req.params.tel), escape(req.params.psword), escape(req.params.nombre), 
+      escape(req.params.apellido), escape(req.params.fechanac), escape(req.params.mail),
+      escape(req.params.cuenta)])
       .then((data)=>{
         console.log('DATA: ', data)
         res.send('Conductor creado exitosamente')
@@ -97,9 +99,10 @@ app.post('/drivers/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta', (req
  * baul, soat y, ocupado
  */
 app.post('/taxi/:placa/:marca/:modelo/:anio/:baul/:soat/:ocupado', (req, res) => {
-  db.one('INSERT INTO taxi VALUES($1,$2,$3,$4,$5,$6,$7,$8)',
-    [req.params.placa, req.params.marca, req.params.modelo, req.params.anio, 
-    req.params.anio, req.params.baul, req.params.soat, req.params.ocupado])
+  db.one('INSERT INTO taxi VALUES($1,$2,$3,$4,$5,$6,$7)',
+    [escape(req.params.placa), escape(req.params.marca), escape(req.params.modelo), 
+      escape(req.params.anio), escape(req.params.baul), escape(req.params.soat), 
+      escape(req.params.ocupado)])
     .then((data)=>{
       console.log('DATA: ', data)
       res.send('Taxi creado exitosamente')
@@ -113,13 +116,13 @@ app.post('/taxi/:placa/:marca/:modelo/:anio/:baul/:soat/:ocupado', (req, res) =>
 // PUT REQUESTS
 
 /**
- * Actualiza un usuario recibiendo, numero de telefono, nombre de usuario, contraseña, nombre
+ * Actualiza un usuario recibiendo, numero de telefono, contraseña, nombre
  * apellido, fecha de nacimiento, correo y numero de tarjeta
  */
 app.put('/users/:tel/:psword/:nombre/:apellido/:mail/:tarjeta', (req, res) => {
   db.one('UPDATE usuario SET contrasenia=$2, nombreUsuario=$3, apellidoUsuario=$4, email=$5, numTarjeta=$6 WHERE telefonoUsuario=$1',
-    [req.params.tel, req.params.psword, req.params.nombre, 
-      req.params.apellido, req.params.mail, req.params.tarjeta])
+    [escape(req.params.tel), escape(req.params.psword), escape(req.params.nombre), 
+      escape(req.params.apellido), escape(req.params.mail),  escape(req.params.tarjeta)])
       .then((data)=>{
         console.log('DATA: ', data)
         res.send('Usuario actualizado exitosamente')
@@ -130,13 +133,13 @@ app.put('/users/:tel/:psword/:nombre/:apellido/:mail/:tarjeta', (req, res) => {
       })
     })
 /**
- * Actualiza un Conductor recibiendo, numero de telefono, nombre de usuario, contraseña, nombre
+ * Actualiza un Conductor recibiendo, numero de telefono, contraseña, nombre
  * apellido, fecha de nacimiento, correo y numero de cuenta
  */
-app.put('/drivers/:uname/:psword/:nombre/:apellido/:mail/:cuenta', (req, res) => {
-  db.one('UPDATE usuario SET contrasenia=$2, nombreConductor=$3, apellidoConductor=$4, email=$5, numCuenta=$6 WHERE username=$1',
-    [req.params.uname, req.params.psword, req.params.nombre, 
-      req.params.apellido, req.params.mail, req.params.cuenta])
+app.put('/drivers/:phone/:psword/:nombre/:apellido/:mail/:cuenta', (req, res) => {
+  db.one('UPDATE usuario SET contrasenia=$2, nombreConductor=$3, apellidoConductor=$4, email=$5, numCuenta=$6 WHERE phone=$1',
+    [escape(req.params.uname), escape(req.params.psword), escape(req.params.nombre), 
+      escape(req.params.apellido), escape(req.params.mail), escape(req.params.cuenta)])
       .then((data)=>{
         console.log('DATA: ', data)
         res.send('Conductor actualizado exitosamente')
@@ -152,7 +155,7 @@ app.put('/drivers/:uname/:psword/:nombre/:apellido/:mail/:cuenta', (req, res) =>
  */
 app.put('/taxi/:placa/:soat', (req, res) => {
   db.one('UPDATE taxi SET soat=$2 WHERE placa=$1',
-    [req.params.placa, req.params.soat])
+    [escape(req.params.placa), escape(req.params.soat)])
     .then((data)=>{
       console.log('DATA: ', data)
       res.send('Taxi creado exitosamente')

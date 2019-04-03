@@ -65,7 +65,7 @@ class FormUsuario extends React.Component {
   state={
     type:this.props.location.state.type,
     telefono:true,
-    contrasenia:true,
+    password:true,
     nombre:true,
     apellido:true,
     fecha:true,
@@ -77,7 +77,7 @@ class FormUsuario extends React.Component {
     this.setState({telefono:e.target.value})
   }
   onChangecontrasenia(e){
-    this.setState({contrasenia:e.target.value})
+    this.setState({password:e.target.value})
   }
   onChangenombre(e){
     this.setState({nombre:e.target.value})
@@ -89,7 +89,7 @@ class FormUsuario extends React.Component {
     this.setState({fecha:e.target.value})
   }
   onChangeemail(e){
-    this.setState({phoemailne:e.target.value})
+    this.setState({email:e.target.value})
   }
   onChangenumtarjeta(e){
     this.setState({numtarjeta:e.target.value})
@@ -97,29 +97,33 @@ class FormUsuario extends React.Component {
   onChangenumcuenta(e){
     this.setState({numcuenta:e.target.value})
   }
-  onClickRegistrar = () => {
-    const user = this.state.user;
+  onClickRegistrar = (e) => {
+    const telefono = this.state.telefono;
     const password = this.state.password;
+    const nombre = this.state.nombre;
+    const apellido = this.state.apellido;
+    const fecha = this.state.fecha;
+    const email = this.state.email;
+    const numtarjeta = this.state.numtarjeta;
+    const numcuenta = this.state.numcuenta;
     if (this.state.type === 'User'){
-      axios.get(`http://localhost:5000/users/${user}/${password}`).then(res => {
+      axios.post(`http://localhost:5000/users/${telefono}/${password}/${nombre}/${apellido}
+        /${fecha}/${email}/${numtarjeta}`).then(res => {
         const persons = res.data;
-        if(persons === 'Nombre de usuario incorrecto'){
-          alert('Nombre de usuario incorrecto')
-        } else if (persons === 'Contraseña incorrecta'){
-          alert('Contraseña incorrecta')
+        if(persons === 'Usuario creado exitosamente'){
+          alert('Usuario creado exitosamente')
         } else{
-          this.props.history.push({pathname:"/SideBar/", state:{username:this.state.user}})
+          alert('ERROR: ' + persons)
         }
       })
     } else if (this.state.type === 'Driver'){
-      axios.get(`http://localhost:5000/drivers/${user}/${password}`).then(res => {
+      axios.post(`http://localhost:5000/drivers/${telefono}/${password}/${nombre}/${apellido}
+        /${fecha}/${email}/${numcuenta}`).then(res => {
         const persons = res.data;
-        if(persons === 'Nombre de usuario incorrecto'){
-          alert('Nombre de usuario incorrecto')
-        } else if (persons === 'Contraseña incorrecta'){
-          alert('Contraseña incorrecta')
+        if(persons === 'Conductor creado exitosamente'){
+          alert('Conductor creado exitosamente')
         } else{
-          this.props.history.push({pathname:"/SideBar/", state:{username:this.state.user}})
+          alert('ERROR: ' + persons)
         }
       })
     }
@@ -149,6 +153,7 @@ class FormUsuario extends React.Component {
           </InputLabel>
           <Input
             id="celular"
+            onChange={e => {this.onChangetelefono(e)}}
             classes={{
               underline: classes.cssUnderline,
             }}
@@ -240,15 +245,15 @@ class FormUsuario extends React.Component {
             </InputLabel>
             <Input
               id="tarjeta"
+              maxDate={new Date()}
               onChange={e => {this.onChangenumtarjeta(e)}}
               classes={{
                 underline: classes.cssUnderline,
               }}
             />
         </FormControl>}
-
         <Fecha/>
-        <Registrar/>
+        <Registrar onClick={(e) => {this.onClickRegistrar(e)}}/>
         </Paper>
       </main>
     );
