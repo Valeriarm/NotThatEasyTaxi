@@ -14,15 +14,15 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import CustomMap from './Mapa';
 import { purple, deepPurple } from '@material-ui/core/colors';
-import BotonPedirServicio from './BotonPedirServicio';
-import LabelDestino from './LabelDestino';
-import LabelOrigen from './LabelOrigen';
 import HomeIcon from'@material-ui/icons/Home';
 import Person from '@material-ui/icons/Person';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
+import { InputLabel, FormControl, Input, Fab } from '@material-ui/core';
+import Check from '@material-ui/icons/Check';
+import Add from '@material-ui/icons/Add';
 
 
 const drawerWidth = 240;
@@ -93,6 +93,37 @@ const styles = theme => ({
   },
   titleLabel: {
     marginLeft: theme.spacing.unit*50,
+  },
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing.unit*2,
+    marginLeft: theme.spacing.unit*15,
+    display: 'block',
+
+  },
+  submit: {
+    marginTop: theme.spacing.unit * 2,
+  },
+  cssLabel: {
+    '&$cssFocused': {
+      color: purple[500],
+    },
+    marginTop: theme.spacing.unit*2,
+  },
+  cssFocused: {},
+  cssUnderline: {
+    '&:after': {
+      borderBottomColor: purple[500],
+    },
+  },
+
+  servicio: {
+    marginTop: theme.spacing.unit*-4.4,
+    marginLeft: theme.spacing.unit*45,
+  },
+  favoritos: {
+    marginTop: theme.spacing.unit*-13,
+    marginLeft: theme.spacing.unit*45,
   }
 });
 
@@ -192,9 +223,51 @@ class PersistentDrawerLeft extends React.Component {
         >
           <div className={classes.drawerHeader} />
           <CustomMap />
-          <LabelOrigen/>
-          <LabelDestino/>
-          <BotonPedirServicio/>
+          <FormControl className={classes.form}>
+          <InputLabel
+            htmlFor="Inicio"
+            classes={{
+              InputLabel: classes.cssLabel,
+              focused: classes.cssFocused,
+            }}
+          >
+            Inicio
+          </InputLabel>
+          <Input
+            id="inicio"
+            classes={{
+              underline: classes.cssUnderline,
+            }}
+          />
+        </FormControl>
+        <FormControl  className={classes.form}>
+          <InputLabel
+            htmlFor="Fin"
+            classes={{
+              InputLabel: classes.cssLabel,
+              focused: classes.cssFocused,
+            }}
+          >
+            Final
+          </InputLabel>
+          <Input
+            id="final"
+            classes={{
+              underline: classes.cssUnderline,
+            }}
+          />
+
+        </FormControl>
+        <div className={classes.servicio}>
+            <Fab color="primary" aria-label="Pedir Servicio" size="small" >
+                <Check/>
+            </Fab>
+        </div>
+        <div className={classes.favoritos}>
+            <Fab color="primary" aria-label="Anadir a Favoritos" size="small" >
+                <Add />
+            </Fab>
+        </div>
         </main>
       </div>
       

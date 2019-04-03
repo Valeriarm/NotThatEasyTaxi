@@ -22,6 +22,7 @@ import Divider from '@material-ui/core/Divider';
 import { Paper, Fab } from '@material-ui/core';
 import SimpleCard from './uploadImage';
 import EditIcon from '@material-ui/icons/Edit';
+import ExitToApp from '@material-ui/icons/ExitToApp';
 
 
 const drawerWidth = 240;
@@ -107,6 +108,12 @@ const styles = theme => ({
     alignItems: 'center',
     padding: `${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
   },
+  logOutButton: {
+    marginLeft: theme.spacing.unit*50,
+  },
+  titleLabel: {
+    marginLeft: theme.spacing.unit*50,
+  }
 });
 
 
@@ -164,9 +171,15 @@ class PersistentDrawerLeft extends React.Component {
             >
               <MenuIcon/>
             </IconButton>
-            <Typography variant="h6" color="inherit" noWrap>
+            <Typography variant="h6" color="inherit" noWrap className={classes.titleLabel}>
               Not That Easy Taxi
             </Typography>
+            <IconButton
+              color = "inherit"
+              className={classes.logOutButton}
+            >
+              <ExitToApp/>
+            </IconButton>
           </Toolbar>
         </AppBar>
         <Drawer
