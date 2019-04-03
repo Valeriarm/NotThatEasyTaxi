@@ -106,10 +106,15 @@ class PersistentDrawerLeft extends React.Component {
     this.setState({ open: false });
   };
 
-  handleClick = () => {
-    this.console.log("funciona");
-    
-  };
+  onClickProfileUser = (e) => {
+    e.preventDefault()
+      this.props.history.push({pathname:"/ProfileUser/", state:{phone: this.state.phone}})
+  }
+
+  onClickSideBar = (e) => {
+    e.preventDefault()
+    this.props.history.push({pathname:"/SideBar/", state:{phone: this.state.phone}})
+  }
 
   render() {
 
@@ -155,25 +160,18 @@ class PersistentDrawerLeft extends React.Component {
 
           </div>
           <Divider />
-          <ListItem button component={Link} to ='/SideBar/'>
+          <ListItem button onClick={e => this.onClickSideBar(e)}>
           <ListItemIcon>
           <HomeIcon/>
           </ListItemIcon>
           <ListItemText primary="Inicio" />
         </ListItem>
-        <ListItem button>
+        <ListItem button onClick={e => this.onClickProfileUser(e)}>
           <ListItemIcon>
           <Person/>
           </ListItemIcon>
           <ListItemText primary="Perfil" />
         </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-          <DraftsIcon/>
-          </ListItemIcon>
-          <ListItemText primary="Kilometros" />
-        </ListItem>
-
         </Drawer>
         <main
           className={classNames(classes.content, {
