@@ -9,6 +9,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import ExitToApp from '@material-ui/icons/ExitToApp';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import CustomMap from './Mapa';
@@ -22,8 +23,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
-import DraftsIcon from '@material-ui/icons/Drafts';
-import {Link} from 'react-router-dom';
 
 
 const drawerWidth = 240;
@@ -48,7 +47,7 @@ const styles = theme => ({
   },
   menuButton: {
     marginLeft: 12,
-    marginRight: 20,
+    marginRight: 60,
   },
   hide: {
     display: 'none',
@@ -88,6 +87,13 @@ const styles = theme => ({
     primary: deepPurple,
     secondary: purple,
   },
+
+  logOutButton: {
+    marginLeft: theme.spacing.unit*50,
+  },
+  titleLabel: {
+    marginLeft: theme.spacing.unit*50,
+  }
 });
 
 
@@ -139,9 +145,15 @@ class PersistentDrawerLeft extends React.Component {
             >
               <MenuIcon/>
             </IconButton>
-            <Typography variant="h6" color="inherit" noWrap>
+            <Typography variant="h6" color="inherit" noWrap className={classes.titleLabel}>
               Not That Easy Taxi
             </Typography>
+            <IconButton
+              color = "inherit"
+              className={classes.logOutButton}
+            >
+              <ExitToApp/>
+            </IconButton>
           </Toolbar>
         </AppBar>
         <Drawer

@@ -19,8 +19,9 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
-import {Link} from 'react-router-dom';
-import { Paper } from '@material-ui/core';
+import { Paper, Fab } from '@material-ui/core';
+import SimpleCard from './uploadImage';
+import EditIcon from '@material-ui/icons/Edit';
 
 
 const drawerWidth = 240;
@@ -43,6 +44,12 @@ const styles = theme => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
+  fab: {
+    position: 'absolute',
+    bottom: theme.spacing.unit * 28,
+    right: theme.spacing.unit * 15,
+  },
+  
   menuButton: {
     marginLeft: 12,
     marginRight: 20,
@@ -91,11 +98,14 @@ const styles = theme => ({
     marginRight: theme.spacing.unit,
   },
   paper: {
-    marginTop: theme.spacing.unit * 5,
+    marginTop: theme.spacing.unit * 8,
+    marginLeft: theme.spacing.unit * 8,
+    marginRight: theme.spacing.unit * 8,
+    marginBottom: theme.spacing.unit * 8,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`,
+    padding: `${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
   },
 });
 
@@ -196,6 +206,9 @@ class PersistentDrawerLeft extends React.Component {
         <div className={classes.drawerHeader} />
           <Paper className={classes.paper}>
             <div>
+              <SimpleCard/>
+            </div>
+            <div>
             <TextField
             id="standard-error"
             label="Nombre"
@@ -252,6 +265,11 @@ class PersistentDrawerLeft extends React.Component {
                 readOnly: true,
             }}
             />
+            </div>
+            <div>
+            <Fab color="primary" aria-label="Edit" className={classes.fab}>
+                <EditIcon/>
+            </Fab>
             </div>
           </Paper>
           
