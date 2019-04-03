@@ -90,6 +90,13 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
   },
+  paper: {
+    marginTop: theme.spacing.unit * 5,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`,
+  },
 });
 
 
@@ -123,7 +130,7 @@ class PersistentDrawerLeft extends React.Component {
     this.props.history.push({pathname:"/SideBar/", state:{phone: this.state.phone}})
   }
 
-  
+
   render() {
 
     const { classes , theme } = this.props;
@@ -187,18 +194,65 @@ class PersistentDrawerLeft extends React.Component {
           })}
         >
         <div className={classes.drawerHeader} />
-          <Paper>
+          <Paper className={classes.paper}>
+            <div>
             <TextField
-            id="filled-read-only-input"
-            label="Read Only"
-            defaultValue="Hello World"
+            id="standard-error"
+            label="Nombre"
             className={classes.textField}
             margin="normal"
             InputProps={{
                 readOnly: true,
             }}
-            variant="filled"
             />
+            <TextField
+            id="standard-error"
+            label="Apellido"
+            className={classes.textField}
+            margin="normal"
+            InputProps={{
+                readOnly: true,
+            }}
+            />
+            <TextField
+            id="standard-error"
+            label="Telefono"
+            className={classes.textField}
+            margin="normal"
+            InputProps={{
+                readOnly: true,
+            }}
+            />
+            </div>
+            <div>
+            <TextField
+            id="standard-error"
+            label="Tarjeta"
+            className={classes.textField}
+            margin="normal"
+            InputProps={{
+                readOnly: true,
+            }}
+            />
+            <TextField
+            id="standard-error"
+            label="Email"
+            className={classes.textField}
+            margin="normal"
+            InputProps={{
+                readOnly: true,
+            }}
+            />
+            <TextField
+            id="standard-error"
+            label="Fecha Nacimiento"
+            className={classes.textField}
+            margin="normal"
+            InputProps={{
+                readOnly: true,
+            }}
+            />
+            </div>
           </Paper>
           
         </main>
