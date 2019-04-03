@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  Front:
+    container_name: docker_front
+    build: ./ReactBases
+    ports:
+      - 3000:3000
+  Back:
+    container_name: docker_back
+    build: ./ReactBases
+    ports:
+      - 5000:5000
+  DataBase:
+    container_name: docker_data_base
+    build: ./DataBase
+    ports:
+      - 5432:5432
+    volumes:
+      - ./DataBase/creacionTablasProyectoV2.sql:/docker-entrypoint.initdb.d/script.sql
+    environment:
+      POSTGRES_DB: ProyectoBases
+      POSTGRES_USER: Marthox
+      POSTGRES_PASSWORD: Marthox2299

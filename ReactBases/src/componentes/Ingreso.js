@@ -10,7 +10,6 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {Link} from 'react-router-dom';
 import axios from 'axios'
 
 const styles = theme => ({
@@ -47,37 +46,60 @@ const styles = theme => ({
 
 class SignIn extends React.Component {
   state = {
-    user: true,
+    type: this.props.location.state.type,
+    phone: true,
     password: true,
   };
 
-  onChange = e =>{
+  onChangePhone = (e) =>{
+    this.setState({phone:e.target.value})
     console.log(e.target.value);
-    this.setState({user:e.target.value})
+    console.log(this.state.type)
   }
   
-  onChange2 = e =>{
-    console.log(e.target.value);
+  onChangePassword = (e) =>{
     this.setState({password:e.target.value})
+    console.log(e.target.value);
   }
 
   onClickIngresar = (e) => {
-    const user = this.state.user;
+    const phone = this.state.phone;
     const password = this.state.password;
-    axios.get(`http://localhost:5000/users/${user}/${password}`).then(res => {
-        const persons = res.data;
-        if(persons === 'Nombre de usuario incorrecto'){
-          alert('Nombre de usuario incorrecto')
-        } else if (persons === 'Contraseña incorrecta'){
+    e.preventDefault()
+    if (this.state.type === 'User'){
+      axios.get(`http://localhost:5000/users/${phone}/${password}`).then(res => {
+        const validation = res.data;
+        if(validation === 'Telefono incorrecto'){
+          alert('Telefono incorrecto')
+        } else if (validation === 'Contraseña incorrecta'){
           alert('Contraseña incorrecta')
         } else{
-          alert(persons)
+          this.props.history.push({pathname:"/SideBar/", state:{phone:this.state.phone}})
         }
       })
+    } else if (this.state.type === 'Driver'){
+      axios.get(`http://localhost:5000/drivers/${phone}/${password}`).then(res => {
+        const validation = res.data;
+        if(validation === 'Telefono incorrecto'){
+          alert('Telefono incorrecto')
+        } else if (validation === 'Contraseña incorrecta'){
+          alert('Contraseña incorrecta')
+        } else{
+          this.props.history.push({pathname:"/SideBar/", state:{phone:this.state.phone}})
+        }
+      })
+    }
   }
 
   onClickCrearCuenta = (e) => {
-    
+    e.preventDefault()
+    if(this.state.type === 'User'){
+      this.props.history.push({pathname:"/CreateUser/", state:{type:'User'}})
+    } else if (this.state.type === 'Driver'){
+      this.props.history.push({pathname:"/CreateUser/", state:{type:'Driver'}})
+    } else {
+      alert("Unknown Error")
+    }
   }
 
   render(){
@@ -95,12 +117,12 @@ class SignIn extends React.Component {
           </Typography>
           <form className={classes.form}>
             <FormControl margin="normal" required fullWidth>
-              <InputLabel htmlFor="email">Email</InputLabel>
-              <Input id="email" name="email" onChange={e => this.onChange(e)}/>
+              <InputLabel htmlFor="phone">Phone</InputLabel>
+              <Input id="phone" name="phone" onChange={e => this.onChangePhone(e)}/>
             </FormControl>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="password">Contrasena</InputLabel>
-              <Input name="password" type="password" id="password" onChange={e => this.onChange2(e)}/>
+              <Input name="password" type="password" id="password" onChange={e => this.onChangePassword(e)}/>
             </FormControl>
             
             <Button
@@ -112,9 +134,6 @@ class SignIn extends React.Component {
             <Button type="submit" fullWidth variant="contained" color="primary"
               className={classes.submit} onClick={e => this.onClickCrearCuenta(e)}>
               Crear Cuenta
-            </Button>
-            <Button component={Link} to= '/SideBar/'>
-              Ensayo
             </Button>
           </form>
         </Paper>

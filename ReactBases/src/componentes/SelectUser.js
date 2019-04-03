@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {Link} from 'react-router-dom';
 import Fab from '@material-ui/core/Fab';
 import Person from '@material-ui/icons/Person';
 import LocalTaxi from '@material-ui/icons/LocalTaxi';
@@ -40,38 +39,49 @@ const styles = theme => ({
   }
   });
 
-function SelectUser(props) {
-  const { classes } = props;
+class SelectUser extends React.Component {
 
-  return (
-    <main className={classes.main}>
-      <CssBaseline />
-      <div>
-      <Typography component="h2" variant="display4" fontFamily = "Oxigen" className={classes.fuente} >
-          <center> NTET</center>
-        </Typography>
-           <Fab
-            component={Link} to= '/Ingreso/'
-            type="button"
-            variant="extended"
-            color="primary"
-            className={classes.submit}
-          >
-          <Person className={classes.icon}/>
-          </Fab>
-        
-          <Fab
-            component={Link} to= '/Ingreso/'
-            type="button"
-            variant="extended"
-            color="primary"
-            className={classes.submit}
-          >
-          <LocalTaxi className={classes.icon}/>
-          </Fab>
-         </div>
-    </main>
-  );
+  sendToDriver = () => {
+    this.props.history.push({pathname:"/Ingreso/", state:{type:'Driver'}})
+  }
+
+  sendToUser = () => {
+    this.props.history.push({pathname:"/Ingreso/", state:{type:'User'}})
+  }
+
+  render(){
+    const { classes } = this.props;
+
+    return (
+      <main className={classes.main}>
+        <CssBaseline />
+        <div>
+        <Typography component="h2" variant="display4" fontFamily = "Oxigen" className={classes.fuente} >
+            <center> NTET</center>
+          </Typography>
+            <Fab
+              onClick={this.sendToUser}
+              type="button"
+              variant="extended"
+              color="primary"
+              className={classes.submit}
+            >
+            <Person className={classes.icon}/>
+            </Fab>
+          
+            <Fab
+              onClick={this.sendToDriver}
+              type="button"
+              variant="extended"
+              color="primary"
+              className={classes.submit}
+            >
+            <LocalTaxi className={classes.icon}/>
+            </Fab>
+          </div>
+      </main>
+    );
+  }
 }
 
 SelectUser.propTypes = {

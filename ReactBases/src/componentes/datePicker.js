@@ -1,36 +1,56 @@
 import React from "react";
-import DatePicker from "react-datepicker";
+import "../../node_modules/react-datepicker/dist/react-datepicker.css";
+import '@date-io/date-fns';
+import PropTypes from 'prop-types';
+import Grid from '@material-ui/core/Grid';
+import {withStyles} from '@material-ui/core/styles';
+import DateFnsUtils from '@date-io/date-fns';
+import { MuiPickersUtilsProvider, DatePicker } from 'material-ui-pickers';
+
 
 // CSS Modules, react-datepicker-cssmodules.css
 // import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 
-class Fecha extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      startDate: new Date()
-    };
-    this.handleChange = this.handleChange.bind(this);
-  }
+const styles = {
+  grid: {
+    width: '60%',
+  },
+};
 
-  handleChange(date) {
-    this.setState({
-      startDate: date
-    });
-  }
+class Fecha extends React.Component {
+  state = {
+    // The first commit of Material-UI
+    selectedDate: new Date(),
+  };
+
+  handleDateChange = date => {
+    this.setState({ selectedDate: date });
+  };
 
   render() {
+    const { classes } = this.props;
+    const { selectedDate } = this.state;
+    
     return (
-        <DatePicker
-        selected={this.state.startDate}
-        onChange={this.handleChange}
-        peekNextMonth
-        showMonthDropdown
-        showYearDropdown
-        dropdownMode="select"
-    />
+      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <Grid container className={classes.grid} justify="space-around">
+          <DatePicker
+            views={["day", "year", "month"]}
+            label="Fecha de nacimiento" 
+            margin="normal"
+            openTo="year"
+            disableFuture
+            value={selectedDate}
+            onChange={this.handleDateChange}
+          />
+        </Grid>
+      </MuiPickersUtilsProvider>
     );
   }
 }
 
-export default Fecha;
+Fecha.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(Fecha);

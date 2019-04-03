@@ -4,6 +4,7 @@ import SideBar from './componentes/SideBar';
 import {BrowserRouter as Router, Route} from 'react-router-dom'
 import Ingreso from './componentes/Ingreso';
 import SelectUser from './componentes/SelectUser';
+import FormUser from './componentes/FormUsuario';
 
 
 
@@ -15,6 +16,7 @@ function AppRouter() {
           <Route path="/Ingreso" exact component={Ingreso} />
           <Route path="/SideBar/" exact component={SideBar} />
           <Route path="/SelectUser/" exact component={SelectUser} />
+          <Route path="/CreateUser/" exact component={FormUser}/>
       </div>
     </Router>
   );

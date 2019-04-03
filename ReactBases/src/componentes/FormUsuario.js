@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import purple from '@material-ui/core/colors/purple';
 import Avatar from '@material-ui/core/Avatar';
@@ -11,6 +11,9 @@ import PersonAdd from '@material-ui/icons/PersonAdd';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Fecha from "./datePicker";
+import Registrar from './BotonRegistrar';
+import axios from 'axios'
+
 
 
 const styles = theme => ({
@@ -58,108 +61,203 @@ const styles = theme => ({
 });
 
 
-function FormUsuario(props) {
-  const { classes } = props;
+class FormUsuario extends React.Component {
+  state={
+    type:this.props.location.state.type,
+    telefono:true,
+    password:true,
+    nombre:true,
+    apellido:true,
+    fecha:true,
+    email:true,
+    numtarjeta:true,
+    numcuenta:true,
+  } 
+  onChangetelefono(e){
+    this.setState({telefono:e.target.value})
+  }
+  onChangecontrasenia(e){
+    this.setState({password:e.target.value})
+  }
+  onChangenombre(e){
+    this.setState({nombre:e.target.value})
+  }
+  onChangeapellido(e){
+    this.setState({apellido:e.target.value})
+  }
+  onChangefecha(e){
+    this.setState({fecha:e.target.value})
+  }
+  onChangeemail(e){
+    this.setState({email:e.target.value})
+  }
+  onChangenumtarjeta(e){
+    this.setState({numtarjeta:e.target.value})
+  }
+  onChangenumcuenta(e){
+    this.setState({numcuenta:e.target.value})
+  }
+  onClickRegistrar = (e) => {
+    const telefono = this.state.telefono;
+    const password = this.state.password;
+    const nombre = this.state.nombre;
+    const apellido = this.state.apellido;
+    const fecha = this.state.fecha;
+    const email = this.state.email;
+    const numtarjeta = this.state.numtarjeta;
+    const numcuenta = this.state.numcuenta;
+    if (this.state.type === 'User'){
+      axios.post(`http://localhost:5000/users/${telefono}/${password}/${nombre}/${apellido}
+        /${fecha}/${email}/${numtarjeta}`).then(res => {
+        const persons = res.data;
+        if(persons === 'Usuario creado exitosamente'){
+          alert('Usuario creado exitosamente')
+        } else{
+          alert('ERROR: ' + persons)
+        }
+      })
+    } else if (this.state.type === 'Driver'){
+      axios.post(`http://localhost:5000/drivers/${telefono}/${password}/${nombre}/${apellido}
+        /${fecha}/${email}/${numcuenta}`).then(res => {
+        const persons = res.data;
+        if(persons === 'Conductor creado exitosamente'){
+          alert('Conductor creado exitosamente')
+        } else{
+          alert('ERROR: ' + persons)
+        }
+      })
+    }
+  }
+  render(){
+    const { classes } = this.props;
 
-  return (
-    <main className={classes.main}>
-      <CssBaseline />
-      <Paper className={classes.paper}>
-        <Avatar >
-          <PersonAdd/>
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Registro
-        </Typography>
-      <FormControl >
-        <InputLabel
-          htmlFor="Nombre"
-          classes={{
-            InputLabel: classes.cssLabel,
-            focused: classes.cssFocused,
-          }}
-        >
-          Nombre
-        </InputLabel>
-        <Input
-          id="nombre"
-          classes={{
-            underline: classes.cssUnderline,
-          }}
-        />
-      </FormControl>
-      <FormControl >
-        <InputLabel
-          htmlFor="Apellido"
-          classes={{
-            InputLabel: classes.cssLabel,
-            focused: classes.cssFocused,
-          }}
-        >
-          Apellido
-        </InputLabel>
-        <Input
-          id="Apellido"
-          classes={{
-            underline: classes.cssUnderline,
-          }}
-        />
-      </FormControl>
-      <FormControl >
-        <InputLabel
-          htmlFor="Email"
-          classes={{
-            InputLabel: classes.cssLabel,
-            focused: classes.cssFocused,
-          }}
-        >
-          Email
-        </InputLabel>
-        <Input
-          id="email"
-          classes={{
-            underline: classes.cssUnderline,
-          }}
-        />
-      </FormControl>
-      <FormControl >
-        <InputLabel
-          htmlFor="Celular"
-          classes={{
-            InputLabel: classes.cssLabel,
-            focused: classes.cssFocused,
-          }}
-        >
-          Celular
-        </InputLabel>
-        <Input
-          id="celular"
-          classes={{
-            underline: classes.cssUnderline,
-          }}
-        />
-      </FormControl>
-      <FormControl >
-        <InputLabel
-          htmlFor="Tarjeta"
-          classes={{
-            InputLabel: classes.cssLabel,
-            focused: classes.cssFocused,
-          }}
-        >
-          Tarjeta
-        </InputLabel>
-        <Input
-          id="tarjeta"
-          classes={{
-            underline: classes.cssUnderline,
-          }}
-        />
-      </FormControl>
-      <Fecha/>
-      </Paper>
-    </main>
-  );
+    return (
+      <main className={classes.main}>
+        <CssBaseline />
+        <Paper className={classes.paper}>
+          <Avatar >
+            <PersonAdd/>
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Registro
+          </Typography>
+        <FormControl >
+          <InputLabel
+            htmlFor="Celular"
+            classes={{
+              InputLabel: classes.cssLabel,
+              focused: classes.cssFocused,
+            }}
+          >
+            Celular
+          </InputLabel>
+          <Input
+            id="celular"
+            onChange={e => {this.onChangetelefono(e)}}
+            classes={{
+              underline: classes.cssUnderline,
+            }}
+          />
+        </FormControl>
+        <FormControl >
+          <InputLabel
+            htmlFor="Nombre"
+            classes={{
+              InputLabel: classes.cssLabel,
+              focused: classes.cssFocused,
+            }}
+          >
+            Nombre
+          </InputLabel>
+          <Input
+            id="nombre"
+            onChange={e => {this.onChangenombre(e)}}
+            classes={{
+              underline: classes.cssUnderline,
+            }}
+          />
+        </FormControl>
+        <FormControl >
+          <InputLabel
+            htmlFor="Apellido"
+            classes={{
+              InputLabel: classes.cssLabel,
+              focused: classes.cssFocused,
+            }}
+          >
+            Apellido
+          </InputLabel>
+          <Input
+            id="Apellido"
+            onChange={e => {this.onChangeapellido(e)}}
+            classes={{
+              underline: classes.cssUnderline,
+            }}
+          />
+        </FormControl>
+        <FormControl >
+          <InputLabel
+            htmlFor="Email"
+            classes={{
+              InputLabel: classes.cssLabel,
+              focused: classes.cssFocused,
+            }}
+          >
+            Email
+          </InputLabel>
+          <Input
+            id="email"
+            onChange={e => {this.onChangeemail(e)}}
+            classes={{
+              underline: classes.cssUnderline,
+            }}
+          />
+        </FormControl>
+
+        {this.state.type === 'Driver' ? 
+          <FormControl >
+            <InputLabel
+              htmlFor="Cuenta"
+              classes={{
+                InputLabel: classes.cssLabel,
+                focused: classes.cssFocused,
+              }}
+            >
+              Cuenta
+            </InputLabel>
+            <Input
+              id="cuenta"
+              onChange={e => {this.onChangenumcuenta(e)}}
+              classes={{
+                underline: classes.cssUnderline,
+              }}
+            />
+          </FormControl>:
+          <FormControl >
+            <InputLabel
+              htmlFor="Tarjeta"
+              classes={{
+                InputLabel: classes.cssLabel,
+                focused: classes.cssFocused,
+              }}
+            >
+              Tarjeta
+            </InputLabel>
+            <Input
+              id="tarjeta"
+              maxDate={new Date()}
+              onChange={e => {this.onChangenumtarjeta(e)}}
+              classes={{
+                underline: classes.cssUnderline,
+              }}
+            />
+        </FormControl>}
+        <Fecha/>
+        <Registrar onClick={(e) => {this.onClickRegistrar(e)}}/>
+        </Paper>
+      </main>
+    );
+  }
 }
 
 FormUsuario.propTypes = {
