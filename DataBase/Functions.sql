@@ -80,7 +80,8 @@ BEGIN
     IF NOT EXISTS(
         SELECT telefonoUsuario FROM servicio INNER JOIN usuario
         ON telefonoUsuario = usuario WHERE telefonoUsuario=new.telefonoUsuario AND usuario_pago = FALSE
-    )THEN RETURN NEW;
+    )THEN DELETE FROM usuario WHERE telefonoUsuario=new.telefonoUsuario;
+	RETURN NEW;
     END IF;
 END;
 $$

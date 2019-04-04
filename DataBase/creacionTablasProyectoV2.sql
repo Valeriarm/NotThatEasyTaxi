@@ -73,6 +73,7 @@ idsolicitud SERIAL NOT NULL,
 usuario TEXT NOT NULL,
 posicionUsuario GEOMETRY(POINT) NOT NULL,
 taxi VARCHAR(6) NOT NULL,
+activa BOOLEAN NOT NULL,
 PRIMARY KEY (idsolicitud),
 FOREIGN KEY (usuario) REFERENCES Usuario(telefonoUsuario) ON DELETE CASCADE ON UPDATE CASCADE,
 FOREIGN KEY (taxi) REFERENCES Taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE
@@ -181,11 +182,35 @@ BEGIN
 	DELETE FROM usuario WHERE telefonoUsuario=new.telefonoUsuario;
 	RETURN NEW;
     END IF;
+		RAISE EXCEPTION 'El usuario todavia tiene deudas pendientes'
+		USING HINT = 'Por favor pague sus servicios antes de eliminar su cuenta';
 END;
 $$
 LANGUAGE plpgsql;
 
 CREATE TRIGGER delete_usuario_deuda AFTER DELETE ON usuario FOR EACH ROW EXECUTE PROCEDURE cobrarOnDelete();
+
+CREATE OR REPLACE FUNCTION crear_solicitud() RETURNS TRIGGER AS $$
+BEGIN
+	IF EXISTS(
+		WITH reporte_taxi AS (SELECT taxi,horaactual, coordenada FROM reporte),
+			taxis AS (SELECT taxi, MAX (horaactual) AS horaactual FROM reporte_taxi Group by taxi),
+			taxi_cercano AS (SELECT *, ST_Distance(coordenada,new.coordenada)
+						 FROM taxis NATURAL JOIN reporte),
+			taxi_mas_cercano AS (SELECT taxi, MIN(st_distance) 
+							 AS distance FROM taxi_cercano 
+							 GROUP BY taxi ORDER BY distance LIMIT 1) 
+			SELECT taxi INTO TEMPORARY placa_taxi FROM taxi_mas_cercano WHERE distance < 20
+	)THEN INSERT INTO solicitud VALUES (Default, new.usuario, new.posicionUsuario, placa_taxi.taxi, TRUE);
+	RETURN NEW;
+	END IF;
+	RAISE EXCEPTION 'No hay conductores cerca de usted'
+	USING HINT = 'Por favor intentelo mas tarde o cambie de posicion';
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER create_solicitud AFTER INSERT ON solicitud FOR EACH ROW EXECUTE PROCEDURE crear_solicitud();
 
 INSERT INTO conductor VALUES ('123456789012345', '1234', 'Mateo', 'Gregory','1999/07/02', 'magremenez@gmail.com', '123454312');
 INSERT INTO usuario VALUES ('123456789012345', '1234', 'Mateo', 'Gregory','1999/07/02', 'magremenez@gmail.com', '123454312');
