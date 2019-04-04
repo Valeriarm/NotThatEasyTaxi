@@ -1,20 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
-import purple from '@material-ui/core/colors/purple';
 import Avatar from '@material-ui/core/Avatar';
+import Fab from '@material-ui/core/Fab';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
-import PersonAdd from '@material-ui/icons/PersonAdd';
+import InputLabel from '@material-ui/core/InputLabel';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import Fecha from "./datePicker";
-import Registrar from './BotonRegistrar';
 import axios from 'axios'
-
-
+import NavigationIcon from '@material-ui/icons/Check'
 
 const styles = theme => ({
   main: {
@@ -26,6 +23,7 @@ const styles = theme => ({
       width: 400,
       marginLeft: 'auto',
       marginRight: 'auto',
+      alignItems: 'center',
     },
   },
   paper: {
@@ -41,22 +39,10 @@ const styles = theme => ({
   },
   form: {
     width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing.unit*2,
+    marginTop: theme.spacing.unit,
   },
   submit: {
     marginTop: theme.spacing.unit * 2,
-  },
-  cssLabel: {
-    '&$cssFocused': {
-      color: purple[500],
-    },
-    marginTop: theme.spacing.unit*2,
-  },
-  cssFocused: {},
-  cssUnderline: {
-    '&:after': {
-      borderBottomColor: purple[500],
-    },
   },
 });
 
@@ -74,19 +60,19 @@ class FormUsuario extends React.Component {
     numcuenta:true,
   } 
   onChangetelefono(e){
-    this.setState({telefono:e.target.value})
+    this.setState({telefono:e.target.value});
   }
   onChangecontrasenia(e){
-    this.setState({password:e.target.value})
+    this.setState({password:e.target.value});
   }
   onChangenombre(e){
-    this.setState({nombre:e.target.value})
+    this.setState({nombre:e.target.value});
   }
   onChangeapellido(e){
-    this.setState({apellido:e.target.value})
+    this.setState({apellido:e.target.value});
   }
   onChangefecha(e){
-    this.setState({fecha:e.target.value})
+    this.setState({fecha:e.target.value});
   }
   onChangeemail(e){
     this.setState({email:e.target.value})
@@ -98,6 +84,7 @@ class FormUsuario extends React.Component {
     this.setState({numcuenta:e.target.value})
   }
   onClickRegistrar = (e) => {
+    e.preventDefault()
     const telefono = this.state.telefono;
     const password = this.state.password;
     const nombre = this.state.nombre;
@@ -110,6 +97,7 @@ class FormUsuario extends React.Component {
       axios.post(`http://localhost:5000/users/${telefono}/${password}/${nombre}/${apellido}
         /${fecha}/${email}/${numtarjeta}`).then(res => {
         const persons = res.data;
+        console.log(persons)
         if(persons === 'Usuario creado exitosamente'){
           alert('Usuario creado exitosamente')
         } else{
@@ -120,6 +108,7 @@ class FormUsuario extends React.Component {
       axios.post(`http://localhost:5000/drivers/${telefono}/${password}/${nombre}/${apellido}
         /${fecha}/${email}/${numcuenta}`).then(res => {
         const persons = res.data;
+        console.log(persons)
         if(persons === 'Conductor creado exitosamente'){
           alert('Conductor creado exitosamente')
         } else{
@@ -127,6 +116,7 @@ class FormUsuario extends React.Component {
         }
       })
     }
+    this.props.history.push({pathname:"/"})
   }
   render(){
     const { classes } = this.props;
@@ -135,13 +125,13 @@ class FormUsuario extends React.Component {
       <main className={classes.main}>
         <CssBaseline />
         <Paper className={classes.paper}>
-          <Avatar >
-            <PersonAdd/>
+          <Avatar>
+            <LockOutlinedIcon/>
           </Avatar>
           <Typography component="h1" variant="h5">
-            Registro
+            Registrar
           </Typography>
-        <FormControl >
+          <FormControl >
           <InputLabel
             htmlFor="Celular"
             classes={{
@@ -170,7 +160,7 @@ class FormUsuario extends React.Component {
             Nombre
           </InputLabel>
           <Input
-            id="nombre"
+            id="Nombre"
             onChange={e => {this.onChangenombre(e)}}
             classes={{
               underline: classes.cssUnderline,
@@ -245,15 +235,37 @@ class FormUsuario extends React.Component {
             </InputLabel>
             <Input
               id="tarjeta"
-              maxDate={new Date()}
               onChange={e => {this.onChangenumtarjeta(e)}}
               classes={{
                 underline: classes.cssUnderline,
               }}
             />
         </FormControl>}
-        <Fecha/>
-        <Registrar onClick={(e) => {this.onClickRegistrar(e)}}/>
+        <FormControl >
+            <InputLabel
+              htmlFor="Birthday"
+              classes={{
+                InputLabel: classes.cssLabel,
+                focused: classes.cssFocused,
+              }}
+            >
+            </InputLabel>
+            <Input
+              fullWidth
+              id="Birthday"
+              type="date"
+              onChange={e => {this.onChangefecha(e)}}
+              classes={{
+                underline: classes.cssUnderline,
+              }}
+            />
+        </FormControl>
+        <Fab
+          type="submit" variant="extended" color="primary"
+          className={classes.submit} onClick={e=>this.onClickRegistrar(e)}>
+          <NavigationIcon/>
+          Registrar
+        </Fab>
         </Paper>
       </main>
     );

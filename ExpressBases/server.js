@@ -16,8 +16,8 @@ app.get('/users/:phone/:psword', (req, res) => {
   console.log(req.params.phone + "-" + req.params.psword)
   db.one('SELECT validarUsuario($1 ,$2)', [escape(req.params.phone), escape(req.params.psword)])
   .then(function (data) {
-    console.log('DATA:', data.validarusuario)
-    res.send(JSON.stringify(data.validarusuario))
+    console.log('DATA:', data.validarUsuario)
+    res.send(JSON.stringify(data.validarUsuario))
   })
   .catch(function (error) {
     console.log('ERROR:', error)
@@ -29,10 +29,10 @@ app.get('/users/:phone/:psword', (req, res) => {
  */
 app.get('/drivers/:phone/:psword', (req, res) => {
   console.log(req.params.phone + "-" + req.params.psword)
-  db.one('SELECT validarConductor($1 ,$2)', [escape(req.params.phone), escape(req.params.psword)])
+  db.one('SELECT validarconductor($1 ,$2)', [escape(req.params.phone), escape(req.params.psword)])
   .then(function (data) {
-    console.log('DATA:', data.validarConductor)
-    res.send(JSON.stringify(data.validarConductor))
+    console.log('DATA:', data.validarconductor)
+    res.send(JSON.stringify(data.validarconductor))
   })
   .catch(function (error) {
     console.log('ERROR:', error)
@@ -63,7 +63,7 @@ app.get('/drivers/taxi/:phone/:placa', (req, res) => {
  * apellido, fecha de nacimiento, correo y numero de tarjeta
  */
 app.post('/users/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:tarjeta', (req, res) => {
-  db.one('INSERT INTO usuario VALUES($1,$2,$3,$4,$5,$6,$7,$8)',
+  db.none('INSERT INTO usuario VALUES($1,$2,$3,$4,$5,$6,$7)',
     [escape(req.params.tel), escape(req.params.psword), escape(req.params.nombre), 
       escape(req.params.apellido), escape(req.params.fechanac), escape(req.params.mail), 
       escape(req.params.tarjeta)])
@@ -81,7 +81,7 @@ app.post('/users/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:tarjeta', (req,
  * apellido, fecha de nacimiento, correo y numero de cuenta
  */
 app.post('/drivers/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta', (req, res) => {
-  db.one('INSERT INTO conductor VALUES($1,$2,$3,$4,$5,$6,$7,$8)',
+  db.none('INSERT INTO conductor VALUES($1,$2,$3,$4,$5,$6,$7)',
     [escape(req.params.tel), escape(req.params.psword), escape(req.params.nombre), 
       escape(req.params.apellido), escape(req.params.fechanac), escape(req.params.mail),
       escape(req.params.cuenta)])
@@ -99,7 +99,7 @@ app.post('/drivers/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta', (req
  * baul, soat y, ocupado
  */
 app.post('/taxi/:placa/:marca/:modelo/:anio/:baul/:soat/:ocupado', (req, res) => {
-  db.one('INSERT INTO taxi VALUES($1,$2,$3,$4,$5,$6,$7)',
+  db.none('INSERT INTO taxi VALUES($1,$2,$3,$4,$5,$6,$7)',
     [escape(req.params.placa), escape(req.params.marca), escape(req.params.modelo), 
       escape(req.params.anio), escape(req.params.baul), escape(req.params.soat), 
       escape(req.params.ocupado)])
@@ -120,7 +120,7 @@ app.post('/taxi/:placa/:marca/:modelo/:anio/:baul/:soat/:ocupado', (req, res) =>
  * apellido, fecha de nacimiento, correo y numero de tarjeta
  */
 app.put('/users/:tel/:psword/:nombre/:apellido/:mail/:tarjeta', (req, res) => {
-  db.one('UPDATE usuario SET contrasenia=$2, nombreUsuario=$3, apellidoUsuario=$4, email=$5, numTarjeta=$6 WHERE telefonoUsuario=$1',
+  db.none('UPDATE usuario SET contrasenia=$2, nombreUsuario=$3, apellidoUsuario=$4, email=$5, numTarjeta=$6 WHERE telefonoUsuario=$1',
     [escape(req.params.tel), escape(req.params.psword), escape(req.params.nombre), 
       escape(req.params.apellido), escape(req.params.mail),  escape(req.params.tarjeta)])
       .then((data)=>{
@@ -137,7 +137,7 @@ app.put('/users/:tel/:psword/:nombre/:apellido/:mail/:tarjeta', (req, res) => {
  * apellido, fecha de nacimiento, correo y numero de cuenta
  */
 app.put('/drivers/:phone/:psword/:nombre/:apellido/:mail/:cuenta', (req, res) => {
-  db.one('UPDATE usuario SET contrasenia=$2, nombreConductor=$3, apellidoConductor=$4, email=$5, numCuenta=$6 WHERE phone=$1',
+  db.none('UPDATE usuario SET contrasenia=$2, nombreConductor=$3, apellidoConductor=$4, email=$5, numCuenta=$6 WHERE phone=$1',
     [escape(req.params.uname), escape(req.params.psword), escape(req.params.nombre), 
       escape(req.params.apellido), escape(req.params.mail), escape(req.params.cuenta)])
       .then((data)=>{
@@ -154,7 +154,7 @@ app.put('/drivers/:phone/:psword/:nombre/:apellido/:mail/:cuenta', (req, res) =>
  * baul, soat y, ocupado
  */
 app.put('/taxi/:placa/:soat', (req, res) => {
-  db.one('UPDATE taxi SET soat=$2 WHERE placa=$1',
+  db.none('UPDATE taxi SET soat=$2 WHERE placa=$1',
     [escape(req.params.placa), escape(req.params.soat)])
     .then((data)=>{
       console.log('DATA: ', data)
