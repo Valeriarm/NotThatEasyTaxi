@@ -162,7 +162,7 @@ class PersistentDrawerLeft extends React.Component {
             [classes.appBarShift]: open,
           })}
         >
-          <Toolbar disableGutters={!open} primary>
+          <Toolbar disableGutters={!open} >
             <IconButton
               color = "inherit"
               aria-label="Open drawer"
