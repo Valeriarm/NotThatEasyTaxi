@@ -1,28 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { withStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ExitToApp from '@material-ui/icons/ExitToApp';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import CustomMap from './Mapa';
-import { purple, deepPurple } from '@material-ui/core/colors';
 import HomeIcon from'@material-ui/icons/Home';
 import Person from '@material-ui/icons/Person';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Divider from '@material-ui/core/Divider';
-import { InputLabel, FormControl, Input, Fab } from '@material-ui/core';
 import Check from '@material-ui/icons/Check';
 import Add from '@material-ui/icons/Add';
+import {purple, deepPurple} from '@material-ui/core/colors';
+import { InputLabel, FormControl, Input, Fab, ListItemIcon, ListItemText ,
+Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar , 
+Toolbar, withStyles, List, } from '@material-ui/core';
+
 
 
 const drawerWidth = 240;
@@ -124,7 +116,13 @@ const styles = theme => ({
   favoritos: {
     marginTop: theme.spacing.unit*-13,
     marginLeft: theme.spacing.unit*45,
-  }
+  },
+
+  menuFavoritos:{
+    marginTop: theme.spacing.unit*-2,
+    marginLeft: theme.spacing.unit*90,
+    marginRight: theme.spacing.unit*30,
+  },
 });
 
 
@@ -133,6 +131,9 @@ const styles = theme => ({
 class PersistentDrawerLeft extends React.Component {
   state = {
     phone: this.props.location.state.phone,
+    origen: '',
+    destino: '',
+    favoritos:['Ninguno'],
   };
 
   handleDrawerOpen = () => {
@@ -146,17 +147,40 @@ class PersistentDrawerLeft extends React.Component {
   onClickProfileUser = (e) => {
     e.preventDefault()
       this.props.history.push({pathname:"/ProfileUser/", state:{phone: this.state.phone}})
-  }
+  };
 
   onClickSideBar = (e) => {
     e.preventDefault()
     this.props.history.push({pathname:"/SideBar/", state:{phone: this.state.phone}})
+  };
+
+  onChangeOrigen = (e) => {
+    this.setState({origen:e.target.value})
+  };
+
+  onChangeDestino = (e) => {
+    this.setState({destino:e.target.value})
+  };
+
+  onClickFavoritos = () => {
+    const { destino, favoritos } = this.state;
+    if (destino) {
+      const nextState = [... favoritos, destino];
+      this.setState({ favoritos: nextState, destino: '' });
+    }
+    console.log(this.state.favoritos)
+    console.log(this.state.phone)
   }
+
+  handleItemClick = (e) => {console.log(e.target.innerHTML)}
 
   render() {
 
     const { classes , theme } = this.props;
     const { open } = this.state;
+    const { destino, favoritos } = this.state;
+    
+    
 
     return (
       <div className={classes.root}>
@@ -167,7 +191,7 @@ class PersistentDrawerLeft extends React.Component {
             [classes.appBarShift]: open,
           })}
         >
-          <Toolbar disableGutters={!open} primary>
+          <Toolbar disableGutters={!open} >
             <IconButton
               color = "inherit"
               aria-label="Open drawer"
@@ -223,35 +247,33 @@ class PersistentDrawerLeft extends React.Component {
         >
           <div className={classes.drawerHeader} />
           <CustomMap />
+          <form>
           <FormControl className={classes.form}>
-          <InputLabel
-            htmlFor="Inicio"
-            classes={{
-              InputLabel: classes.cssLabel,
-              focused: classes.cssFocused,
-            }}
-          >
-            Inicio
-          </InputLabel>
+            <InputLabel
+              htmlFor="Origen"
+            >
+              Origen
+            </InputLabel>
           <Input
-            id="inicio"
+            id="Origen"
+            name="Origen"
+            onChange ={this.onChangeOrigen}
             classes={{
               underline: classes.cssUnderline,
             }}
           />
         </FormControl>
-        <FormControl  className={classes.form}>
+        <FormControl  className={classes.form}>    
           <InputLabel
-            htmlFor="Fin"
-            classes={{
-              InputLabel: classes.cssLabel,
-              focused: classes.cssFocused,
-            }}
+            htmlFor="Destino"
           >
-            Final
+            Destino
           </InputLabel>
           <Input
-            id="final"
+            id="Destino"
+            name="Destino"
+            value = {destino}
+            onChange ={this.onChangeDestino}
             classes={{
               underline: classes.cssUnderline,
             }}
@@ -264,10 +286,15 @@ class PersistentDrawerLeft extends React.Component {
             </Fab>
         </div>
         <div className={classes.favoritos}>
-            <Fab color="primary" aria-label="Anadir a Favoritos" size="small" >
+            <Fab color="primary" aria-label="Anadir a Favoritos" size="small" onClick={this.onClickFavoritos}>
                 <Add />
             </Fab>
         </div>
+        <div>
+          <List items={favoritos} onClickCapture={this.handleItemClick} />
+        </div>
+        </form>
+        
         </main>
       </div>
       
