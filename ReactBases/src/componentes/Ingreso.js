@@ -63,8 +63,14 @@ class SignIn extends React.Component {
   }
 
   onClickIngresar = (e) => {
-    const phone = this.state.phone;
-    const password = this.state.password;
+    var phone = this.state.phone;
+    if(this.state.phone === ""){
+      phone = 'true';
+    }
+    var password = this.state.password;
+    if(this.state.password === ""){
+      password = 'true';
+    }
     e.preventDefault()
     if (this.state.type === 'User'){
       axios.get(`http://localhost:5000/users/${phone}/${password}`).then(res => {
@@ -74,7 +80,7 @@ class SignIn extends React.Component {
           alert('Telefono incorrecto')
         } else if (validation === 'Contraseña incorrecta'){
           alert('Contraseña incorrecta')
-        } else{
+        } else if (validation === phone){
           this.props.history.push({pathname:"/SideBar/", state:{phone:this.state.phone}})
         }
       })
@@ -86,7 +92,7 @@ class SignIn extends React.Component {
           alert('Telefono incorrecto')
         } else if (validation === 'Contraseña incorrecta'){
           alert('Contraseña incorrecta')
-        } else{
+        } else if (validation === phone){
           this.props.history.push({pathname:"/SideBar/", state:{phone:this.state.phone}})
         }
       })
