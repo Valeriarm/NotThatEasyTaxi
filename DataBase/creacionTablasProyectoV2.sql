@@ -15,7 +15,7 @@ contrasenia TEXT NOT NULL,
 nombreUsuario TEXT NOT NULL,
 apellidoUsuario TEXT NOT NULL,
 fechaNacimiento DATE NOT NULL,
-email TEXT NOT NULL UNIQUE,
+email TEXT NOT NULL,
 numTarjeta VARCHAR (30) NOT NULL,
 PRIMARY KEY (telefonoUsuario)
 );
@@ -66,7 +66,16 @@ PRIMARY KEY (idServicio),
 FOREIGN KEY (usuario) REFERENCES Usuario(telefonoUsuario) ON DELETE CASCADE ON UPDATE CASCADE,
 FOREIGN KEY (conductor) REFERENCES Conductor(telefonoConductor) ON DELETE CASCADE ON UPDATE CASCADE,
 FOREIGN KEY (taxi) REFERENCES Taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE
+);
 
+CREATE TABLE solicitud(
+idsolicitud SERIAL NOT NULL,
+usuario TEXT NOT NULL,
+posicionUsuario GEOMETRY(POINT) NOT NULL,
+taxi VARCHAR(6) NOT NULL,
+PRIMARY KEY (idsolicitud),
+FOREIGN KEY (usuario) REFERENCES Usuario(telefonoUsuario) ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (taxi) REFERENCES Taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Maneja(
@@ -168,13 +177,15 @@ BEGIN
     IF NOT EXISTS(
         SELECT telefonoUsuario FROM servicio INNER JOIN usuario
         ON telefonoUsuario = usuario WHERE telefonoUsuario=new.telefonoUsuario AND usuario_pago = FALSE
-    )THEN RETURN NEW;
+    )THEN 
+	DELETE FROM usuario WHERE telefonoUsuario=new.telefonoUsuario;
+	RETURN NEW;
     END IF;
 END;
 $$
 LANGUAGE plpgsql;
 
-CREATE TRIGGER delete_usuario_deuda BEFORE DELETE ON usuario FOR EACH ROW EXECUTE PROCEDURE cobrarOnDelete();
+CREATE TRIGGER delete_usuario_deuda AFTER DELETE ON usuario FOR EACH ROW EXECUTE PROCEDURE cobrarOnDelete();
 
 INSERT INTO conductor VALUES ('123456789012345', '1234', 'Mateo', 'Gregory','1999/07/02', 'magremenez@gmail.com', '123454312');
 INSERT INTO usuario VALUES ('123456789012345', '1234', 'Mateo', 'Gregory','1999/07/02', 'magremenez@gmail.com', '123454312');

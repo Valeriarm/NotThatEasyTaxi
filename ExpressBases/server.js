@@ -4,17 +4,28 @@ const app = express()
 const port = 5000
 const pgp = require('pg-promise')(/*options*/)
 const db = pgp('postgres://Marthox:Marthox2299@localhost:5432/ProyectoBases')
+const { check, validationResult } = require('express-validator/check')
 
 app.use(cors())
-
+app.use(express.json());
 // GET REQUESTS
 
 /**
  * Valida los usuario recibiendo telefono y contraseña
  */
-app.get('/users/:phone/:psword', (req, res) => {
-  console.log(req.params.phone + "-" + req.params.psword)
-  db.one('SELECT validarUsuario($1 ,$2)', [escape(req.params.phone), escape(req.params.psword)])
+app.get('/users/:phone/:psword',[
+  check('phone').isNumeric().isLength({min:15, max:15}),
+  check('psword').isLength({min:8})
+],(req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log({errors: errors.array()})
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const phone = req.params.phone;
+  const psword = req.params.psword;
+  console.log(phone + "-" + psword)
+  db.one('SELECT validarusuario($1 ,$2)', [escape(phone), escape(psword)])
   .then(function (data) {
     console.log('DATA:', data.validarusuario)
     res.send(JSON.stringify(data.validarusuario))
@@ -27,12 +38,22 @@ app.get('/users/:phone/:psword', (req, res) => {
 /**
  * Valida los Conductores recibiendo telefono y contraseña
  */
-app.get('/drivers/:phone/:psword', (req, res) => {
-  console.log(req.params.phone + "-" + req.params.psword)
-  db.one('SELECT validarConductor($1 ,$2)', [escape(req.params.phone), escape(req.params.psword)])
+app.get('/drivers/:phone/:psword', [
+  check('phone').isNumeric().isLength({min:15, max:15}),
+  check('psword').isLength({min:8})
+],(req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log({errors: errors.array()})
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const phone = req.params.phone;
+  const psword = req.params.psword;
+  console.log(phone + "-" + psword)
+  db.one('SELECT validarconductor($1 ,$2)', [escape(phone), escape(psword)])
   .then(function (data) {
-    console.log('DATA:', data.validarConductor)
-    res.send(JSON.stringify(data.validarConductor))
+    console.log('DATA:', data.validarconductor)
+    res.send(JSON.stringify(data.validarconductor))
   })
   .catch(function (error) {
     console.log('ERROR:', error)
@@ -43,9 +64,19 @@ app.get('/drivers/:phone/:psword', (req, res) => {
  * Valida cuando un conductor quiera manejar un taxi recibiendo telefono del conductor
  * y placa del vehiculo
  */
-app.get('/drivers/taxi/:phone/:placa', (req, res) => {
-  console.log(req.params.phone + "-" + req.params.psword)
-  db.one('SELECT manejarTaxi($1 ,$2)', [escape(req.params.phone), escape(req.params.placa)])
+app.get('/drivers/taxi/:phone/:placa',[
+  check('phone').isNumeric().isLength({min:15, max:15}),
+  check('placa').isNumeric().isLength({min:6, max:6})
+], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log({errors: errors.array()})
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const phone = req.params.phone;
+  const placa = req.params.placa
+  console.log(phone + "-" + placa)
+  db.one('SELECT manejarTaxi($1 ,$2)', [escape(phone), escape(placa)])
   .then(function (data) {
     console.log('DATA:', data.manejarTaxi)
     res.send(JSON.stringify(data.manejarTaxi))
@@ -62,47 +93,142 @@ app.get('/drivers/taxi/:phone/:placa', (req, res) => {
  * Crea un usuario recibiendo, numero de telefono, contraseña, nombre
  * apellido, fecha de nacimiento, correo y numero de tarjeta
  */
-app.post('/users/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:tarjeta', (req, res) => {
-  db.one('INSERT INTO usuario VALUES($1,$2,$3,$4,$5,$6,$7,$8)',
-    [escape(req.params.tel), escape(req.params.psword), escape(req.params.nombre), 
-      escape(req.params.apellido), escape(req.params.fechanac), escape(req.params.mail), 
-      escape(req.params.tarjeta)])
-      .then((data)=>{
-        console.log('DATA: ', data)
-        res.send('Usuario creado exitosamente')
-      })
-      .catch((error)=>{
-        console.log('ERROR', error)
-        res.send('Error creando el usuario, por favor intentelo de nuevo')
-      })
-    })
+app.post('/users/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:tarjeta', [
+  check('tel').isNumeric().isLength({min:15, max:15}),
+  check('psword').isLength({min:8}),
+  check('nombre').isAlpha(),
+  check('apellido').isAlpha(),
+  check('fechanac').isLength({min:10}),
+  check('fechanac').custom(value =>{
+    value=value.split("-");
+    console.log(value)
+    if(isNaN(value[0]) || value[0].length!==2){
+      return false
+    } else if (isNaN(value[1]) || value[1].length!==2){
+      return false
+    } else if (isNaN(value[2])){
+      return false
+    } else {return true}
+  }),
+  check('mail').isEmail(),
+  check('tarjeta').isNumeric(),
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log({errors: errors.array()})
+      return res.status(422).json({ errors: errors.array() });
+    }
+    const tel=req.params.tel;
+    const psword=req.params.psword;
+    const nombre=req.params.nombre;
+    const apellido=req.params.apellido;
+    const fechanac=req.params.fechanac;
+    const mail=req.params.mail;
+    const tarjeta=req.params.tarjeta;
+    db.none('INSERT INTO usuario VALUES($1,$2,$3,$4,$5,$6,$7)',
+      [escape(tel), escape(psword), escape(nombre), 
+        escape(apellido), escape(fechanac), escape(mail), 
+        escape(tarjeta)])
+        .then((data)=>{
+          console.log('DATA: ', data)
+          res.send('Usuario creado exitosamente')
+        })
+        .catch((error)=>{
+          console.log(req.params)
+          console.log('ERROR', error)
+          res.send(error.detail)
+        })
+  })
 /**
  * Crea un Conductor recibiendo, numero de telefono, contraseña, nombre
  * apellido, fecha de nacimiento, correo y numero de cuenta
  */
-app.post('/drivers/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta', (req, res) => {
-  db.one('INSERT INTO conductor VALUES($1,$2,$3,$4,$5,$6,$7,$8)',
-    [escape(req.params.tel), escape(req.params.psword), escape(req.params.nombre), 
-      escape(req.params.apellido), escape(req.params.fechanac), escape(req.params.mail),
-      escape(req.params.cuenta)])
-      .then((data)=>{
-        console.log('DATA: ', data)
-        res.send('Conductor creado exitosamente')
+app.post('/drivers/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta',[
+  check('tel').isNumeric().isLength({min:15, max:15}),
+  check('psword').isLength({min:8}),
+  check('nombre').isAlpha(),
+  check('apellido').isAlpha(),
+  check('fechanac').isLength({min:10}),
+  check('fechanac').custom(value =>{
+    value=value.split("-");
+    console.log(value)
+    if(isNaN(value[0]) || value[0].length!==2){
+      return false
+    } else if (isNaN(value[1]) || value[1].length!==2){
+      return false
+    } else if (isNaN(value[2])){
+      return false
+    } else {return true}
+  }),
+  check('mail').isEmail(),
+  check('cuenta').isNumeric(),
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log({errors: errors.array()})
+      return res.status(422).json({ errors: errors.array() });
+    }
+    const tel=req.params.tel;
+    const psword=req.params.psword;
+    const nombre=req.params.nombre;
+    const apellido=req.params.apellido;
+    const fechanac=req.params.fechanac;
+    const mail=req.params.mail;
+    const cuenta=req.params.cuenta;
+    db.none('INSERT INTO conductor VALUES($1,$2,$3,$4,$5,$6,$7)',
+      [escape(tel), escape(psword), escape(nombre), 
+        escape(apellido), escape(fechanac), escape(mail),
+        escape(cuenta)])
+        .then((data)=>{
+          console.log('DATA: ', data)
+          res.send('Conductor creado exitosamente')
+        })
+        .catch((error)=>{
+          console.log('ERROR', error)
+          res.send(error.detail)
+        })
       })
-      .catch((error)=>{
-        console.log('ERROR', error)
-        res.send('Error creando el conductor, por favor intentelo de nuevo')
-      })
-    })
 /**
  * Crea un Taxi recibiendo, placa, marca, modelo, anio
  * baul, soat y, ocupado
  */
-app.post('/taxi/:placa/:marca/:modelo/:anio/:baul/:soat/:ocupado', (req, res) => {
-  db.one('INSERT INTO taxi VALUES($1,$2,$3,$4,$5,$6,$7)',
-    [escape(req.params.placa), escape(req.params.marca), escape(req.params.modelo), 
-      escape(req.params.anio), escape(req.params.baul), escape(req.params.soat), 
-      escape(req.params.ocupado)])
+app.post('/taxi/:placa/:marca/:modelo/:anio/:baul/:soat/:ocupado', [
+  check('placa').isNumeric().isLength({min:6,max:6}),
+  check('marca').isAlphanumeric(),
+  check('modelo').isAlphanumeric(),
+  check('anio').isNumeric().isLength({min:4}),
+  check('baul').isAlpha(),
+  check('soat').custom(value =>{
+    value=value.split("-");
+    console.log(value)
+    if(isNaN(value[0]) || value[0].length!==2){
+      return false
+    } else if (isNaN(value[1]) || value[1].length!==2){
+      return false
+    } else if (isNaN(value[2])){
+      return false
+    } else {return true}
+  }),
+  check('ocupado').isBoolean(),
+],(req, res) => {
+  const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log({errors: errors.array()})
+      return res.status(422).json({ errors: errors.array() });
+    }
+  const placa = req.params.placa;
+  const marca = req.params.marca;
+  const modelo = req.params.modelo;
+  const anio = req.params.anio;
+  const baul = req.params.baul;
+  const soat = req.params.soat;
+  const ocupado = req.params.ocupado;
+  db.none('INSERT INTO taxi VALUES($1,$2,$3,$4,$5,$6,$7)',
+    [escape(placa), escape(marca), escape(modelo), 
+      escape(anio), escape(baul), escape(soat), 
+      escape(ocupado)])
     .then((data)=>{
       console.log('DATA: ', data)
       res.send('Taxi creado exitosamente')
@@ -119,10 +245,28 @@ app.post('/taxi/:placa/:marca/:modelo/:anio/:baul/:soat/:ocupado', (req, res) =>
  * Actualiza un usuario recibiendo, numero de telefono, contraseña, nombre
  * apellido, fecha de nacimiento, correo y numero de tarjeta
  */
-app.put('/users/:tel/:psword/:nombre/:apellido/:mail/:tarjeta', (req, res) => {
-  db.one('UPDATE usuario SET contrasenia=$2, nombreUsuario=$3, apellidoUsuario=$4, email=$5, numTarjeta=$6 WHERE telefonoUsuario=$1',
-    [escape(req.params.tel), escape(req.params.psword), escape(req.params.nombre), 
-      escape(req.params.apellido), escape(req.params.mail),  escape(req.params.tarjeta)])
+app.put('/users/:tel/:psword/:nombre/:apellido/:mail/:tarjeta', [
+  check('tel').isNumeric().isLength({min:15,max:15}),
+  check('psword').isLength({min:8}),
+  check('nombre').isAlpha(),
+  check('apellido').isAlpha(),
+  check('mail').isEmail(),
+  check('tarjeta').isNumeric(),
+],(req, res) => {
+  const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log({errors: errors.array()})
+      return res.status(422).json({ errors: errors.array() });
+    }
+  const tel = req.params.tel;
+  const psword = req.params.psword;
+  const nombre = req.params.nombre;
+  const apellido = req.params.apellido;
+  const mail = req.params.mail;
+  const tarjeta = req.params.tarjeta;
+  db.none('UPDATE usuario SET contrasenia=$2, nombreUsuario=$3, apellidoUsuario=$4, email=$5, numTarjeta=$6 WHERE telefonoUsuario=$1',
+    [escape(tel), escape(psword), escape(nombre), 
+      escape(apellido), escape(mail),  escape(tarjeta)])
       .then((data)=>{
         console.log('DATA: ', data)
         res.send('Usuario actualizado exitosamente')
@@ -136,10 +280,28 @@ app.put('/users/:tel/:psword/:nombre/:apellido/:mail/:tarjeta', (req, res) => {
  * Actualiza un Conductor recibiendo, numero de telefono, contraseña, nombre
  * apellido, fecha de nacimiento, correo y numero de cuenta
  */
-app.put('/drivers/:phone/:psword/:nombre/:apellido/:mail/:cuenta', (req, res) => {
-  db.one('UPDATE usuario SET contrasenia=$2, nombreConductor=$3, apellidoConductor=$4, email=$5, numCuenta=$6 WHERE phone=$1',
-    [escape(req.params.uname), escape(req.params.psword), escape(req.params.nombre), 
-      escape(req.params.apellido), escape(req.params.mail), escape(req.params.cuenta)])
+app.put('/drivers/:phone/:psword/:nombre/:apellido/:mail/:cuenta',[
+  check('phone').isNumeric().isLength({min:15, max:15}),
+  check('psword').isLength({min:8}),
+  check('nombre').isAlpha(),
+  check('apellido').isAlpha(),
+  check('mail').isEmail(),
+  check('cuenta').isNumeric(),
+], (req, res) => {
+  const errors = validationResult(req);
+    if(!errors.isEmpty()){
+      console.log({errors: errors.array()})
+      return res.status(422).json({ errors: errors.array() });
+    }
+  const phone = req.params.phone;
+  const psword = req.params.psword;
+  const nombre = req.params.nombre;
+  const apellido = req.params.apellido;
+  const mail = req.params.mail;
+  const cuenta = req.params.cuenta;
+  db.none('UPDATE usuario SET contrasenia=$2, nombreConductor=$3, apellidoConductor=$4, email=$5, numCuenta=$6 WHERE phone=$1',
+    [escape(phone), escape(psword), escape(nombre), 
+      escape(apellido), escape(mail), escape(cuenta)])
       .then((data)=>{
         console.log('DATA: ', data)
         res.send('Conductor actualizado exitosamente')
@@ -153,9 +315,29 @@ app.put('/drivers/:phone/:psword/:nombre/:apellido/:mail/:cuenta', (req, res) =>
  * Actualiza un Taxi recibiendo, placa, marca, modelo, anio
  * baul, soat y, ocupado
  */
-app.put('/taxi/:placa/:soat', (req, res) => {
-  db.one('UPDATE taxi SET soat=$2 WHERE placa=$1',
-    [escape(req.params.placa), escape(req.params.soat)])
+app.put('/taxi/:placa/:soat', [
+  check('placa').isNumeric().isLength({min:6, max:6}),
+  check('soat').custom(value =>{
+    value=value.split("-");
+    console.log(value)
+    if(isNaN(value[0]) || value[0].length!==2){
+      return false
+    } else if (isNaN(value[1]) || value[1].length!==2){
+      return false
+    } else if (isNaN(value[2])){
+      return false
+    } else {return true}
+  }),
+],(req, res) => {
+  const errors = validationResult(req);
+    if(!errors.isEmpty()){
+      console.log({errors: errors.array()})
+      return res.status(422).json({ errors: errors.array()});
+    }
+  const placa = req.params.placa;
+  const soat = req.params.soat;
+  db.none('UPDATE taxi SET soat=$2 WHERE placa=$1',
+    [escape(placa), escape(soat)])
     .then((data)=>{
       console.log('DATA: ', data)
       res.send('Taxi creado exitosamente')
@@ -165,17 +347,6 @@ app.put('/taxi/:placa/:soat', (req, res) => {
       res.send('Error creando el taxi, por favor intentelo de nuevo')
     })
 })
-
-
-//////////////////////////////////////////////////////////////////////////////////
-////////////////////////////    EJEMPLOOOOOOOOOOOS   /////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
-
-app.get('/', (req, res) => {
-  res.send('I am a get request!')
-})
-
-
 
 /* OTRA FORMA DE OBTENER LOS DATOS
 app.get('/users/prueba', (req, res) => {
@@ -190,57 +361,5 @@ app.get('/users/prueba', (req, res) => {
   })
 })
 */
-
-/*
-app.get('/users/:userid', (req, res) => {
-  console.log(req.params.userid)
-  res.send(req.params.userid)
-})
-*/
-//POST REQUESTS
-
-app.post('/', (req, res) =>{
-  res.send("I am a post request!")
-})
-
-app.post('/users', (req, res) =>{
-  db.one('SELECT $1 AS value', 123)
-  .then(function (data) {
-    console.log('DATA:', data.value)
-    res.send(JSON.stringify(data.value))
-  })
-  .catch(function (error) {
-    console.log('ERROR:', error)
-  })
-})
-
-app.post('/users/:newuser', (req, res) =>{
-  console.log(req.params)
-  res.send(JSON.stringify(req.params.newuser))
-})
-
-//PUT REQUESTS
-
-app.put('/', (req, res) =>{
-  res.send("I am a put request!")
-})
-
-app.put('/users', (req, res) =>{
-  db.one('SELECT $1 AS value', 123)
-  .then(function (data) {
-    console.log('DATA:', data.value)
-    res.send(JSON.stringify(data.value))
-  })
-  .catch(function (error) {
-    console.log('ERROR:', error)
-  })
-})
-
-app.put('/users/:newuser', (req, res) =>{
-  console.log(req.params)
-  res.send(JSON.stringify(req.params.newuser))
-})
-
-//LISTENER
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
