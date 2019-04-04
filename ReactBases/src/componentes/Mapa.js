@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Map, TileLayer, Marker, Popup} from 'react-leaflet';
+import { Map, TileLayer} from 'react-leaflet';
 const mapCenter = [3.43722 , -76.5225];
 const zoomLevel = 12.4;
 
