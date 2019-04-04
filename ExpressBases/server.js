@@ -14,10 +14,10 @@ app.use(cors())
  */
 app.get('/users/:phone/:psword', (req, res) => {
   console.log(req.params.phone + "-" + req.params.psword)
-  db.one('SELECT validarUsuario($1 ,$2)', [escape(req.params.phone), escape(req.params.psword)])
+  db.one('SELECT validarusuario($1 ,$2)', [escape(req.params.phone), escape(req.params.psword)])
   .then(function (data) {
-    console.log('DATA:', data.validarUsuario)
-    res.send(JSON.stringify(data.validarUsuario))
+    console.log('DATA:', data.validarusuario)
+    res.send(JSON.stringify(data.validarusuario))
   })
   .catch(function (error) {
     console.log('ERROR:', error)
@@ -68,13 +68,13 @@ app.post('/users/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:tarjeta', (req,
       escape(req.params.apellido), escape(req.params.fechanac), escape(req.params.mail), 
       escape(req.params.tarjeta)])
       .then((data)=>{
-        console.log(req.params)
+        console.log('DATA: ', data)
         res.send('Usuario creado exitosamente')
       })
       .catch((error)=>{
         console.log(req.params)
         console.log('ERROR', error)
-        res.send('Error creando el usuario, por favor intentelo de nuevo')
+        res.send(error.detail)
       })
     })
 /**
@@ -88,13 +88,11 @@ app.post('/drivers/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta', (req
       escape(req.params.cuenta)])
       .then((data)=>{
         console.log('DATA: ', data)
-        console.log(req.params)
         res.send('Conductor creado exitosamente')
       })
       .catch((error)=>{
         console.log('ERROR', error)
-        console.log(req.params)
-        res.send('Error creando el conductor, por favor intentelo de nuevo')
+        res.send(error.detail)
       })
     })
 /**

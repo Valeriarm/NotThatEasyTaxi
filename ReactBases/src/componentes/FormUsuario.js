@@ -108,7 +108,7 @@ class FormUsuario extends React.Component {
         if(persons === 'Usuario creado exitosamente'){
           alert('Usuario creado exitosamente')
         } else{
-          alert('ERROR: ' + persons)
+          alert(persons)
         }
       })
     } else if (this.state.type === 'Driver'){
@@ -118,7 +118,7 @@ class FormUsuario extends React.Component {
         if(persons === 'Conductor creado exitosamente'){
           alert('Conductor creado exitosamente')
         } else{
-          alert('ERROR: ' + persons)
+          alert(persons)
         }
       })
     }
