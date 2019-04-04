@@ -61,27 +61,35 @@ class FormUsuario extends React.Component {
   } 
   onChangetelefono(e){
     this.setState({telefono:e.target.value});
+    console.log(e.target.value)
   }
   onChangecontrasenia(e){
     this.setState({password:e.target.value});
+    console.log(e.target.value)
   }
   onChangenombre(e){
     this.setState({nombre:e.target.value});
+    console.log(e.target.value)
   }
   onChangeapellido(e){
     this.setState({apellido:e.target.value});
+    console.log(e.target.value)
   }
   onChangefecha(e){
     this.setState({fecha:e.target.value});
+    console.log(e.target.value)
   }
   onChangeemail(e){
-    this.setState({email:e.target.value})
+    this.setState({email:e.target.value});
+    console.log(e.target.value)
   }
   onChangenumtarjeta(e){
-    this.setState({numtarjeta:e.target.value})
+    this.setState({numtarjeta:e.target.value});
+    console.log(e.target.value)
   }
   onChangenumcuenta(e){
-    this.setState({numcuenta:e.target.value})
+    this.setState({numcuenta:e.target.value});
+    console.log(e.target.value)
   }
   onClickRegistrar = (e) => {
     e.preventDefault()
@@ -94,8 +102,7 @@ class FormUsuario extends React.Component {
     const numtarjeta = this.state.numtarjeta;
     const numcuenta = this.state.numcuenta;
     if (this.state.type === 'User'){
-      axios.post(`http://localhost:5000/users/${telefono}/${password}/${nombre}/${apellido}
-        /${fecha}/${email}/${numtarjeta}`).then(res => {
+      axios.post(`http://localhost:5000/users/${telefono}/${password}/${nombre}/${apellido}/${fecha}/${email}/${numtarjeta}`).then(res => {
         const persons = res.data;
         console.log(persons)
         if(persons === 'Usuario creado exitosamente'){
@@ -105,8 +112,7 @@ class FormUsuario extends React.Component {
         }
       })
     } else if (this.state.type === 'Driver'){
-      axios.post(`http://localhost:5000/drivers/${telefono}/${password}/${nombre}/${apellido}
-        /${fecha}/${email}/${numcuenta}`).then(res => {
+      axios.post(`http://localhost:5000/drivers/${telefono}/${password}/${nombre}/${apellido}/${fecha}/${email}/${numcuenta}`).then(res => {
         const persons = res.data;
         console.log(persons)
         if(persons === 'Conductor creado exitosamente'){

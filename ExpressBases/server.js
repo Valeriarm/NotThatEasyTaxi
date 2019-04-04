@@ -68,10 +68,11 @@ app.post('/users/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:tarjeta', (req,
       escape(req.params.apellido), escape(req.params.fechanac), escape(req.params.mail), 
       escape(req.params.tarjeta)])
       .then((data)=>{
-        console.log('DATA: ', data)
+        console.log(req.params)
         res.send('Usuario creado exitosamente')
       })
       .catch((error)=>{
+        console.log(req.params)
         console.log('ERROR', error)
         res.send('Error creando el usuario, por favor intentelo de nuevo')
       })
@@ -87,10 +88,12 @@ app.post('/drivers/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta', (req
       escape(req.params.cuenta)])
       .then((data)=>{
         console.log('DATA: ', data)
+        console.log(req.params)
         res.send('Conductor creado exitosamente')
       })
       .catch((error)=>{
         console.log('ERROR', error)
+        console.log(req.params)
         res.send('Error creando el conductor, por favor intentelo de nuevo')
       })
     })
