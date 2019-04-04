@@ -1,25 +1,41 @@
 import React, { Component } from 'react';
-import { Map, TileLayer} from 'react-leaflet';
+import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet'
 const mapCenter = [3.43722 , -76.5225];
 const zoomLevel = 12.4;
 
+const myIcon = new L.Icon.Default
 
-function doSomething (e) {
-    console.log(e.latlng)
-}
+//podemos usar para el calculo de la tarifa
+//points ya que existe una funcion para sacar 
+//la distancia cartesiana entre dos puntos 
 
 class CustomMap extends Component {
+    state={
+        posicion : [1 , 1],
+
+    };
+
+    doSomething = (e) => {
+        console.log(e.latlng);
+        //this.setState({posicion: {lat: e.latlng.lat , lng:e.latlng.lng}})
+        //this.setState({posicion: e.latlng});
+        this.setState({posicion: [e.latlng.lat , e.latlng.lng]})
+        console.log(this.state.posicion)
+        
+    }
+
     
     render() {
         return (
             <div>
-                <rigth>
                 <Map
+                    id = 'map'
                     center={mapCenter}
                     zoom={zoomLevel}
                     zoomControl={false}
                     doubleClickZoom={false}
-                    onClick={doSomething}
+                    onClick={this.doSomething}
                 >
                     <TileLayer
                         url = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidmFsZXJpYXJtIiwiYSI6ImNqdDU3Z285aTAzaWMzeW8zcWw2dzJ5c2gifQ.44erZi0QyJwNw__0LsjcQQ'
@@ -27,8 +43,10 @@ class CustomMap extends Component {
                         id= 'mapbox.streets'
                         accessTocken= 'pk.eyJ1IjoidmFsZXJpYXJtIiwiYSI6ImNqdDU3Z285aTAzaWMzeW8zcWw2dzJ5c2gifQ.44erZi0QyJwNw__0LsjcQQ'
                     />
+
+                    <Marker position={this.state.posicion}/>
                 </Map>
-                </rigth>
+               
             </div>
         );
     }
