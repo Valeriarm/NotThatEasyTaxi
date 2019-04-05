@@ -1,0 +1,27 @@
+REVOKE ALL
+ON ALL TABLES IN SCHEMA public 
+FROM PUBLIC;
+
+DROP USER IF EXISTS usercreate;
+CREATE USER usercreate  WITH PASSWORD 'usercreate';
+GRANT INSERT
+ON ALL TABLES IN SCHEMA public 
+TO usercreate;
+
+DROP USER IF EXISTS userread;
+CREATE USER userread  WITH PASSWORD 'userread';
+GRANT SELECT
+ON ALL TABLES IN SCHEMA public 
+TO userread;
+
+DROP USER IF EXISTS userupdate;
+CREATE USER userupdate  WITH PASSWORD 'userupdate';
+GRANT UPDATE
+ON ALL TABLES IN SCHEMA public 
+TO userupdate;
+
+DROP USER IF EXISTS userdelete;
+CREATE USER userdelete  WITH PASSWORD 'userdelete';
+GRANT DELETE
+ON ALL TABLES IN SCHEMA public 
+TO userdelete;
