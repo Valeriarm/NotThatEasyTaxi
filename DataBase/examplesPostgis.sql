@@ -6,3 +6,4 @@ SELECT username, origen, st_asText(st_transform(origen, 4326)) FROM origenesfav
 
 /*To obtain longitud and latitud divided*/
 SELECT ST_X(origen) as longitude, ST_Y(origen) as latitude FROM origenesfav
+
