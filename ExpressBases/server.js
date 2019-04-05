@@ -6,8 +6,8 @@ const connectionOptions = {
   host: 'localhost',
   port: 5432,
   database: 'ProyectoBases',
-  user: 'Marthox',
-  password: 'Marthox2299',
+  user: 'postgres',
+  password: 'postgres',
   poolSize: 20,
   poolIdleTimeout: 10000
 };

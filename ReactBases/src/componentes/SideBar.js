@@ -167,8 +167,8 @@ class PersistentDrawerLeft extends React.Component {
     if (destino) {
       const nextState = [... favoritos, destino];
       this.setState({ favoritos: nextState, destino: '' });
-    }
-    console.log(this.state.favoritos)
+      console.log(nextState)
+    }    
     console.log(this.state.phone)
   }
 
