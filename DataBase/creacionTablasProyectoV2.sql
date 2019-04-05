@@ -1,16 +1,16 @@
 DROP TABLE IF EXISTS usuario CASCADE;
 DROP TABLE IF EXISTS origenesFav CASCADE;
 DROP TABLE IF EXISTS telefono CASCADE;
-DROP TABLE IF EXISTS Conductor CASCADE;
-DROP TABLE IF EXISTS Taxi CASCADE;
-DROP TABLE IF EXISTS Servicio CASCADE;
+DROP TABLE IF EXISTS conductor CASCADE;
+DROP TABLE IF EXISTS taxi CASCADE;
+DROP TABLE IF EXISTS servicio CASCADE;
 DROP TABLE IF EXISTS reporte CASCADE;
-DROP TABLE IF EXISTS Maneja CASCADE;
+DROP TABLE IF EXISTS maneja CASCADE;
 DROP TABLE IF EXISTS solicitud CASCADE;
 CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-CREATE TABLE Usuario(
+CREATE TABLE usuario(
 telefonoUsuario VARCHAR(15) NOT NULL,
 contrasenia TEXT NOT NULL,
 nombreUsuario TEXT NOT NULL,
@@ -21,14 +21,14 @@ numTarjeta VARCHAR (30) NOT NULL,
 PRIMARY KEY (telefonoUsuario)
 );
 
-CREATE TABLE OrigenesFav(
+CREATE TABLE origenesfav(
 origen GEOMETRY(POINT) NOT NULL,
 telefonoUsuario TEXT NOT NULL,
 PRIMARY KEY (origen, telefonoUsuario),
 FOREIGN KEY (telefonoUsuario) REFERENCES Usuario(telefonoUsuario) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE Conductor(
+CREATE TABLE conductor(
 telefonoConductor VARCHAR(15) NOT NULL,
 contrasenia TEXT NOT NULL,
 nombreConductor TEXT NOT NULL,
@@ -39,7 +39,7 @@ numCuenta VARCHAR (30) NOT NULL,
 PRIMARY KEY (telefonoConductor)
 );
 
-CREATE TABLE Taxi(
+CREATE TABLE taxi(
 placa VARCHAR(6) NOT NULL,
 marca TEXT NOT NULL,
 modelo TEXT NOT NULL,
@@ -80,7 +80,7 @@ FOREIGN KEY (usuario) REFERENCES Usuario(telefonoUsuario) ON DELETE CASCADE ON U
 FOREIGN KEY (taxi) REFERENCES Taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE Maneja(
+CREATE TABLE maneja(
 taxi VARCHAR(6) NOT NULL,
 conductor VARCHAR(30) NOT NULL,
 PRIMARY KEY (taxi, conductor),
@@ -88,7 +88,7 @@ FOREIGN KEY (taxi) REFERENCES Taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE,
 FOREIGN KEY (conductor) REFERENCES Conductor(telefonoConductor) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE Reporte(
+CREATE TABLE reporte(
 idReporte SERIAL NOT NULL,
 taxi VARCHAR(6) NOT NULL,
 horaActual TIMESTAMP NOT NULL,
@@ -98,7 +98,7 @@ FOREIGN KEY (taxi) REFERENCES Taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 /*LogIn Usuario*/
-CREATE OR REPLACE FUNCTION validarUsuario(VARCHAR(15), Text) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION validarusuario(VARCHAR(15), Text) RETURNS Text AS $$
 DECLARE
 	phone ALIAS FOR $1;
 	psword ALIAS FOR $2;
@@ -114,7 +114,7 @@ END;
 $$
 LANGUAGE plpgsql;
 /*LogIn Conductor*/
-CREATE OR REPLACE FUNCTION validarConductor(VARCHAR(15), Text) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION validarconductor(VARCHAR(15), Text) RETURNS Text AS $$
 DECLARE
 	phone ALIAS FOR $1;
 	psword ALIAS FOR $2;
@@ -130,7 +130,7 @@ END;
 $$
 LANGUAGE plpgsql;
 /*Select a taxi*/
-CREATE OR REPLACE FUNCTION manejarTaxi(Text, VARCHAR(15)) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION manejartaxi(Text, VARCHAR(15)) RETURNS Text AS $$
 DECLARE
 	placataxi ALIAS FOR $1;
 	phone ALIAS FOR $2;
@@ -138,7 +138,7 @@ BEGIN
 	IF NOT EXISTS (SELECT * FROM maneja WHERE taxi=placataxi)
 	THEN RETURN 'El taxi que desea manejar no esta registrado';
 	END IF;
-	IF NOT EXISTS (SELECT * FROM maneja WHERE telefonoConductor=phone AND taxi=placataxi)
+	IF NOT EXISTS (SELECT * FROM maneja WHERE telefonoconductor=phone AND taxi=placataxi)
 	THEN RETURN 'El taxi que desea manejar no esta asociado con su cuenta';
 	END IF;
 	IF NOT EXISTS (SELECT * FROM maneja INNER JOIN taxi ON taxi=placa WHERE NOT ocupado AND taxi=placataxi)
@@ -149,7 +149,7 @@ END;
 $$
 LANGUAGE plpgsql;
 /*Redimir Kilometros Conductor*/
-CREATE OR REPLACE FUNCTION redimirKilometros(Text) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION redimirkilometros(Text) RETURNS Text AS $$
 DECLARE
 	phone ALIAS FOR $1;
 BEGIN
@@ -174,13 +174,13 @@ END;
 $$
 LANGUAGE plpgsql;
 /*No eliminar un usuario si tiene deudas*/
-CREATE OR REPLACE FUNCTION cobrarOnDelete() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION cobrarondelete() RETURNS TRIGGER AS $$
 BEGIN
     IF NOT EXISTS(
-        SELECT telefonoUsuario FROM servicio INNER JOIN usuario
-        ON telefonoUsuario = usuario WHERE telefonoUsuario=new.telefonoUsuario AND usuario_pago = FALSE
+        SELECT telefonousuario FROM servicio INNER JOIN usuario
+        ON telefonousuario = usuario WHERE telefonoUsuario=new.telefonousuario AND usuario_pago = FALSE
     )THEN 
-	DELETE FROM usuario WHERE telefonoUsuario=new.telefonoUsuario;
+	DELETE FROM usuario WHERE telefonousuario=new.telefonoUsuario;
 	RETURN NEW;
     END IF;
 		RAISE EXCEPTION 'El usuario todavia tiene deudas pendientes'
@@ -189,7 +189,7 @@ END;
 $$
 LANGUAGE plpgsql;
 
-CREATE TRIGGER delete_usuario_deuda AFTER DELETE ON usuario FOR EACH ROW EXECUTE PROCEDURE cobrarOnDelete();
+CREATE TRIGGER delete_usuario_deuda AFTER DELETE ON usuario FOR EACH ROW EXECUTE PROCEDURE cobrarondelete();
 
 CREATE OR REPLACE FUNCTION crear_solicitud() RETURNS TRIGGER AS $$
 BEGIN
@@ -213,8 +213,9 @@ LANGUAGE plpgsql;
 
 CREATE TRIGGER create_solicitud AFTER INSERT ON solicitud FOR EACH ROW EXECUTE PROCEDURE crear_solicitud();
 
-INSERT INTO conductor VALUES ('123456789012345', '12345678', 'Mateo', 'Gregory','1999/07/02', 'magremenez@gmail.com', '123454312');
-INSERT INTO usuario VALUES ('123456789012345', '1234', 'Mateo', 'Gregory','1999/07/02', 'magremenez@gmail.com', '123454312');
-INSERT INTO conductor VALUES ('123451234567890', '1234', 'Valeria', 'Rivera','1998/11/19', 'valeriarm@gmail.com', '123454313');
-INSERT INTO usuario VALUES ('123451234567890', '1234', 'Valeria', 'Rivera','1998/11/19', 'valeriarm@gmail.com', '123454313');
+
+INSERT INTO conductor VALUES ('123456789012345', '12345678', 'Mateo', 'Gregory','1999-07-02', 'magremenez@gmail.com', '123454312');
+INSERT INTO usuario VALUES ('123456789012345', '12345678', 'Mateo', 'Gregory','1999-07-02', 'magremenez@gmail.com', '123454312');
+INSERT INTO conductor VALUES ('123451234567890', '12345678', 'Valeria', 'Rivera','1998-11-19', 'valeriarm@gmail.com', '123454313');
+INSERT INTO usuario VALUES ('123451234567890', '12345678', 'Valeria', 'Rivera','1998-11-19', 'valeriarm@gmail.com', '123454313');
 SELECT * FROM usuario;

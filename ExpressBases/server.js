@@ -111,11 +111,11 @@ app.post('/users/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:tarjeta', [
   check('fechanac').custom(value =>{
     value=value.split("-");
     console.log(value)
-    if(isNaN(value[0]) || value[0].length!==2){
+    if(isNaN(value[0])){
       return false
     } else if (isNaN(value[1]) || value[1].length!==2){
       return false
-    } else if (isNaN(value[2])){
+    } else if (isNaN(value[2]) || value[2].length!==2){
       return false
     } else {return true}
   }),
@@ -162,11 +162,11 @@ app.post('/drivers/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta',[
   check('fechanac').custom(value =>{
     value=value.split("-");
     console.log(value)
-    if(isNaN(value[0]) || value[0].length!==2){
+    if(isNaN(value[0])){
       return false
     } else if (isNaN(value[1]) || value[1].length!==2){
       return false
-    } else if (isNaN(value[2])){
+    } else if (isNaN(value[2]) || value[2].length!==2){
       return false
     } else {return true}
   }),
