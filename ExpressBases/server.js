@@ -1,10 +1,19 @@
-const express = require('express')
-const cors = require('cors')
-const app = express()
-const port = 5000
-const pgp = require('pg-promise')(/*options*/)
-const db = pgp('postgres://Marthox:Marthox2299@localhost:5432/ProyectoBases')
-const { check, validationResult } = require('express-validator/check')
+const express = require('express');
+const cors = require('cors');
+const app = express();
+const port = 5000;
+const connectionOptions = {
+  host: 'localhost',
+  port: 5432,
+  database: 'ProyectoBases',
+  user: 'Marthox',
+  password: 'Marthox2299',
+  poolSize: 20,
+  poolIdleTimeout: 10000
+};
+const pgp = require('pg-promise')(/*options*/);
+const db = pgp(connectionOptions);
+const { check, validationResult } = require('express-validator/check');
 
 app.use(cors())
 app.use(express.json());
@@ -66,7 +75,7 @@ app.get('/drivers/:phone/:psword', [
  */
 app.get('/drivers/taxi/:phone/:placa',[
   check('phone').isNumeric().isLength({min:15, max:15}),
-  check('placa').isNumeric().isLength({min:6, max:6})
+  check('placa').isAlphanumeric().isLength({min:6, max:6})
 ], (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -195,7 +204,7 @@ app.post('/drivers/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta',[
  * baul, soat y, ocupado
  */
 app.post('/taxi/:placa/:marca/:modelo/:anio/:baul/:soat/:ocupado', [
-  check('placa').isNumeric().isLength({min:6,max:6}),
+  check('placa').isAlphanumeric().isLength({min:6,max:6}),
   check('marca').isAlphanumeric(),
   check('modelo').isAlphanumeric(),
   check('anio').isNumeric().isLength({min:4}),
@@ -316,7 +325,7 @@ app.put('/drivers/:phone/:psword/:nombre/:apellido/:mail/:cuenta',[
  * baul, soat y, ocupado
  */
 app.put('/taxi/:placa/:soat', [
-  check('placa').isNumeric().isLength({min:6, max:6}),
+  check('placa').isAlphanumeric().isLength({min:6, max:6}),
   check('soat').custom(value =>{
     value=value.split("-");
     console.log(value)
