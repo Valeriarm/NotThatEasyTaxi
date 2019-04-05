@@ -213,8 +213,8 @@ LANGUAGE plpgsql;
 
 CREATE TRIGGER create_solicitud AFTER INSERT ON solicitud FOR EACH ROW EXECUTE PROCEDURE crear_solicitud();
 
-INSERT INTO conductor VALUES ('123456789012345', '12345678', 'Mateo', 'Gregory','1999/07/02', 'magremenez@gmail.com', '123454312');
-INSERT INTO usuario VALUES ('123456789012345', '12345678', 'Mateo', 'Gregory','1999/07/02', 'magremenez@gmail.com', '123454312');
-INSERT INTO conductor VALUES ('123451234567890', '12345678', 'Valeria', 'Rivera','1998/11/19', 'valeriarm@gmail.com', '123454313');
-INSERT INTO usuario VALUES ('123451234567890', '12345678', 'Valeria', 'Rivera','1998/11/19', 'valeriarm@gmail.com', '123454313');
+INSERT INTO conductor VALUES ('123456789012345', '12345678', 'Mateo', 'Gregory','1999-07-02', 'magremenez@gmail.com', '123454312');
+INSERT INTO usuario VALUES ('123456789012345', '12345678', 'Mateo', 'Gregory','1999-07-02', 'magremenez@gmail.com', '123454312');
+INSERT INTO conductor VALUES ('123451234567890', '12345678', 'Valeria', 'Rivera','1998-11-19', 'valeriarm@gmail.com', '123454313');
+INSERT INTO usuario VALUES ('123451234567890', '12345678', 'Valeria', 'Rivera','1998-11-19', 'valeriarm@gmail.com', '123454313');
 SELECT * FROM usuario;
