@@ -88,3 +88,28 @@ $$
 LANGUAGE plpgsql;
 
 CREATE TRIGGER delete_usuario_deuda BEFORE DELETE ON usuario FOR EACH ROW EXECUTE PROCEDURE cobrarOnDelete();
+
+/*Seleccionar el taxi mas cercano para crear la solicitud del servicio*/
+
+CREATE OR REPLACE FUNCTION crear_solicitud() RETURNS TRIGGER AS $$
+BEGIN
+	IF EXISTS(
+		WITH reporte_taxi AS (SELECT taxi,horaactual, coordenada FROM reporte),
+			taxis AS (SELECT taxi, MAX (horaactual) AS horaactual FROM reporte_taxi Group by taxi),
+			taxi_cercano AS (SELECT *, ST_Distance(coordenada,new.coordenada)
+						 FROM taxis NATURAL JOIN reporte),
+			taxi_mas_cercano AS (SELECT taxi, MIN(st_distance) 
+							 AS distance FROM taxi_cercano 
+							 GROUP BY taxi ORDER BY distance LIMIT 1) 
+			SELECT taxi INTO TEMPORARY placa_taxi FROM taxi_mas_cercano WHERE distance < 20
+	)THEN INSERT INTO solicitud VALUES (Default, new.usuario, new.posicionUsuario, placa_taxi.taxi, TRUE);
+	RETURN NEW;
+	END IF;
+	RAISE EXCEPTION 'No hay conductores cerca de usted'
+	USING HINT = 'Por favor intentelo mas tarde o cambie de posicion';
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER create_solicitud AFTER INSERT ON solicitud FOR EACH ROW EXECUTE PROCEDURE crear_solicitud();
+
