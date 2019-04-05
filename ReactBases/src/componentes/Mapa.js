@@ -12,20 +12,23 @@ const myIcon = new L.Icon.Default
 
 class CustomMap extends Component {
     state={
-        posicion : [1 , 1],
-
+        origenMarker:[1 , 1],
+        destinoMarker: [1 , 1],
+        clickState: 0, 
     };
 
     doSomething = (e) => {
         console.log(e.latlng);
-        //this.setState({posicion: {lat: e.latlng.lat , lng:e.latlng.lng}})
-        //this.setState({posicion: e.latlng});
-        this.setState({posicion: [e.latlng.lat , e.latlng.lng]})
+        if (this.state.clickState===0){
+            this.setState({origenMarker: [e.latlng.lat , e.latlng.lng]});
+            this.setState({clickState: 1});
+        }else if (this.state.clickState===1){
+            this.setState({destinoMarker: [e.latlng.lat , e.latlng.lng]});
+            this.setState({clickState: 0});
+        }
         console.log(this.state.posicion)
-        
     }
 
-    
     render() {
         return (
             <div>
@@ -35,7 +38,7 @@ class CustomMap extends Component {
                     zoom={zoomLevel}
                     zoomControl={false}
                     doubleClickZoom={false}
-                    onClick={this.doSomething}
+                    onclick={this.doSomething}
                 >
                     <TileLayer
                         url = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidmFsZXJpYXJtIiwiYSI6ImNqdDU3Z285aTAzaWMzeW8zcWw2dzJ5c2gifQ.44erZi0QyJwNw__0LsjcQQ'
@@ -44,7 +47,8 @@ class CustomMap extends Component {
                         accessTocken= 'pk.eyJ1IjoidmFsZXJpYXJtIiwiYSI6ImNqdDU3Z285aTAzaWMzeW8zcWw2dzJ5c2gifQ.44erZi0QyJwNw__0LsjcQQ'
                     />
 
-                    <Marker position={this.state.posicion}/>
+                    <Marker id ="origen" position={this.state.origenMarker}/>
+                    <Marker id = "destino" position={this.state.destinoMarker}/>
                 </Map>
                
             </div>
