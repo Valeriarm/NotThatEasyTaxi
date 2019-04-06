@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';
-import user from './images/descarga.png';
 
 const styles = {
   card: {
@@ -26,7 +25,6 @@ function SimpleCard(props) {
     <Card className={classes.card}>
      <CardMedia
           className={classes.media}
-          image={user}
           title="Profile Pic"
         />
     </Card>
