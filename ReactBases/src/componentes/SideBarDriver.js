@@ -7,11 +7,13 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import HomeIcon from'@material-ui/icons/Home';
 import Person from '@material-ui/icons/Person';
+import Check from '@material-ui/icons/Check';
 import LocalTaxi from '@material-ui/icons/LocalTaxi';
 import {purple, deepPurple} from '@material-ui/core/colors';
-import { InputLabel, FormControl, Input, Fab, ListItemIcon, ListItemText ,
+import { ListItemIcon, ListItemText ,
 Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar , 
-Toolbar, withStyles, List, } from '@material-ui/core';
+Toolbar, withStyles, FormControl, InputLabel, Input, Fab} from '@material-ui/core';
+import CustonMapDriver from './MapaDriver'
 
 
 
@@ -112,7 +114,7 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit*45,
   },
   favoritos: {
-    marginTop: theme.spacing.unit*-13,
+    marginTop: theme.spacing.unit*-5,
     marginLeft: theme.spacing.unit*45,
   },
 
@@ -131,6 +133,8 @@ class PersistentDrawerLeft extends React.Component {
     phone: this.props.location.state.phone,
     origen: {lat:true, lng:true},
     destino: {lat:true, lng:true},
+    placa: true,
+    posicionActual: {lat: true, lng: true},
   };
 
   handleDrawerOpen = () => {
@@ -155,6 +159,11 @@ class PersistentDrawerLeft extends React.Component {
     e.preventDefault()
     this.props.history.push({pathname:"/Taxi/", state:{phone: this.state.phone}})
   };
+
+  onChangePlaca = (e) =>{
+    this.setState({placa: e.target.value})
+    console.log(e.target.value)
+  }
 
   render() {
 
@@ -232,6 +241,44 @@ class PersistentDrawerLeft extends React.Component {
           })}
         >
           <div className={classes.drawerHeader} />
+          <CustonMapDriver/>
+          <div>
+            <FormControl className={classes.form}>
+              <InputLabel
+              htmlFor="Placa">
+              Placa
+              </InputLabel>
+              <Input
+              id="Placa"
+              name="Placa"
+              classes={{
+                underline: classes.cssUnderline,
+              }}
+              onChange = {this.onChangePlaca}
+              >
+              </Input>
+            </FormControl>
+            <FormControl className= {classes.form}>
+              <InputLabel
+              htmlFor="Posicion Actual">
+              Posicion Actual
+              </InputLabel>
+              <Input
+              id ="PosicionActual"
+              name="Posicion"
+              classes={{
+                underline: classes.cssUnderline,
+              }}
+              >
+              </Input>
+            </FormControl>
+          </div>
+          <div className={classes.favoritos}>
+            <Fab
+              color="primary" aria-label="Pedir Servicio" size="small" >
+              <Check/>
+            </Fab>  
+          </div>
                   
         </main>
       </div>

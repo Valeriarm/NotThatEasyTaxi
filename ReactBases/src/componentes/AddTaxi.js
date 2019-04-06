@@ -11,8 +11,7 @@ import LocalTaxi from '@material-ui/icons/LocalTaxi';
 import {purple, deepPurple} from '@material-ui/core/colors';
 import { InputLabel, FormControl, Input, Fab, ListItemIcon, ListItemText ,
 Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar , 
-Toolbar, withStyles, List, TextField, MenuItem, } from '@material-ui/core';
-import axios from 'axios';
+Toolbar, withStyles, TextField, MenuItem, } from '@material-ui/core';
 
 
 
@@ -346,21 +345,23 @@ class PersistentDrawerLeft extends React.Component {
           />
         </FormControl>
         <FormControl >
-          <InputLabel
-            htmlFor="Soat"
-            classes={{
-              focused: classes.cssFocused,
-            }}
-          >
-            Soat
-          </InputLabel>
-          <Input
-            id="Soat"
-            classes={{
-              underline: classes.cssUnderline,
-            }}
-            onChange={this.handleChange('soat')}
-          />
+        <InputLabel
+              htmlFor="Soat"
+              classes={{
+                focused: classes.cssFocused,
+              }}
+            >
+            </InputLabel>
+            <Input
+              fullWidth
+              id="soat"
+              type="date"
+              onChange={this.handleChange('soat')}
+              classes={{
+                underline: classes.cssUnderline,
+              }}
+              className={classes.textField}
+            />
         </FormControl>
         <FormControl>
         <TextField
