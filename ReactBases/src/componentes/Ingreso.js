@@ -93,7 +93,7 @@ class SignIn extends React.Component {
         } else if (validation === 'Contraseña incorrecta'){
           alert('Contraseña incorrecta')
         } else if (validation === phone){
-          this.props.history.push({pathname:"/SideBar/", state:{phone:this.state.phone}})
+          this.props.history.push({pathname:"/SideBarDriver/", state:{phone:this.state.phone}})
         }
       })
     }

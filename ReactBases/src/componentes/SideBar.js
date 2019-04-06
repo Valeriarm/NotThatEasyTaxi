@@ -14,6 +14,7 @@ import {purple, deepPurple} from '@material-ui/core/colors';
 import { InputLabel, FormControl, Input, Fab, ListItemIcon, ListItemText ,
 Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar , 
 Toolbar, withStyles, List, } from '@material-ui/core';
+import axios from 'axios';
 
 
 
@@ -131,9 +132,8 @@ const styles = theme => ({
 class PersistentDrawerLeft extends React.Component {
   state = {
     phone: this.props.location.state.phone,
-    origen: '',
-    destino: '',
-    favoritos:['Ninguno'],
+    origen: {lat:true, lng:true},
+    destino: {lat:true, lng:true},
   };
 
   handleDrawerOpen = () => {
@@ -162,14 +162,20 @@ class PersistentDrawerLeft extends React.Component {
     this.setState({destino:e.target.value})
   };
 
-  onClickFavoritos = () => {
-    const { destino, favoritos } = this.state;
-    if (destino) {
-      const nextState = [... favoritos, destino];
-      this.setState({ favoritos: nextState, destino: '' });
-    }
-    console.log(this.state.favoritos)
-    console.log(this.state.phone)
+  onClickCustomMap = (origen, destino) => {
+    this.setState({destino: destino, origen: origen})
+  }
+
+  onClickConfirmar = () => {
+    const phone = this.state.phone;
+    const lat = this.state.destino.lat;
+    const lng = this.state.destino.lng;
+    console.log(lat);
+    console.log(lat);
+    axios.post(`http://localhost:5000/users/favorites/${phone}/${lat}/${lng}`).then(res => {
+        const persons = res.data;
+        console.log(persons);
+      })
   }
 
   handleItemClick = (e) => {console.log(e.target.innerHTML)}
@@ -178,8 +184,7 @@ class PersistentDrawerLeft extends React.Component {
 
     const { classes , theme } = this.props;
     const { open } = this.state;
-    const { destino, favoritos } = this.state;
-    
+    const { destino, origen, originCor} = this.state;
     
 
     return (
@@ -205,7 +210,6 @@ class PersistentDrawerLeft extends React.Component {
             </Typography>
             <IconButton
               color = "inherit"
-              className={classes.logOutButton}
             >
               <ExitToApp/>
             </IconButton>
@@ -246,7 +250,7 @@ class PersistentDrawerLeft extends React.Component {
           })}
         >
           <div className={classes.drawerHeader} />
-          <CustomMap />
+          <CustomMap getCoordinates={this.onClickCustomMap.bind(this)}/>
           <form>
           <FormControl className={classes.form}>
             <InputLabel
@@ -257,9 +261,10 @@ class PersistentDrawerLeft extends React.Component {
           <Input
             id="Origen"
             name="Origen"
+            value={"" + origen.lat + " " + origen.lng}
             onChange ={this.onChangeOrigen}
             classes={{
-              underline: classes.cssUnderline,
+              underline: classes.cssUnstatederline,
             }}
           />
         </FormControl>
@@ -272,7 +277,7 @@ class PersistentDrawerLeft extends React.Component {
           <Input
             id="Destino"
             name="Destino"
-            value = {destino}
+            value={"" + destino.lat + " " + destino.lng}
             onChange ={this.onChangeDestino}
             classes={{
               underline: classes.cssUnderline,
@@ -286,12 +291,9 @@ class PersistentDrawerLeft extends React.Component {
             </Fab>
         </div>
         <div className={classes.favoritos}>
-            <Fab color="primary" aria-label="Anadir a Favoritos" size="small" onClick={this.onClickFavoritos}>
+            <Fab color="primary" aria-label="Anadir a Favoritos" size="small" onClick={this.onClickConfirmar}>
                 <Add />
             </Fab>
-        </div>
-        <div>
-          <List items={favoritos} onClickCapture={this.handleItemClick} />
         </div>
         </form>
         
