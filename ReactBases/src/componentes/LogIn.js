@@ -13,7 +13,6 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import { purple, deepPurple } from '@material-ui/core/colors';
 import HomeIcon from'@material-ui/icons/Home';
-import Person from '@material-ui/icons/Person';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';

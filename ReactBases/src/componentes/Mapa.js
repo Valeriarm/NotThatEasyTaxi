@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet'
+import PropTypes from 'prop-types';
+import { Map, TileLayer, Marker} from 'react-leaflet';
+import axios from 'axios';
 const mapCenter = [3.43722 , -76.5225];
 const zoomLevel = 12.4;
 
-const myIcon = new L.Icon.Default
 
 //podemos usar para el calculo de la tarifa
 //points ya que existe una funcion para sacar 
@@ -12,21 +12,23 @@ const myIcon = new L.Icon.Default
 
 class CustomMap extends Component {
     state={
-        origenMarker:[1 , 1],
-        destinoMarker: [1 , 1],
+        origenMarker:{lat:true , lng:true},
+        destinoMarker: {lat:true , lng:true},
         clickState: 0, 
     };
+
 
     doSomething = (e) => {
         console.log(e.latlng);
         if (this.state.clickState===0){
-            this.setState({origenMarker: [e.latlng.lat , e.latlng.lng]});
+            this.setState({origenMarker: e.latlng});
+            this.props.getCoordinates(this.state.origenMarker, this.state.destinoMarker);
             this.setState({clickState: 1});
         }else if (this.state.clickState===1){
-            this.setState({destinoMarker: [e.latlng.lat , e.latlng.lng]});
+            this.setState({destinoMarker: e.latlng});
+            this.props.getCoordinates(this.state.origenMarker, this.state.destinoMarker);
             this.setState({clickState: 0});
         }
-        console.log(this.state.posicion)
     }
 
     render() {
@@ -38,7 +40,7 @@ class CustomMap extends Component {
                     zoom={zoomLevel}
                     zoomControl={false}
                     doubleClickZoom={false}
-                    onclick={this.doSomething}
+                    onclick={this.doSomething.bind(this)}
                 >
                     <TileLayer
                         url = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidmFsZXJpYXJtIiwiYSI6ImNqdDU3Z285aTAzaWMzeW8zcWw2dzJ5c2gifQ.44erZi0QyJwNw__0LsjcQQ'
