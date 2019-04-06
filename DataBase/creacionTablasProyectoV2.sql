@@ -256,4 +256,6 @@ INSERT INTO conductor VALUES ('123456789012345', '12345678', 'Mateo', 'Gregory',
 INSERT INTO usuario VALUES ('123456789012345', '12345678', 'Mateo', 'Gregory','1999-07-02', 'magremenez@gmail.com', '123454312');
 INSERT INTO conductor VALUES ('123451234567890', '12345678', 'Valeria', 'Rivera','1998-11-19', 'valeriarm@gmail.com', '123454313');
 INSERT INTO usuario VALUES ('123451234567890', '12345678', 'Valeria', 'Rivera','1998-11-19', 'valeriarm@gmail.com', '123454313');
+INSERT INTO taxi VALUES ('DEO840','12345678','Renault','Logan',2016,'Mediano','2020-10-01', false);
+INSERT INTO taxi VALUES ('CMP217','12345678','Hyundai','Acent',2006,'Pequenio','2020-10-01', false);
 SELECT * FROM usuario;
