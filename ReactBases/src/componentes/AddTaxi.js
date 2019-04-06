@@ -345,21 +345,23 @@ class PersistentDrawerLeft extends React.Component {
           />
         </FormControl>
         <FormControl >
-          <InputLabel
-            htmlFor="Soat"
-            classes={{
-              focused: classes.cssFocused,
-            }}
-          >
-            Soat
-          </InputLabel>
-          <Input
-            id="Soat"
-            classes={{
-              underline: classes.cssUnderline,
-            }}
-            onChange={this.handleChange('soat')}
-          />
+        <InputLabel
+              htmlFor="Soat"
+              classes={{
+                focused: classes.cssFocused,
+              }}
+            >
+            </InputLabel>
+            <Input
+              fullWidth
+              id="soat"
+              type="date"
+              onChange={this.handleChange('soat')}
+              classes={{
+                underline: classes.cssUnderline,
+              }}
+              className={classes.textField}
+            />
         </FormControl>
         <FormControl>
         <TextField
