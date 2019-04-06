@@ -2,21 +2,64 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const port = 5000;
-const connectionOptions = {
-  host: 'localhost',
-  port: 5432,
-  database: 'ProyectoBases',
-  user: 'Marthox',
-  password: 'Marthox2299',
-  poolSize: 20,
-  poolIdleTimeout: 10000
-};
-const pgp = require('pg-promise')(/*options*/);
-const db = pgp(connectionOptions);
 const { check, validationResult } = require('express-validator/check');
+const pgp = require('pg-promise')(/*options*/);
+
+const connectionAdminOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
+  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
+const db = pgp(connectionAdminOptions);
+
+const connectionUserCreateOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
+  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
+const dbcu = pgp(connectionUserCreateOptions);
+
+const connectionUserReadOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
+  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
+const dbru = pgp(connectionUserReadOptions);
+
+const connectionUserUpdateOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
+  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
+const dbuu = pgp(connectionUserUpdateOptions);
+
+const connectionUserDeleteOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
+  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
+const dbdu = pgp(connectionUserDeleteOptions);
+
+const connectionDriverCreateOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
+  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
+const dbcd = pgp(connectionDriverCreateOptions);
+
+const connectionDriverReadOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
+  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
+const dbrd = pgp(connectionDriverReadOptions);
+
+const connectionDriverUpdateOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
+  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
+const dbud = pgp(connectionDriverUpdateOptions);
+
+const connectionDriverDeleteOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
+  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
+const dbdd = pgp(connectionDriverDeleteOptions);
+
+const connectionTaxiCreateOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
+  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
+const dbct = pgp(connectionTaxiCreateOptions);
+
+const connectionTaxiReadOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
+  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
+const dbrt = pgp(connectionTaxiReadOptions);
+
+const connectionTaxiUpdateOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
+  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
+const dbut = pgp(connectionTaxiUpdateOptions);
+
+const connectionTaxiDeleteOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
+  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
+const dbdt = pgp(connectionTaxiDeleteOptions);
 
 app.use(cors())
 app.use(express.json());
+
 // GET REQUESTS
 
 /**
@@ -203,8 +246,9 @@ app.post('/drivers/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta',[
  * Crea un Taxi recibiendo, placa, marca, modelo, anio
  * baul, soat y, ocupado
  */
-app.post('/taxi/:placa/:marca/:modelo/:anio/:baul/:soat/:ocupado', [
+app.post('/taxi/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocupado', [
   check('placa').isAlphanumeric().isLength({min:6,max:6}),
+  check('contrasenia').isLength({min:8}),
   check('marca').isAlphanumeric(),
   check('modelo').isAlphanumeric(),
   check('anio').isNumeric().isLength({min:4}),
@@ -234,8 +278,9 @@ app.post('/taxi/:placa/:marca/:modelo/:anio/:baul/:soat/:ocupado', [
   const baul = req.params.baul;
   const soat = req.params.soat;
   const ocupado = req.params.ocupado;
-  db.none('INSERT INTO taxi VALUES($1,$2,$3,$4,$5,$6,$7)',
-    [escape(placa), escape(marca), escape(modelo), 
+  const contrasenia = req.params.contrasenia;
+  db.none('INSERT INTO taxi VALUES($1,$2,$3,$4,$5,$6,$7,$8)',
+    [escape(placa), escape(contrasenia),escape(marca), escape(modelo), 
       escape(anio), escape(baul), escape(soat), 
       escape(ocupado)])
     .then((data)=>{

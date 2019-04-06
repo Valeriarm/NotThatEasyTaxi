@@ -41,6 +41,7 @@ PRIMARY KEY (telefonoConductor)
 
 CREATE TABLE taxi(
 placa VARCHAR(6) NOT NULL,
+contrasenia TEXT NOT NULL,
 marca TEXT NOT NULL,
 modelo TEXT NOT NULL,
 anio INTEGER NOT NULL,
@@ -83,6 +84,7 @@ FOREIGN KEY (taxi) REFERENCES Taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE
 CREATE TABLE maneja(
 taxi VARCHAR(6) NOT NULL,
 conductor VARCHAR(30) NOT NULL,
+chosen BOOLEAN NOT NULL,
 PRIMARY KEY (taxi, conductor),
 FOREIGN KEY (taxi) REFERENCES Taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE,
 FOREIGN KEY (conductor) REFERENCES Conductor(telefonoConductor) ON DELETE CASCADE ON UPDATE CASCADE
@@ -130,10 +132,10 @@ END;
 $$
 LANGUAGE plpgsql;
 /*Select a taxi*/
-CREATE OR REPLACE FUNCTION manejartaxi(Text, VARCHAR(15)) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION manejartaxi(VARCHAR(15), VARCHAR(6)) RETURNS Text AS $$
 DECLARE
-	placataxi ALIAS FOR $1;
-	phone ALIAS FOR $2;
+	phone ALIAS FOR $1;
+	placataxi ALIAS FOR $2;
 BEGIN
 	IF NOT EXISTS (SELECT * FROM maneja WHERE taxi=placataxi)
 	THEN RETURN 'El taxi que desea manejar no esta registrado';
@@ -141,9 +143,23 @@ BEGIN
 	IF NOT EXISTS (SELECT * FROM maneja WHERE telefonoconductor=phone AND taxi=placataxi)
 	THEN RETURN 'El taxi que desea manejar no esta asociado con su cuenta';
 	END IF;
-	IF NOT EXISTS (SELECT * FROM maneja INNER JOIN taxi ON taxi=placa WHERE NOT ocupado AND taxi=placataxi)
-	THEN RETURN 'El taxi que desea manejar se encuentra ocupado';
+	IF NOT EXISTS (SELECT * FROM maneja WHERE chosen AND taxi=placataxi 
+		AND telefonoconductor!=phone)
+	THEN RETURN 'El taxi que desea manejar se encuentra seleccionado por otro usuario';
 	END IF;
+	IF NOT EXISTS (
+		WITH taxis_chosen_by_user AS 
+			(SELECT count(*) AS num_taxis FROM maneja WHERE telefonoConductor=phone AND chosen)
+			SELECT * FROM taxis_chosen_by_user WHERE num_taxis > 1
+			)THEN 
+			UPDATE manejar SET chosen = FALSE WHERE taxi!=placataxi
+				AND telefonoconductor=phone;
+			UPDATE manejar SET chosen = TRUE WHERE taxi=placataxi
+				AND telefonoConductor=phone;
+		RETURN placa;
+	END IF;
+UPDATE manejar SET chosen = TRUE WHERE taxi=placataxi
+	AND telefonoConductor=phone;
 RETURN placa;
 END;
 $$
@@ -170,6 +186,28 @@ BEGIN
         RETURN 'Kilometros redimidos con exito';
     END IF;
     RETURN 'Kilometros insuficientes, debe tener un minimo de 20 km para redimirlos';
+END;
+$$
+LANGUAGE plpgsql;
+/*Paga Kilometros Usuario*/
+CREATE OR REPLACE FUNCTION pagarkilometros(Text) RETURNS Text AS $$
+DECLARE
+	phone ALIAS FOR $1;
+BEGIN
+    IF EXISTS(
+    WITH kilometros_por_servicio AS (
+            SELECT telefonoConductor, ST_Distance(puntoPartida, puntoLlegada) AS kilometros FROM
+            conductor INNER JOIN servicio ON conductor = telefonoConductor
+            WHERE telefonoConductor = phone AND usuario_pago = FALSE), 
+        kilometros_totales_usuario AS (
+            SELECT telefonoConductor, SUM(kilometros) AS kilometros_totales FROM kilometros_por_servicio 
+            WHERE telefonoConductor = phone),
+        SELECT * FROM kilometros_totales_usuario)
+		THEN UPDATE servicio SET usuario_pago = TRUE 
+        WHERE conductor = telefonoConductor AND usuario_pago = FALSE;
+        RETURN 'Kilometros pagados con exito';
+    END IF;
+    RETURN 'No tiene deudas con la empresa para pagar';
 END;
 $$
 LANGUAGE plpgsql;
@@ -201,8 +239,8 @@ BEGIN
 			taxi_mas_cercano AS (SELECT taxi, MIN(st_distance) 
 							 AS distance FROM taxi_cercano 
 							 GROUP BY taxi ORDER BY distance LIMIT 1) 
-			SELECT taxi INTO TEMPORARY placa_taxi FROM taxi_mas_cercano WHERE distance < 20
-	)THEN INSERT INTO solicitud VALUES (Default, new.usuario, new.posicionUsuario, placa_taxi.taxi, TRUE);
+			SELECT taxi INTO TEMPORARY placataxi FROM taxi_mas_cercano WHERE distance < 20
+	)THEN INSERT INTO solicitud VALUES (Default, new.usuario, new.posicionusuario, placataxi.taxi, TRUE);
 	RETURN NEW;
 	END IF;
 	RAISE EXCEPTION 'No hay conductores cerca de usted'
