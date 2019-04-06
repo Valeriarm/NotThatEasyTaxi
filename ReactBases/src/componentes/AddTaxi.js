@@ -11,7 +11,7 @@ import LocalTaxi from '@material-ui/icons/LocalTaxi';
 import {purple, deepPurple} from '@material-ui/core/colors';
 import { InputLabel, FormControl, Input, Fab, ListItemIcon, ListItemText ,
 Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar , 
-Toolbar, withStyles, List, } from '@material-ui/core';
+Toolbar, withStyles, List, TextField, MenuItem, } from '@material-ui/core';
 import axios from 'axios';
 
 
@@ -22,12 +22,26 @@ const styles = theme => ({
   root: {
     display: 'flex',
   },
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: 200,
+  },
   appBar: {
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
+
+  paper: {
+    marginTop: theme.spacing.unit * 2,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`,
+  },
+
   appBarShift: {
     width: `calc(100% - ${drawerWidth}px)`,
     marginLeft: drawerWidth,
@@ -93,7 +107,7 @@ const styles = theme => ({
 
   },
   submit: {
-    marginTop: theme.spacing.unit * 2,
+    marginTop: theme.spacing.unit * 4,
   },
   cssLabel: {
     '&$cssFocused': {
@@ -125,13 +139,31 @@ const styles = theme => ({
 });
 
 
-
+const currencies = [
+    {
+      value: 'Grande',
+      label: 'Grande',
+    },
+    {
+      value: 'Pequenio',
+      label: 'Pequenio',
+    },
+    {
+      value: 'Mediano',
+      label: 'Mediano',
+    },
+  ];
 
 class PersistentDrawerLeft extends React.Component {
   state = {
     phone: this.props.location.state.phone,
-    origen: {lat:true, lng:true},
-    destino: {lat:true, lng:true},
+    currency: true,
+    placa: true,
+    marca:true,
+    modelo: true,
+    soat: true,
+    anio: true,
+    tamanio: true,
   };
 
   handleDrawerOpen = () => {
@@ -157,11 +189,17 @@ class PersistentDrawerLeft extends React.Component {
     this.props.history.push({pathname:"/Taxi/", state:{phone: this.state.phone}})
   };
 
+  handleChange = name => event => {
+    this.setState({ [name]: event.target.value });
+  };
+
+
+
   render() {
 
     const { classes , theme } = this.props;
     const { open } = this.state;
-    
+
 
     return (
       <div className={classes.root}>
@@ -186,7 +224,6 @@ class PersistentDrawerLeft extends React.Component {
             </Typography>
             <IconButton
               color = "inherit"
-              className={classes.logOutButton}
             >
               <ExitToApp/>
             </IconButton>
@@ -233,7 +270,127 @@ class PersistentDrawerLeft extends React.Component {
           })}
         >
           <div className={classes.drawerHeader} />
-                  
+          <center>
+          <Typography component="h1" variant="h4" color="primary">
+          <br/>
+            Agregar Taxi
+          </Typography>
+          </center>
+          <div className={classes.paper}>
+          <FormControl >
+          <InputLabel
+            htmlFor="Marca"
+            classes={{
+              focused: classes.cssFocused,
+            }}
+          >
+            Marca
+          </InputLabel>
+          <Input
+            id="Marca"
+            classes={{
+              underline: classes.cssUnderline,
+            }}
+            onChange={this.handleChange('marca')}
+          />
+        </FormControl>
+        <FormControl >
+          <InputLabel
+            htmlFor="Placa"
+            classes={{
+              focused: classes.cssFocused,
+            }}
+          >
+        Placa          
+        </InputLabel>
+          <Input
+            id="Placa"
+            classes={{
+              underline: classes.cssUnderline,
+            }}
+            onChange={this.handleChange('placa')}
+          />
+        </FormControl>
+        <FormControl >
+          <InputLabel
+            htmlFor="Modelo"
+            classes={{
+              focused: classes.cssFocused,
+            }}
+          >
+            Modelo
+          </InputLabel>
+          <Input
+            id="Modelo"
+            classes={{
+              underline: classes.cssUnderline,
+            }}
+            onChange={this.handleChange('modelo')}
+          />
+        </FormControl>
+        <FormControl >
+          <InputLabel
+            htmlFor="Anio"
+            classes={{
+              focused: classes.cssFocused,
+            }}
+          >
+            Anio
+          </InputLabel>
+          <Input
+            id="Anio"
+            classes={{
+              underline: classes.cssUnderline,
+            }}
+            onChange= {this.handleChange('anio')}
+          />
+        </FormControl>
+        <FormControl >
+          <InputLabel
+            htmlFor="Soat"
+            classes={{
+              focused: classes.cssFocused,
+            }}
+          >
+            Soat
+          </InputLabel>
+          <Input
+            id="Soat"
+            classes={{
+              underline: classes.cssUnderline,
+            }}
+            onChange={this.handleChange('soat')}
+          />
+        </FormControl>
+        <FormControl>
+        <TextField
+          select
+          label="Seleccione"
+          className={classes.textField}
+          value={this.state.tamanio}
+          onChange={this.handleChange('tamanio')}
+          SelectProps={{
+            MenuProps: {
+              className: classes.menu,
+            },
+          }}
+          margin="dense"
+          helperText = "Tamanio del Baul"
+        >
+          {currencies.map(option => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </TextField>
+        </FormControl>
+        <Fab
+          type="submit" variant="extended" color="primary"
+          className={classes.submit}
+        >         
+          Agregar
+        </Fab>
+        </div>
         </main>
       </div>
       
