@@ -13,7 +13,7 @@ import Add from '@material-ui/icons/Add';
 import {purple, deepPurple} from '@material-ui/core/colors';
 import { InputLabel, FormControl, Input, Fab, ListItemIcon, ListItemText ,
 Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar , 
-Toolbar, withStyles, List, } from '@material-ui/core';
+Toolbar, withStyles } from '@material-ui/core';
 import axios from 'axios';
 
 
@@ -184,7 +184,7 @@ class PersistentDrawerLeft extends React.Component {
 
     const { classes , theme } = this.props;
     const { open } = this.state;
-    const { destino, origen, originCor} = this.state;
+    const { destino, origen} = this.state;
     
 
     return (

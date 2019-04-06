@@ -230,7 +230,7 @@ class PersistentDrawerLeft extends React.Component {
         <div className={classes.drawerHeader} />
           <Paper className={classes.paper}>
             <div>
-              <SimpleCard image = {driverPhoto}/>
+              <SimpleCard/>
             </div>
             <div>
             <TextField
