@@ -95,7 +95,6 @@ const styles = theme => ({
   submit: {
     marginTop: theme.spacing.unit * 2,
   },
-
   cssLabel: {
     '&$cssFocused': {
       color: purple[500],
@@ -113,33 +112,16 @@ const styles = theme => ({
     marginTop: theme.spacing.unit*-4.4,
     marginLeft: theme.spacing.unit*45,
   },
-
   favoritos: {
     marginTop: theme.spacing.unit*-13,
     marginLeft: theme.spacing.unit*45,
   },
 
-    submit: {
-    marginTop: theme.spacing.unit * 17,
-    width: 180,
-    height: 160,
-    margin: 10,
-    
+  menuFavoritos:{
+    marginTop: theme.spacing.unit*-2,
+    marginLeft: theme.spacing.unit*90,
+    marginRight: theme.spacing.unit*30,
   },
-  main: {
-    width: 'auto',
-    display: 'flex',
-    marginRight: theme.spacing.unit * 2,
-    [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
-      width: 500,
-      marginLeft: 'auto',
-      marginRight: 'auto',
-    },
-  },
-
-  fuente:{
-    font: "Oxigen",
-}
 });
 
 
@@ -173,21 +155,6 @@ class PersistentDrawerLeft extends React.Component {
   onClickTaxi = (e) => {
     e.preventDefault()
     this.props.history.push({pathname:"/Taxi/", state:{phone: this.state.phone}})
-  };
-
-  onClickAddTaxi = (e) => {
-    e.preventDefault()
-      this.props.history.push({pathname:"/CreateTaxi/", state:{phone: this.state.phone}})
-  };
-
-  onClickRegisterTaxi = (e) => {
-    e.preventDefault()
-    this.props.history.push({pathname:"/RegisterTaxi/", state:{phone: this.state.phone}})
-  };
-
-  onClickSearchTaxi = (e) => {
-    e.preventDefault()
-    this.props.history.push({pathname:"/SearchTaxi/", state:{phone: this.state.phone}})
   };
 
   render() {
@@ -266,39 +233,6 @@ class PersistentDrawerLeft extends React.Component {
           })}
         >
           <div className={classes.drawerHeader} />
-          <div className={classes.main}>
-            <Typography component="h2" variant="display4" fontFamily = "Oxigen" className={classes.fuente} >
-            </Typography>
-            <Fab
-              onClick={e=>this.onClickAddTaxi(e)}
-              type="button"
-              variant="extended"
-              color="primary"
-              className={classes.submit}
-            >
-            <Person className={classes.icon}/>
-            </Fab>
-          
-            <Fab
-              onClick={e=>this.onClickRegisterTaxi(e)}
-              type="button"
-              variant="extended"
-              color="primary"
-              className={classes.submit}
-            >
-            <LocalTaxi className={classes.icon}/>
-            </Fab>
-
-            <Fab
-              onClick={e=>this.onClickSearchTaxi(e)}
-              type="button"
-              variant="extended"
-              color="primary"
-              className={classes.submit}
-            >
-            <LocalTaxi className={classes.icon}/>
-            </Fab>
-          </div>
                   
         </main>
       </div>
