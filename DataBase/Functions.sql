@@ -74,6 +74,28 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+/*Paga Kilometros Usuario*/
+CREATE OR REPLACE FUNCTION pagarkilometros(Text) RETURNS Text AS $$
+DECLARE
+	phone ALIAS FOR $1;
+BEGIN
+    IF EXISTS(
+    WITH kilometros_por_servicio AS (
+            SELECT telefonoConductor, ST_Distance(puntoPartida, puntoLlegada) AS kilometros FROM
+            conductor INNER JOIN servicio ON conductor = telefonoConductor
+            WHERE telefonoConductor = phone AND usuario_pago = FALSE), 
+        kilometros_totales_usuario AS (
+            SELECT telefonoConductor, SUM(kilometros) AS kilometros_totales FROM kilometros_por_servicio 
+            WHERE telefonoConductor = phone),
+        SELECT * FROM kilometros_totales_usuario)
+		THEN UPDATE servicio SET usuario_pago = TRUE 
+        WHERE conductor = telefonoConductor AND usuario_pago = FALSE;
+        RETURN 'Kilometros pagados con exito';
+    END IF;
+    RETURN 'No tiene deudas con la empresa para pagar';
+END;
+$$
+LANGUAGE plpgsql;
 /*No eliminar un usuario si tiene deudas*/
 CREATE OR REPLACE FUNCTION cobrarOnDelete() RETURNS TRIGGER AS $$
 BEGIN
@@ -86,11 +108,8 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
-
 CREATE TRIGGER delete_usuario_deuda BEFORE DELETE ON usuario FOR EACH ROW EXECUTE PROCEDURE cobrarOnDelete();
-
 /*Seleccionar el taxi mas cercano para crear la solicitud del servicio*/
-
 CREATE OR REPLACE FUNCTION crear_solicitud() RETURNS TRIGGER AS $$
 BEGIN
 	IF EXISTS(
@@ -110,6 +129,5 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
-
 CREATE TRIGGER create_solicitud AFTER INSERT ON solicitud FOR EACH ROW EXECUTE PROCEDURE crear_solicitud();
 
