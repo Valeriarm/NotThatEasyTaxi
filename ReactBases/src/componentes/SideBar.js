@@ -210,7 +210,6 @@ class PersistentDrawerLeft extends React.Component {
             </Typography>
             <IconButton
               color = "inherit"
-              className={classes.logOutButton}
             >
               <ExitToApp/>
             </IconButton>

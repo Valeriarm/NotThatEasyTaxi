@@ -8,11 +8,12 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import HomeIcon from'@material-ui/icons/Home';
 import Person from '@material-ui/icons/Person';
 import LocalTaxi from '@material-ui/icons/LocalTaxi';
+import Search from '@material-ui/icons/Search';
+import Add from '@material-ui/icons/Add';
 import {purple, deepPurple} from '@material-ui/core/colors';
-import { InputLabel, FormControl, Input, Fab, ListItemIcon, ListItemText ,
+import {Fab, ListItemIcon, ListItemText ,
 Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar , 
-Toolbar, withStyles, List, } from '@material-ui/core';
-import axios from 'axios';
+Toolbar, withStyles } from '@material-ui/core';
 
 
 
@@ -22,6 +23,12 @@ const styles = theme => ({
   root: {
     display: 'flex',
   },
+
+  icon: {
+    width: 80,
+    height: 80,
+  },
+
   appBar: {
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
@@ -92,9 +99,6 @@ const styles = theme => ({
     display: 'block',
 
   },
-  submit: {
-    marginTop: theme.spacing.unit * 2,
-  },
 
   cssLabel: {
     '&$cssFocused': {
@@ -143,13 +147,9 @@ const styles = theme => ({
 });
 
 
-
-
 class PersistentDrawerLeft extends React.Component {
   state = {
     phone: this.props.location.state.phone,
-    origen: {lat:true, lng:true},
-    destino: {lat:true, lng:true},
   };
 
   handleDrawerOpen = () => {
@@ -276,7 +276,7 @@ class PersistentDrawerLeft extends React.Component {
               color="primary"
               className={classes.submit}
             >
-            <Person className={classes.icon}/>
+            <LocalTaxi className={classes.icon}/>
             </Fab>
           
             <Fab
@@ -286,7 +286,7 @@ class PersistentDrawerLeft extends React.Component {
               color="primary"
               className={classes.submit}
             >
-            <LocalTaxi className={classes.icon}/>
+            <Add className={classes.icon}/>
             </Fab>
 
             <Fab
@@ -296,7 +296,7 @@ class PersistentDrawerLeft extends React.Component {
               color="primary"
               className={classes.submit}
             >
-            <LocalTaxi className={classes.icon}/>
+            <Search className={classes.icon}/>
             </Fab>
           </div>
                   
