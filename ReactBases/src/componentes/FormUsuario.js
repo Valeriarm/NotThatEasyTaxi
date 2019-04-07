@@ -44,6 +44,12 @@ const styles = theme => ({
   submit: {
     marginTop: theme.spacing.unit * 2,
   },
+
+  textField:{
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: 200,
+  }
 });
 
 
@@ -264,6 +270,7 @@ class FormUsuario extends React.Component {
               classes={{
                 underline: classes.cssUnderline,
               }}
+              className={classes.textField}
             />
         </FormControl>
         <Fab

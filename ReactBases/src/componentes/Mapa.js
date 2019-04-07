@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { Map, TileLayer, Marker} from 'react-leaflet';
-import axios from 'axios';
 const mapCenter = [3.43722 , -76.5225];
 const zoomLevel = 12.4;
 
