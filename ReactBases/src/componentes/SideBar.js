@@ -166,6 +166,18 @@ class PersistentDrawerLeft extends React.Component {
     this.setState({destino: destino, origen: origen})
   }
 
+  onClickAgregar = () => {
+    const phone = this.state.phone;
+    const lat = this.state.destino.lat;
+    const lng = this.state.destino.lng;
+    console.log(lat);
+    console.log(lat);
+    axios.post(`http://localhost:5000/users/favorites/${phone}/${lat}/${lng}`).then(res => {
+        const persons = res.data;
+        console.log(persons);
+      })
+  }
+
   onClickConfirmar = () => {
     const phone = this.state.phone;
     const lat = this.state.destino.lat;
@@ -176,6 +188,14 @@ class PersistentDrawerLeft extends React.Component {
         const persons = res.data;
         console.log(persons);
       })
+  }
+
+  checkForDriver = setInterval(()=>{
+    return 1;
+  }, 200)
+
+  addService = () => {
+
   }
 
   handleItemClick = (e) => {console.log(e.target.innerHTML)}
@@ -286,12 +306,12 @@ class PersistentDrawerLeft extends React.Component {
 
         </FormControl>
         <div className={classes.servicio}>
-            <Fab color="primary" aria-label="Pedir Servicio" size="small" >
+            <Fab color="primary" aria-label="Pedir Servicio" size="small" onClick={this.onClickConfirmar}>
                 <Check/>
             </Fab>
         </div>
         <div className={classes.favoritos}>
-            <Fab color="primary" aria-label="Anadir a Favoritos" size="small" onClick={this.onClickConfirmar}>
+            <Fab color="primary" aria-label="Anadir a Favoritos" size="small" onClick={this.onClickAgregar}>
                 <Add />
             </Fab>
         </div>
