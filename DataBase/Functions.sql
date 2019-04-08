@@ -30,22 +30,6 @@ RETURN phone;
 END;
 $$
 LANGUAGE plpgsql;
-/*Registrar Taxi*/
-CREATE OR REPLACE FUNCTION validar_taxi(VARCHAR(6), Text) RETURNS Text AS $$
-DECLARE
-	placataxi ALIAS FOR $1;
-	psword ALIAS FOR $2;
-BEGIN
-	IF NOT EXISTS (SELECT * FROM taxi WHERE placa=placataxi)
-	THEN RETURN 'Placa incorrecta';
-	END IF;
-	IF NOT EXISTS (SELECT * FROM taxi WHERE placa=placataxi AND contrasenia=psword)
-	THEN RETURN 'Contraseña incorrecta';
-	END IF;
-RETURN placataxi;
-END;
-$$
-LANGUAGE plpgsql;
 /*Select a taxi*/
 CREATE OR REPLACE FUNCTION manejar_taxi(VARCHAR(15), VARCHAR(6)) RETURNS Text AS $$
 DECLARE
@@ -116,7 +100,7 @@ BEGIN
             WHERE telefonoConductor = phone AND usuario_pago = FALSE), 
         kilometros_totales_usuario AS (
             SELECT telefonoConductor, SUM(kilometros) AS kilometros_totales FROM kilometros_por_servicio 
-            WHERE telefonoConductor = phone),
+            WHERE telefonoConductor = phone)
         SELECT * FROM kilometros_totales_usuario)
 		THEN UPDATE servicio SET usuario_pago = TRUE 
         WHERE conductor = telefonoConductor AND usuario_pago = FALSE;
@@ -141,7 +125,7 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
-CREATE TRIGGER delete_usuario_deuda AFTER DELETE ON usuario FOR EACH ROW EXECUTE PROCEDURE cobrar_on_delete();
+CREATE TRIGGER delete_usuario_deuda AFTER DELETE ON usuario FOR EACH ROW EXECUTE PROCEDURE cobrarondelete();
 /*Crea una solicitud recibiendo la ubicacion del usuario y luego encuentra el taxi mas cercano*/
 CREATE OR REPLACE FUNCTION crear_solicitud() RETURNS TRIGGER AS $$
 BEGIN
@@ -166,22 +150,26 @@ CREATE TRIGGER create_solicitud AFTER INSERT ON solicitud FOR EACH ROW EXECUTE P
 /*Al crear un taxi se asocia con el usuario que lo registro en al tabla maneja*/
 CREATE OR REPLACE FUNCTION insert_taxi(VARCHAR(15),VARCHAR(6), TEXT, TEXT, TEXT, INTEGER, TEXT, DATE) RETURNS TEXT AS $$
 DECLARE
-	phone ALIAS FOR $1,
-	placa ALIAS FOR $2,
-	contrasenia ALIAS FOR $3,
-	marca ALIAS FOR $4,
-	modelo ALIAS FOR $5,
-	anio ALIAS FOR $6,
-	baul ALIAS FOR $7,
-	soat ALIAS FOR $8,
+	phone ALIAS FOR $1;
+	placa ALIAS FOR $2;
+	contrasenia ALIAS FOR $3;
+	marca ALIAS FOR $4;
+	modelo ALIAS FOR $5;
+	anio ALIAS FOR $6;
+	baul ALIAS FOR $7;
+	soat ALIAS FOR $8;
 BEGIN
 	IF EXISTS(
-		SELECT * FROM conductor WHERE telefonoconductor=phone;
+		SELECT * FROM conductor WHERE telefonoconductor=phone
 	)THEN
 		INSERT INTO taxi VALUES (placa, contrasenia, marca, modelo, anio, baul, soat, FALSE);
 		INSERT INTO maneja VALUES (placa, phone, FALSE);
 		RETURN "Taxi creado con exito";
-	END IF
+	END IF;
 END;
 $$
 LANGUAGE plpgsql;
+
+REVOKE ALL
+ON ALL TABLES IN SCHEMA public 
+FROM PUBLIC;
