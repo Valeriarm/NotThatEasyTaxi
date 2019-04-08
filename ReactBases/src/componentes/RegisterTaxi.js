@@ -92,7 +92,8 @@ const styles = theme => ({
 
   },
   submit: {
-    marginTop: theme.spacing.unit * 2,
+    marginTop: theme.spacing.unit * 5,
+    marginLeft: theme.spacing.unit * 20
   },
   cssLabel: {
     '&$cssFocused': {

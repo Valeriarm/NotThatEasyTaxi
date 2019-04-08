@@ -164,12 +164,17 @@ class PersistentDrawerLeft extends React.Component {
     this.setState({placa: e.target.value})
     console.log(e.target.value)
   }
+  onClickCustomMap = (origen, destino) => {
+    this.setState({posicionActual: origen})
+  }
+
+  
 
   render() {
 
     const { classes , theme } = this.props;
     const { open } = this.state;
-    
+    const {posicionActual, origen, destino} = this.state;   
 
     return (
       <div className={classes.root}>
@@ -241,7 +246,7 @@ class PersistentDrawerLeft extends React.Component {
           })}
         >
           <div className={classes.drawerHeader} />
-          <CustonMapDriver/>
+          <CustonMapDriver getCoordinates={this.onClickCustomMap.bind(this)}/>
           <div>
             <FormControl className={classes.form}>
               <InputLabel
@@ -269,6 +274,7 @@ class PersistentDrawerLeft extends React.Component {
               classes={{
                 underline: classes.cssUnderline,
               }}
+              value={"" + posicionActual.lat + " " + posicionActual.lng}
               >
               </Input>
             </FormControl>

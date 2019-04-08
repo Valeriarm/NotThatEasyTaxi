@@ -23,7 +23,6 @@ import { Paper, Fab } from '@material-ui/core';
 import SimpleCard from './uploadImage';
 import EditIcon from '@material-ui/icons/Edit';
 import ExitToApp from '@material-ui/icons/ExitToApp';
-import  driverPhoto from './images/user-512.png';
 import LocalTaxi from '@material-ui/icons/LocalTaxi';
 
 const drawerWidth = 240;
@@ -98,6 +97,9 @@ const styles = theme => ({
   textField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
+    '&:after': {
+      borderBottomColor: purple[500],
+    },
   },
   paper: {
     marginTop: theme.spacing.unit * 8,
@@ -123,6 +125,8 @@ const styles = theme => ({
 class PersistentDrawerLeft extends React.Component {
   state = {
     phone: this.props.location.state.phone,
+    placa: true,
+    visible: false,
   };
 
   handleDrawerOpen = () => {

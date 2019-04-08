@@ -6,7 +6,7 @@ const { check, validationResult } = require('express-validator/check');
 const pgp = require('pg-promise')(/*options*/);
 
 const connectionAdminOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
-  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
+  user: 'postgres',password: 'postgres',poolSize: 20,poolIdleTimeout: 10000};
 const db = pgp(connectionAdminOptions);
 /*
 const connectionUserOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
