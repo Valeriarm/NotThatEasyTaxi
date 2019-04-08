@@ -1,5 +1,5 @@
 /*LogIn Usuario*/
-CREATE OR REPLACE FUNCTION validarUsuario(VARCHAR(15), Text) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION validarusuario(VARCHAR(15), Text) RETURNS Text AS $$
 DECLARE
 	phone ALIAS FOR $1;
 	psword ALIAS FOR $2;
@@ -15,7 +15,7 @@ END;
 $$
 LANGUAGE plpgsql;
 /*LogIn Conductor*/
-CREATE OR REPLACE FUNCTION validarConductor(VARCHAR(15), Text) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION validarconductor(VARCHAR(15), Text) RETURNS Text AS $$
 DECLARE
 	phone ALIAS FOR $1;
 	psword ALIAS FOR $2;
@@ -30,27 +30,57 @@ RETURN phone;
 END;
 $$
 LANGUAGE plpgsql;
-/*Select a taxi*/
-CREATE OR REPLACE FUNCTION manejarTaxi(Text, VARCHAR(15)) RETURNS Text AS $$
+/*Registrar Taxi*/
+CREATE OR REPLACE FUNCTION validartaxi(VARCHAR(6), Text) RETURNS Text AS $$
 DECLARE
 	placataxi ALIAS FOR $1;
-	phone ALIAS FOR $2;
+	psword ALIAS FOR $2;
+BEGIN
+	IF NOT EXISTS (SELECT * FROM taxi WHERE placa=placataxi)
+	THEN RETURN 'Placa incorrecta';
+	END IF;
+	IF NOT EXISTS (SELECT * FROM taxi WHERE placa=placataxi AND contrasenia=psword)
+	THEN RETURN 'Contraseña incorrecta';
+	END IF;
+RETURN placataxi;
+END;
+$$
+LANGUAGE plpgsql;
+/*Select a taxi*/
+CREATE OR REPLACE FUNCTION manejartaxi(VARCHAR(15), VARCHAR(6)) RETURNS Text AS $$
+DECLARE
+	phone ALIAS FOR $1;
+	placataxi ALIAS FOR $2;
 BEGIN
 	IF NOT EXISTS (SELECT * FROM maneja WHERE taxi=placataxi)
 	THEN RETURN 'El taxi que desea manejar no esta registrado';
 	END IF;
-	IF NOT EXISTS (SELECT * FROM maneja WHERE telefonoConductor=phone AND taxi=placataxi)
+	IF NOT EXISTS (SELECT * FROM maneja WHERE telefonoconductor=phone AND taxi=placataxi)
 	THEN RETURN 'El taxi que desea manejar no esta asociado con su cuenta';
 	END IF;
-	IF NOT EXISTS (SELECT * FROM maneja INNER JOIN taxi ON taxi=placa WHERE NOT ocupado AND taxi=placataxi)
-	THEN RETURN 'El taxi que desea manejar se encuentra ocupado';
+	IF NOT EXISTS (SELECT * FROM maneja WHERE chosen AND taxi=placataxi 
+		AND telefonoconductor!=phone)
+	THEN RETURN 'El taxi que desea manejar se encuentra seleccionado por otro usuario';
 	END IF;
+	IF NOT EXISTS (
+		WITH taxis_chosen_by_user AS 
+			(SELECT count(*) AS num_taxis FROM maneja WHERE telefonoConductor=phone AND chosen)
+			SELECT * FROM taxis_chosen_by_user WHERE num_taxis > 1
+			)THEN 
+			UPDATE manejar SET chosen = FALSE WHERE taxi!=placataxi
+				AND telefonoconductor=phone;
+			UPDATE manejar SET chosen = TRUE WHERE taxi=placataxi
+				AND telefonoConductor=phone;
+		RETURN placa;
+	END IF;
+UPDATE manejar SET chosen = TRUE WHERE taxi=placataxi
+	AND telefonoConductor=phone;
 RETURN placa;
 END;
 $$
 LANGUAGE plpgsql;
 /*Redimir Kilometros Conductor*/
-CREATE OR REPLACE FUNCTION redimirKilometros(Text) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION redimirkilometros(Text) RETURNS Text AS $$
 DECLARE
 	phone ALIAS FOR $1;
 BEGIN
@@ -97,19 +127,22 @@ END;
 $$
 LANGUAGE plpgsql;
 /*No eliminar un usuario si tiene deudas*/
-CREATE OR REPLACE FUNCTION cobrarOnDelete() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION cobrarondelete() RETURNS TRIGGER AS $$
 BEGIN
     IF NOT EXISTS(
-        SELECT telefonoUsuario FROM servicio INNER JOIN usuario
-        ON telefonoUsuario = usuario WHERE telefonoUsuario=new.telefonoUsuario AND usuario_pago = FALSE
-    )THEN DELETE FROM usuario WHERE telefonoUsuario=new.telefonoUsuario;
+        SELECT telefonousuario FROM servicio INNER JOIN usuario
+        ON telefonousuario = usuario WHERE telefonoUsuario=new.telefonousuario AND usuario_pago = FALSE
+    )THEN 
+	DELETE FROM usuario WHERE telefonousuario=new.telefonoUsuario;
 	RETURN NEW;
     END IF;
+		RAISE EXCEPTION 'El usuario todavia tiene deudas pendientes'
+		USING HINT = 'Por favor pague sus servicios antes de eliminar su cuenta';
 END;
 $$
 LANGUAGE plpgsql;
-CREATE TRIGGER delete_usuario_deuda BEFORE DELETE ON usuario FOR EACH ROW EXECUTE PROCEDURE cobrarOnDelete();
-/*Seleccionar el taxi mas cercano para crear la solicitud del servicio*/
+CREATE TRIGGER delete_usuario_deuda AFTER DELETE ON usuario FOR EACH ROW EXECUTE PROCEDURE cobrarondelete();
+/*Crea una solicitud recibiendo la ubicacion del usuario y luego encuentra el taxi mas cercano*/
 CREATE OR REPLACE FUNCTION crear_solicitud() RETURNS TRIGGER AS $$
 BEGIN
 	IF EXISTS(
@@ -120,8 +153,8 @@ BEGIN
 			taxi_mas_cercano AS (SELECT taxi, MIN(st_distance) 
 							 AS distance FROM taxi_cercano 
 							 GROUP BY taxi ORDER BY distance LIMIT 1) 
-			SELECT taxi INTO TEMPORARY placa_taxi FROM taxi_mas_cercano WHERE distance < 20
-	)THEN INSERT INTO solicitud VALUES (Default, new.usuario, new.posicionUsuario, placa_taxi.taxi, TRUE);
+			SELECT taxi INTO TEMPORARY placataxi FROM taxi_mas_cercano WHERE distance < 20
+	)THEN INSERT INTO solicitud VALUES (Default, new.usuario, new.posicionusuario, placataxi.taxi, TRUE);
 	RETURN NEW;
 	END IF;
 	RAISE EXCEPTION 'No hay conductores cerca de usted'
@@ -130,4 +163,3 @@ END;
 $$
 LANGUAGE plpgsql;
 CREATE TRIGGER create_solicitud AFTER INSERT ON solicitud FOR EACH ROW EXECUTE PROCEDURE crear_solicitud();
-

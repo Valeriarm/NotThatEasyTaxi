@@ -113,6 +113,31 @@ app.get(`/drivers/:phone/:psword`, [
   })
 })
 /**
+ * Valida los Taxis recibiendo placa y contraseña
+ */
+app.get(`/taxi/:placa/:psword`, [
+  check(`placa`).isNumeric().isLength({min:15, max:15}),
+  check(`psword`).isLength({min:8})
+],(req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log({errors: errors.array()})
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const placa = req.params.placa;
+  const psword = req.params.psword;
+  console.log(placa + "-" + psword)
+  db.one(`SELECT validarconductor($1 ,$2)`, [escape(placa), escape(psword)])
+  .then(function (data) {
+    console.log(`DATA:`, data.validarconductor)
+    res.send(JSON.stringify(data.validarconductor))
+  })
+  .catch(function (error) {
+    console.log(`ERROR:`, error)
+    res.send(JSON.stringify("Credenciales invalidas"))
+  })
+})
+/**
  * Valida cuando un conductor quiera manejar un taxi recibiendo telefono del conductor
  * y placa del vehiculo
  */
