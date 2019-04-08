@@ -226,7 +226,7 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
-CREATE TRIGGER delete_usuario_deuda AFTER DELETE ON usuario FOR EACH ROW EXECUTE PROCEDURE cobrarondelete();
+CREATE TRIGGER delete_usuario_deuda AFTER DELETE ON usuario FOR EACH ROW EXECUTE PROCEDURE cobrar_on_delete();
 /*Crea una solicitud recibiendo la ubicacion del usuario y luego encuentra el taxi mas cercano*/
 CREATE OR REPLACE FUNCTION crear_solicitud() RETURNS TRIGGER AS $$
 BEGIN
