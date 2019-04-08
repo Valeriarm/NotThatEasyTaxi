@@ -12,6 +12,7 @@ import {purple, deepPurple} from '@material-ui/core/colors';
 import { InputLabel, FormControl, Input, Fab, ListItemIcon, ListItemText ,
 Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar , 
 Toolbar, withStyles, TextField, MenuItem, } from '@material-ui/core';
+import axios from 'axios'
 
 
 
@@ -157,6 +158,7 @@ class PersistentDrawerLeft extends React.Component {
   state = {
     phone: this.props.location.state.phone,
     currency: true,
+    password:true,
     placa: true,
     marca:true,
     modelo: true,
@@ -192,7 +194,28 @@ class PersistentDrawerLeft extends React.Component {
     this.setState({ [name]: event.target.value });
   };
 
+  onClickAgregar = e => {
+    const phone = this.state.phone;
+    const password = this.state.password;
+    const marca = this.state.marca;
+    const placa = this.state.placa;
+    const modelo = this.state.modelo;
+    const anio = this.state.anio;
+    const soat = this.state.soat;
+    const baul = this.state.tamanio;
 
+    axios.post(`http://localhost:5000/taxi/${phone}/${placa}/${password}/${marca}/${modelo}/${anio}/${baul}/${soat}`).then(res => {
+        const validation = res.data;
+        console.log(validation)
+        if(validation === 'Taxi creado exitosamente'){
+          alert('Taxi creado exitosamente')
+        } else if (validation === 'Error creando el taxi, por favor intentelo de nuevo'){
+          alert('Error creando el taxi, por favor intentelo de nuevo')
+        } else if (validation === phone){
+          this.props.history.push({pathname:"/SideBar/", state:{phone:this.state.phone}})
+        }
+      })
+  }
 
   render() {
 
@@ -244,19 +267,19 @@ class PersistentDrawerLeft extends React.Component {
 
           </div>
           <Divider />
-          <ListItem button onClick={e => this.onClickSideBar(e)}>
+          <ListItem button onClick={this.onClickSideBar}>
           <ListItemIcon>
           <HomeIcon/>
           </ListItemIcon>
           <ListItemText primary="Inicio" />
         </ListItem>
-        <ListItem button onClick={e => this.onClickProfileUser(e)}>
+        <ListItem button onClick={this.onClickProfileUser}>
           <ListItemIcon>
           <Person/>
           </ListItemIcon>
           <ListItemText primary="Perfil" />
         </ListItem>
-        <ListItem button  onClick = {e=>this.onClickTaxi(e)}>
+        <ListItem button  onClick = {this.onClickTaxi}>
           <ListItemIcon>
           <LocalTaxi/>
           </ListItemIcon>
@@ -308,6 +331,23 @@ class PersistentDrawerLeft extends React.Component {
               underline: classes.cssUnderline,
             }}
             onChange={this.handleChange('placa')}
+          />
+        </FormControl>
+        <FormControl >
+          <InputLabel
+            htmlFor="password"
+            classes={{
+              focused: classes.cssFocused,
+            }}
+          >
+        password          
+        </InputLabel>
+          <Input
+            id="password"
+            classes={{
+              underline: classes.cssUnderline,
+            }}
+            onChange={this.handleChange('password')}
           />
         </FormControl>
         <FormControl >
