@@ -201,7 +201,7 @@ BEGIN
             WHERE telefonoConductor = phone AND usuario_pago = FALSE), 
         kilometros_totales_usuario AS (
             SELECT telefonoConductor, SUM(kilometros) AS kilometros_totales FROM kilometros_por_servicio 
-            WHERE telefonoConductor = phone),
+            WHERE telefonoConductor = phone)
         SELECT * FROM kilometros_totales_usuario)
 		THEN UPDATE servicio SET usuario_pago = TRUE 
         WHERE conductor = telefonoConductor AND usuario_pago = FALSE;

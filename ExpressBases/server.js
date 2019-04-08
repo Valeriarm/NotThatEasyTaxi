@@ -8,55 +8,15 @@ const pgp = require('pg-promise')(/*options*/);
 const connectionAdminOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
   user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
 const db = pgp(connectionAdminOptions);
+/*
+const connectionUserOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
+  user: 'usercrud',password: 'usercrud',poolSize: 20,poolIdleTimeout: 10000};
+const dbu = pgp(connectionUserCreateOptions);
 
-const connectionUserCreateOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
-  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
-const dbcu = pgp(connectionUserCreateOptions);
-
-const connectionUserReadOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
-  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
-const dbru = pgp(connectionUserReadOptions);
-
-const connectionUserUpdateOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
-  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
-const dbuu = pgp(connectionUserUpdateOptions);
-
-const connectionUserDeleteOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
-  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
-const dbdu = pgp(connectionUserDeleteOptions);
-
-const connectionDriverCreateOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
-  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
-const dbcd = pgp(connectionDriverCreateOptions);
-
-const connectionDriverReadOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
-  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
-const dbrd = pgp(connectionDriverReadOptions);
-
-const connectionDriverUpdateOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
-  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
-const dbud = pgp(connectionDriverUpdateOptions);
-
-const connectionDriverDeleteOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
-  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
-const dbdd = pgp(connectionDriverDeleteOptions);
-
-const connectionTaxiCreateOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
-  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
-const dbct = pgp(connectionTaxiCreateOptions);
-
-const connectionTaxiReadOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
-  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
-const dbrt = pgp(connectionTaxiReadOptions);
-
-const connectionTaxiUpdateOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
-  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
-const dbut = pgp(connectionTaxiUpdateOptions);
-
-const connectionTaxiDeleteOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
-  user: 'Marthox',password: 'Marthox2299',poolSize: 20,poolIdleTimeout: 10000};
-const dbdt = pgp(connectionTaxiDeleteOptions);
-
+const connectionDriverOptions = {host: 'localhost',port: 5432,database: 'ProyectoBases',
+  user: 'drivercrud',password: 'drivercrud',poolSize: 20,poolIdleTimeout: 10000};
+const dbd = pgp(connectionUserReadOptions);
+*/
 app.use(cors())
 app.use(express.json());
 
@@ -77,10 +37,10 @@ app.get(`/users/:phone/:psword`,[
   const phone = req.params.phone;
   const psword = req.params.psword;
   console.log(phone + "-" + psword)
-  db.one(`SELECT validarusuario($1 ,$2)`, [escape(phone), escape(psword)])
+  db.one(`SELECT validar_usuario($1 ,$2)`, [escape(phone), escape(psword)])
   .then(function (data) {
-    console.log(`DATA:`, data.validarusuario)
-    res.send(JSON.stringify(data.validarusuario))
+    console.log(`DATA:`, data.validar_usuario)
+    res.send(JSON.stringify(data.validar_usuario))
   })
   .catch(function (error) {
     console.log(`ERROR:`, error)
@@ -102,10 +62,10 @@ app.get(`/drivers/:phone/:psword`, [
   const phone = req.params.phone;
   const psword = req.params.psword;
   console.log(phone + "-" + psword)
-  db.one(`SELECT validarconductor($1 ,$2)`, [escape(phone), escape(psword)])
+  db.one(`SELECT validar_conductor($1 ,$2)`, [escape(phone), escape(psword)])
   .then(function (data) {
-    console.log(`DATA:`, data.validarconductor)
-    res.send(JSON.stringify(data.validarconductor))
+    console.log(`DATA:`, data.validar_conductor)
+    res.send(JSON.stringify(data.validar_conductor))
   })
   .catch(function (error) {
     console.log(`ERROR:`, error)
@@ -127,10 +87,10 @@ app.get(`/taxi/:placa/:psword`, [
   const placa = req.params.placa;
   const psword = req.params.psword;
   console.log(placa + "-" + psword)
-  db.one(`SELECT validarconductor($1 ,$2)`, [escape(placa), escape(psword)])
+  db.one(`SELECT validar_taxi($1 ,$2)`, [escape(placa), escape(psword)])
   .then(function (data) {
-    console.log(`DATA:`, data.validarconductor)
-    res.send(JSON.stringify(data.validarconductor))
+    console.log(`DATA:`, data.validar_taxi)
+    res.send(JSON.stringify(data.validar_taxi))
   })
   .catch(function (error) {
     console.log(`ERROR:`, error)
@@ -153,10 +113,10 @@ app.get(`/drivers/taxi/:phone/:placa`,[
   const phone = req.params.phone;
   const placa = req.params.placa
   console.log(phone + "-" + placa)
-  db.one(`SELECT manejarTaxi($1 ,$2)`, [escape(phone), escape(placa)])
+  db.one(`SELECT manejar_taxi($1 ,$2)`, [escape(phone), escape(placa)])
   .then(function (data) {
-    console.log(`DATA:`, data.manejarTaxi)
-    res.send(JSON.stringify(data.manejarTaxi))
+    console.log(`DATA:`, data.manejar_taxi)
+    res.send(JSON.stringify(data.manejar_taxi))
   })
   .catch(function (error) {
     console.log(`ERROR:`, error)
@@ -271,8 +231,18 @@ app.post(`/drivers/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta`,[
  * Crea un Taxi recibiendo, placa, marca, modelo, anio
  * baul, soat y, ocupado
  */
-app.post('/taxi/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocupado', [
-  check('placa').isAlphanumeric().isLength({min:6,max:6}),
+app.post('/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocupado', [
+  check('phone').isNumeric().isLength({min:15, max:15}),
+  check('placa').isAlphanumeric().isLength({min:6,max:6}).custom(value=>{
+    value = value.split('');
+    const letters = /^[A-Z]+$/;
+    if(!value[0].match(letters) || !value[1].match(letters) || !value[2].match(letters)){
+      return false;
+    }
+    if(isNan(value[3]) || isNan(value[4]) || isNan(value[5])){
+      return false;
+    }
+  }),
   check('contrasenia').isLength({min:8}),
   check('marca').isAlphanumeric(),
   check('modelo').isAlphanumeric(),
@@ -296,6 +266,7 @@ app.post('/taxi/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocupado', 
       console.log({errors: errors.array()})
       return res.status(422).json({ errors: errors.array() });
     }
+  const phone = req.params.phone;
   const placa = req.params.placa;
   const marca = req.params.marca;
   const modelo = req.params.modelo;
@@ -304,9 +275,9 @@ app.post('/taxi/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocupado', 
   const soat = req.params.soat;
   const ocupado = req.params.ocupado;
   const contrasenia = req.params.contrasenia;
-  db.none('INSERT INTO taxi VALUES($1,$2,$3,$4,$5,$6,$7,$8)',
-    [escape(placa), escape(contrasenia),escape(marca), escape(modelo), 
-      escape(anio), escape(baul), escape(soat), 
+  db.none('SELECT insert_taxi($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+    [escape(phone), escape(placa), escape(contrasenia),escape(marca), 
+      escape(modelo), escape(anio), escape(baul), escape(soat), 
       escape(ocupado)])
     .then((data)=>{
       console.log(`DATA: `, data)
@@ -339,6 +310,36 @@ app.post(`/users/favorites/:phone/:lat/:lng`,
     .then((data)=>{
       console.log(`DATA: `, data)
       res.send(`Agergado a favoritos`)
+    })
+    .catch((error)=>{
+      console.log(`ERROR`, error)
+      res.send(`Error, por favor intentelo de nuevo`)
+    })
+  }
+)
+
+/**
+ * Crea una Solicitud recibiendo, telefono del usuario y coordenadas del usuario
+ */
+app.post(`/users/favorites/:phone/:lat/:lng`, 
+  [
+    check(`phone`).isNumeric().isLength({min: 15, max: 15}),
+    check(`lat`).isNumeric(),
+    check(`lng`).isNumeric()
+  ], (req,res)=>{
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log({errors: errors.array()})
+      return res.status(422).json({ errors: errors.array() });
+    }
+    const phone = req.params.phone;
+    const lat = req.params.lat;
+    const lng = req.params.lng;
+    db.none(`INSERT INTO solicitud VALUES ($1, ST_GeomFromText('POINT($2 $3)', 4326))`,
+    [escape(phone), escape(lat), escape(lng)])
+    .then((data)=>{
+      console.log(`DATA: `, data)
+      res.send(`Solicitud de servicio aceptada`)
     })
     .catch((error)=>{
       console.log(`ERROR`, error)
@@ -459,10 +460,10 @@ app.put(`/taxi/:placa/:soat`, [
 /* OTRA FORMA DE OBTENER LOS DATOS
 app.get(`/users/prueba`, (req, res) => {
   const {username, password}=req.query
-  db.one(`SELECT validarUsuario($1 ,$2)`, [username, password])
+  db.one(`SELECT validar_Usuario($1 ,$2)`, [username, password])
   .then(function (data) {
-    console.log(`DATA:`, data.validarusuario)
-    res.send(JSON.stringify(data.validarusuario))
+    console.log(`DATA:`, data.validar_usuario)
+    res.send(JSON.stringify(data.validar_usuario))
   })
   .catch(function (error) {
     console.log(`ERROR:`, error)
