@@ -347,6 +347,36 @@ app.post(`/users/favorites/:phone/:lat/:lng`,
   }
 )
 
+/**
+ * Crea una Solicitud recibiendo, telefono del usuario y coordenadas del usuario
+ */
+app.post(`/users/favorites/:phone/:lat/:lng`, 
+  [
+    check(`phone`).isNumeric().isLength({min: 15, max: 15}),
+    check(`lat`).isNumeric(),
+    check(`lng`).isNumeric()
+  ], (req,res)=>{
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log({errors: errors.array()})
+      return res.status(422).json({ errors: errors.array() });
+    }
+    const phone = req.params.phone;
+    const lat = req.params.lat;
+    const lng = req.params.lng;
+    db.none(`INSERT INTO solicitud VALUES ($1, ST_GeomFromText('POINT($2 $3)', 4326))`,
+    [escape(phone), escape(lat), escape(lng)])
+    .then((data)=>{
+      console.log(`DATA: `, data)
+      res.send(`Solicitud de servicio aceptada`)
+    })
+    .catch((error)=>{
+      console.log(`ERROR`, error)
+      res.send(`Error, por favor intentelo de nuevo`)
+    })
+  }
+)
+
 // PUT REQUESTS
 
 /**

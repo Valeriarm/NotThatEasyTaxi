@@ -52,21 +52,21 @@ PRIMARY KEY (placa)
 );
 
 CREATE TABLE servicio(
-idServicio SERIAL NOT NULL,
+idservicio SERIAL NOT NULL,
 usuario TEXT NOT NULL,
 conductor TEXT NOT NULL,
 taxi VARCHAR(6) NOT NULL,
-calificacionUsuario INTEGER,
-calificacionConductor INTEGER,
-puntoPartida GEOMETRY(POINT) NOT NULL,
-puntoLlegada GEOMETRY(POINT) NOT NULL,
-horaInicio TIMESTAMP NOT NULL,
-horaFin TIMESTAMP NOT NULL,
+calificacionusuario INTEGER,
+calificacionconductor INTEGER,
+puntopartida GEOMETRY(POINT) NOT NULL,
+puntollegada GEOMETRY(POINT) NOT NULL,
+horainicio TIMESTAMP NOT NULL,
+horafin TIMESTAMP NOT NULL,
 usuario_pago BOOLEAN NOT NULL,
 conductor_pago BOOLEAN NOT NULL,
-PRIMARY KEY (idServicio),
-FOREIGN KEY (usuario) REFERENCES Usuario(telefonoUsuario) ON DELETE CASCADE ON UPDATE CASCADE,
-FOREIGN KEY (conductor) REFERENCES Conductor(telefonoConductor) ON DELETE CASCADE ON UPDATE CASCADE,
+PRIMARY KEY (idservicio),
+FOREIGN KEY (usuario) REFERENCES usuario(telefonousuario) ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (conductor) REFERENCES Conductor(telefonoconductor) ON DELETE CASCADE ON UPDATE CASCADE,
 FOREIGN KEY (taxi) REFERENCES Taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
