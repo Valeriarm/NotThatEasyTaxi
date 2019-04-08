@@ -146,6 +146,31 @@ app.get(`/drivers/taxi/request/:placa`,[
     res.send(JSON.stringify("Credenciales invalidas"))
   })
 })
+
+
+/**
+ * Obtiene los datos de un conductor para cargarlos en su perfil
+ */
+app.get(`/drivers/:phone/`,[
+  check(`phone`).isNumeric().isLength({min:15, max:15}),
+],(req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log({errors: errors.array()})
+    return res.send(JSON.stringify("Credenciales invalidas"));
+  }
+  const phone = req.params.phone;
+  db.one(`SELECT * FROM conductor WHERE telefonoconductor= $1`, [escape(phone)])
+  .then(function (data) {
+    console.log(data )
+    res.send(JSON.stringify(data))
+  })
+  .catch(function (error) {
+    console.log(`ERROR:`, error)
+    res.send(JSON.stringify("Credenciales invalidas"))
+  })
+})
+
 // POST REQUESTS
 
 /**
@@ -442,6 +467,7 @@ app.put(`/drivers/:phone/:psword/:nombre/:apellido/:mail/:cuenta`,[
         res.send(`Error actualizando el conductor, por favor intentelo de nuevo`)
       })
     })
+
 /**
  * Actualiza un Taxi recibiendo, placa, marca, modelo, anio
  * baul, soat y, ocupado

@@ -24,6 +24,7 @@ import SimpleCard from './uploadImage';
 import EditIcon from '@material-ui/icons/Edit';
 import ExitToApp from '@material-ui/icons/ExitToApp';
 import LocalTaxi from '@material-ui/icons/LocalTaxi';
+import Check from '@material-ui/icons/Check';
 
 const drawerWidth = 240;
 
@@ -120,13 +121,15 @@ const styles = theme => ({
 });
 
 
-
-
 class PersistentDrawerLeft extends React.Component {
   state = {
     phone: this.props.location.state.phone,
+    nombre: this.props.location.state.nombre,
+    apellido: this.props.location.state.apellido,
+    numcuenta: this.props.location.state.numcuenta,
+    email: this.props.location.state.email,
     placa: true,
-    visible: false,
+    lock: true,
   };
 
   handleDrawerOpen = () => {
@@ -136,12 +139,6 @@ class PersistentDrawerLeft extends React.Component {
   handleDrawerClose = () => {
     this.setState({ open: false });
   };
-
-  handleClick = () => {
-    this.console.log("funciona");
-    
-  };
-
   onClickProfileUser = (e) => {
     e.preventDefault()
       this.props.history.push({pathname:"/ProfileDriver/", state:{phone: this.state.phone}})
@@ -160,7 +157,7 @@ class PersistentDrawerLeft extends React.Component {
   render() {
 
     const { classes , theme } = this.props;
-    const { open } = this.state;
+    const { open , lock} = this.state;
 
     return (
       <div className={classes.root}>
@@ -234,7 +231,7 @@ class PersistentDrawerLeft extends React.Component {
         <div className={classes.drawerHeader} />
           <Paper className={classes.paper}>
             <div>
-              <SimpleCard/>
+             
             </div>
             <div>
             <TextField
@@ -243,8 +240,9 @@ class PersistentDrawerLeft extends React.Component {
             className={classes.textField}
             margin="normal"
             InputProps={{
-                readOnly: true,
+                readOnly: this.state.lock,
             }}
+            defaultValue={this.state.nombre}
             />
             <TextField
             id="standard-error"
@@ -252,8 +250,9 @@ class PersistentDrawerLeft extends React.Component {
             className={classes.textField}
             margin="normal"
             InputProps={{
-                readOnly: true,
+                readOnly: this.state.lock,
             }}
+            defaultValue={this.state.apellido}
             />
             <TextField
             id="standard-error"
@@ -263,6 +262,7 @@ class PersistentDrawerLeft extends React.Component {
             InputProps={{
                 readOnly: true,
             }}
+            defaultValue={this.state.phone}
             />
             </div>
             <div>
@@ -272,31 +272,25 @@ class PersistentDrawerLeft extends React.Component {
             className={classes.textField}
             margin="normal"
             InputProps={{
-                readOnly: true,
+                readOnly: this.state.lock,
             }}
+            defaultValue={this.state.numcuenta}
             />
             <TextField
             id="standard-error"
             label="Email"
             className={classes.textField}
+            defaultValue={this.state.email}
             margin="normal"
             InputProps={{
                 readOnly: true,
             }}
-            />
-            <TextField
-            id="standard-error"
-            label="Fecha Nacimiento"
-            className={classes.textField}
-            margin="normal"
-            InputProps={{
-                readOnly: true,
-            }}
+            
             />
             </div>
             <div>
-            <Fab color="primary" aria-label="Edit" className={classes.fab}>
-                <EditIcon/>
+            <Fab color="primary" aria-label="Edit" className={classes.fab} onClick= {() =>this.setState({lock: !lock})}>
+                {this.state.lock ? <EditIcon/> : <Check/> }
             </Fab>
             </div>
           </Paper>
