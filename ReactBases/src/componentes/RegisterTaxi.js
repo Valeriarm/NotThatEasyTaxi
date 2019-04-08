@@ -85,7 +85,7 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit*50,
   },
   form: {
-    width: '100%', // Fix IE 11 issue.
+    width: '100%',
     marginTop: theme.spacing.unit*2,
     marginLeft: theme.spacing.unit*15,
     display: 'block',
@@ -129,8 +129,8 @@ const styles = theme => ({
 class PersistentDrawerLeft extends React.Component {
   state = {
     phone: this.props.location.state.phone,
-    origen: {lat:true, lng:true},
-    destino: {lat:true, lng:true},
+    placa: true,
+    codVerificacion: true,
   };
 
   handleDrawerOpen = () => {
@@ -231,6 +231,46 @@ class PersistentDrawerLeft extends React.Component {
           })}
         >
           <div className={classes.drawerHeader} />
+          <FormControl className={classes.form}>
+            <InputLabel
+              htmlFor="Placa"
+              classes={{
+                focused: classes.cssFocused,
+              }}
+            >
+            Placa
+            </InputLabel>
+            <Input
+            id="Placa"
+            classes={{
+              underline: classes.cssUnderline,
+            }}
+            >
+            </Input>
+          </FormControl>
+          <FormControl className={classes.form}>
+            <InputLabel
+              htmlFor="Codigo Verificacion"
+              classes={{
+                focused: classes.cssFocused,
+              }}
+            >
+            Codigo de Verificacion
+            </InputLabel>
+            <Input
+            id="Codigo Verificacion"
+            classes={{
+              underline: classes.cssUnderline,
+            }}
+            >
+            </Input>
+          </FormControl>
+          <Fab
+          type="submit" variant="extended" color="primary"
+          className={classes.submit}
+          >         
+            Registrar
+          </Fab>
                   
         </main>
       </div>
