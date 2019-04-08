@@ -73,6 +73,8 @@ class SignIn extends React.Component {
           alert('Telefono incorrecto')
         } else if (validation === 'Contraseña incorrecta'){
           alert('Contraseña incorrecta')
+        } else if (validation === 'Credenciales invalidas'){
+          alert('Por favor ingrese credenciales validas')
         } else if (validation === phone){
           this.props.history.push({pathname:"/SideBar/", state:{phone:this.state.phone}})
         }
@@ -85,7 +87,9 @@ class SignIn extends React.Component {
           alert('Telefono incorrecto')
         } else if (validation === 'Contraseña incorrecta'){
           alert('Contraseña incorrecta')
-        } else if (validation === phone){
+        } else if (validation === 'Credenciales invalidas'){
+          alert('Por favor ingrese credenciales validas')
+        }else if (validation === phone){
           this.props.history.push({pathname:"/SideBarDriver/", state:{phone:this.state.phone}})
         }
       })
