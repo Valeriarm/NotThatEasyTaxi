@@ -169,7 +169,16 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
-
-REVOKE ALL
-ON ALL TABLES IN SCHEMA public 
-FROM PUBLIC;
+/*Buscar por solicitudes activas*/
+CREATE OR REPLACE FUNCTION buscar_solicitudes(VARCHAR(6)) RETURNS Text AS $$
+DECLARE
+	placa ALIAS FOR $1;
+BEGIN
+	IF EXISTS (
+		SELECT * FROM solicitud WHERE taxi=placa AND activa=TRUE
+	)THEN RETURN "Solicitud encontrado";
+	END IF;
+	RETURN "Buscando Solicitudes";
+END;
+$$
+LANGUAGE plpgsql;

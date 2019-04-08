@@ -32,7 +32,7 @@ app.get(`/users/:phone/:psword`,[
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log({errors: errors.array()})
-    return res.status(422).json({ errors: errors.array() });
+    return res.send(JSON.stringify("Credenciales invalidas"));
   }
   const phone = req.params.phone;
   const psword = req.params.psword;
@@ -57,7 +57,7 @@ app.get(`/drivers/:phone/:psword`, [
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log({errors: errors.array()})
-    return res.status(422).json({ errors: errors.array() });
+    return res.send(JSON.stringify("Credenciales invalidas"));
   }
   const phone = req.params.phone;
   const psword = req.params.psword;
@@ -108,7 +108,7 @@ app.get(`/drivers/taxi/:phone/:placa`,[
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log({errors: errors.array()})
-    return res.status(422).json({ errors: errors.array() });
+    return res.send(JSON.stringify("Credenciales invalidas"));
   }
   const phone = req.params.phone;
   const placa = req.params.placa
@@ -123,7 +123,29 @@ app.get(`/drivers/taxi/:phone/:placa`,[
     res.send(JSON.stringify("Credenciales invalidas"))
   })
 })
-
+/**
+ * Busca por solicitudes activas
+ */
+app.get(`/drivers/taxi/request/:placa`,[
+  check(`placa`).isAlphanumeric().isLength({min:6, max:6})
+], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log({errors: errors.array()})
+    return res.send(JSON.stringify("Credenciales invalidas"));
+  }
+  const placa = req.params.placa
+  console.log(phone + "-" + placa)
+  db.one(`SELECT manejar_taxi($1)`, [escape(placa)])
+  .then(function (data) {
+    console.log(`DATA:`, data.manejar_taxi)
+    res.send(JSON.stringify(data.manejar_taxi))
+  })
+  .catch(function (error) {
+    console.log(`ERROR:`, error)
+    res.send(JSON.stringify("Credenciales invalidas"))
+  })
+})
 // POST REQUESTS
 
 /**
@@ -321,7 +343,7 @@ app.post(`/users/favorites/:phone/:lat/:lng`,
 /**
  * Crea una Solicitud recibiendo, telefono del usuario y coordenadas del usuario
  */
-app.post(`/users/favorites/:phone/:lat/:lng`, 
+app.post(`/users/service/:phone/:lat/:lng`, 
   [
     check(`phone`).isNumeric().isLength({min: 15, max: 15}),
     check(`lat`).isNumeric(),
