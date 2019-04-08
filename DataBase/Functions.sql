@@ -150,22 +150,26 @@ CREATE TRIGGER create_solicitud AFTER INSERT ON solicitud FOR EACH ROW EXECUTE P
 /*Al crear un taxi se asocia con el usuario que lo registro en al tabla maneja*/
 CREATE OR REPLACE FUNCTION insert_taxi(VARCHAR(15),VARCHAR(6), TEXT, TEXT, TEXT, INTEGER, TEXT, DATE) RETURNS TEXT AS $$
 DECLARE
-	phone ALIAS FOR $1,
-	placa ALIAS FOR $2,
-	contrasenia ALIAS FOR $3,
-	marca ALIAS FOR $4,
-	modelo ALIAS FOR $5,
-	anio ALIAS FOR $6,
-	baul ALIAS FOR $7,
-	soat ALIAS FOR $8,
+	phone ALIAS FOR $1;
+	placa ALIAS FOR $2;
+	contrasenia ALIAS FOR $3;
+	marca ALIAS FOR $4;
+	modelo ALIAS FOR $5;
+	anio ALIAS FOR $6;
+	baul ALIAS FOR $7;
+	soat ALIAS FOR $8;
 BEGIN
 	IF EXISTS(
-		SELECT * FROM conductor WHERE telefonoconductor=phone;
+		SELECT * FROM conductor WHERE telefonoconductor=phone
 	)THEN
 		INSERT INTO taxi VALUES (placa, contrasenia, marca, modelo, anio, baul, soat, FALSE);
 		INSERT INTO maneja VALUES (placa, phone, FALSE);
 		RETURN "Taxi creado con exito";
-	END IF
+	END IF;
 END;
 $$
 LANGUAGE plpgsql;
+
+REVOKE ALL
+ON ALL TABLES IN SCHEMA public 
+FROM PUBLIC;
