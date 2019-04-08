@@ -11,32 +11,32 @@ CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TABLE usuario(
-telefonoUsuario VARCHAR(15) NOT NULL,
+telefonousuario VARCHAR(15) NOT NULL,
 contrasenia TEXT NOT NULL,
-nombreUsuario TEXT NOT NULL,
-apellidoUsuario TEXT NOT NULL,
-fechaNacimiento DATE NOT NULL,
+nombreusuario TEXT NOT NULL,
+apellidousuario TEXT NOT NULL,
+fechanacimiento DATE NOT NULL,
 email TEXT NOT NULL,
-numTarjeta VARCHAR (30) NOT NULL,
-PRIMARY KEY (telefonoUsuario)
+numtarjeta VARCHAR (30) NOT NULL,
+PRIMARY KEY (telefonousuario)
 );
 
 CREATE TABLE origenesfav(
 origen GEOMETRY(POINT) NOT NULL,
-telefonoUsuario TEXT NOT NULL,
-PRIMARY KEY (origen, telefonoUsuario),
-FOREIGN KEY (telefonoUsuario) REFERENCES Usuario(telefonoUsuario) ON DELETE CASCADE ON UPDATE CASCADE
+telefonousuario TEXT NOT NULL,
+PRIMARY KEY (origen, telefonousuario),
+FOREIGN KEY (telefonousuario) REFERENCES Usuario(telefonousuario) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE conductor(
-telefonoConductor VARCHAR(15) NOT NULL,
+telefonoconductor VARCHAR(15) NOT NULL,
 contrasenia TEXT NOT NULL,
-nombreConductor TEXT NOT NULL,
-apellidoConductor TEXT NOT NULL,
-fechaNacimiento DATE NOT NULL,
+nombreconductor TEXT NOT NULL,
+apellidoconductor TEXT NOT NULL,
+fechanacimiento DATE NOT NULL,
 email TEXT NOT NULL,
-numCuenta VARCHAR (30) NOT NULL,
-PRIMARY KEY (telefonoConductor)
+numcuenta VARCHAR (30) NOT NULL,
+PRIMARY KEY (telefonoconductor)
 );
 
 CREATE TABLE taxi(
@@ -52,33 +52,33 @@ PRIMARY KEY (placa)
 );
 
 CREATE TABLE servicio(
-idServicio SERIAL NOT NULL,
+idservicio SERIAL NOT NULL,
 usuario TEXT NOT NULL,
 conductor TEXT NOT NULL,
 taxi VARCHAR(6) NOT NULL,
-calificacionUsuario INTEGER,
-calificacionConductor INTEGER,
-puntoPartida GEOMETRY(POINT) NOT NULL,
-puntoLlegada GEOMETRY(POINT) NOT NULL,
-horaInicio TIMESTAMP NOT NULL,
-horaFin TIMESTAMP NOT NULL,
+calificacionusuario INTEGER,
+calificacionconductor INTEGER,
+puntopartida GEOMETRY(POINT) NOT NULL,
+puntollegada GEOMETRY(POINT) NOT NULL,
+horainicio TIMESTAMP NOT NULL,
+horafin TIMESTAMP NOT NULL,
 usuario_pago BOOLEAN NOT NULL,
 conductor_pago BOOLEAN NOT NULL,
-PRIMARY KEY (idServicio),
-FOREIGN KEY (usuario) REFERENCES Usuario(telefonoUsuario) ON DELETE CASCADE ON UPDATE CASCADE,
-FOREIGN KEY (conductor) REFERENCES Conductor(telefonoConductor) ON DELETE CASCADE ON UPDATE CASCADE,
-FOREIGN KEY (taxi) REFERENCES Taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE
+PRIMARY KEY (idservicio),
+FOREIGN KEY (usuario) REFERENCES usuario(telefonousuario) ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (conductor) REFERENCES Conductor(telefonoconductor) ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (taxi) REFERENCES taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE solicitud(
 idsolicitud SERIAL NOT NULL,
 usuario TEXT NOT NULL,
-posicionUsuario GEOMETRY(POINT) NOT NULL,
+posicionusuario GEOMETRY(POINT) NOT NULL,
 taxi VARCHAR(6) NOT NULL,
 activa BOOLEAN NOT NULL,
 PRIMARY KEY (idsolicitud),
-FOREIGN KEY (usuario) REFERENCES Usuario(telefonoUsuario) ON DELETE CASCADE ON UPDATE CASCADE,
-FOREIGN KEY (taxi) REFERENCES Taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE
+FOREIGN KEY (usuario) REFERENCES Usuario(telefonousuario) ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (taxi) REFERENCES taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE maneja(
@@ -86,15 +86,15 @@ taxi VARCHAR(6) NOT NULL,
 conductor VARCHAR(30) NOT NULL,
 chosen BOOLEAN NOT NULL,
 PRIMARY KEY (taxi, conductor),
-FOREIGN KEY (taxi) REFERENCES Taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE,
-FOREIGN KEY (conductor) REFERENCES Conductor(telefonoConductor) ON DELETE CASCADE ON UPDATE CASCADE
+FOREIGN KEY (taxi) REFERENCES taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (conductor) REFERENCES conductor(telefonoconductor) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE reporte(
-idReporte SERIAL NOT NULL,
+idreporte SERIAL NOT NULL,
 taxi VARCHAR(6) NOT NULL,
-horaActual TIMESTAMP NOT NULL,
+horaactual TIMESTAMP NOT NULL,
 coordenada GEOMETRY(POINT) NOT NULL,
-PRIMARY KEY (idReporte),
-FOREIGN KEY (taxi) REFERENCES Taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE
+PRIMARY KEY (idreporte),
+FOREIGN KEY (taxi) REFERENCES taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE
 );

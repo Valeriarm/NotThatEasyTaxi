@@ -231,13 +231,13 @@ class PersistentDrawerLeft extends React.Component {
 
           </div>
           <Divider />
-          <ListItem button onClick={e => this.onClickSideBar(e)}>
+          <ListItem button onClick={this.onClickSideBar}>
           <ListItemIcon>
           <HomeIcon/>
           </ListItemIcon>
           <ListItemText primary="Inicio" />
         </ListItem>
-        <ListItem button onClick={e => this.onClickProfileUser(e)}>
+        <ListItem button onClick={this.onClickProfileUser}>
           <ListItemIcon>
           <Person/>
           </ListItemIcon>

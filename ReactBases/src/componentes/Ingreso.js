@@ -50,18 +50,11 @@ class SignIn extends React.Component {
     phone: true,
     password: true,
   };
-
-  onChangePhone = (e) =>{
-    this.setState({phone:e.target.value})
-    console.log(e.target.value);
-    console.log(this.state.type)
+  onHandleChange = name => event => {
+    this.setState({[name]:event.target.value});
+    console.log(event.target.value)
+    console.log(this.state)
   }
-  
-  onChangePassword = (e) =>{
-    this.setState({password:e.target.value})
-    console.log(e.target.value);
-  }
-
   onClickIngresar = (e) => {
     var phone = this.state.phone;
     if(this.state.phone === ""){
@@ -98,7 +91,6 @@ class SignIn extends React.Component {
       })
     }
   }
-
   onClickCrearCuenta = (e) => {
     e.preventDefault()
     if(this.state.type === 'User'){
@@ -109,10 +101,8 @@ class SignIn extends React.Component {
       alert("Unknown Error")
     }
   }
-
   render(){
     const { classes } = this.props;
-
     return (
       <main className={classes.main}>
         <CssBaseline />
@@ -126,21 +116,21 @@ class SignIn extends React.Component {
           <form className={classes.form}>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="phone">Phone</InputLabel>
-              <Input id="phone" name="phone" onChange={e => this.onChangePhone(e)}/>
+              <Input id="phone" name="phone" onChange={this.onHandleChange('phone')}/>
             </FormControl>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="password">Contrasena</InputLabel>
-              <Input name="password" type="password" id="password" onChange={e => this.onChangePassword(e)}/>
+              <Input name="password" type="password" id="password" onChange={this.onHandleChange('password')}/>
             </FormControl>
             
             <Button
               type="submit" fullWidth variant="contained" color="primary"
-              className={classes.submit} onClick={e => this.onClickIngresar(e)}>
+              className={classes.submit} onClick={this.onClickIngresar}>
               Ingresar
             </Button>
           
             <Button type="submit" fullWidth variant="contained" color="primary"
-              className={classes.submit} onClick={e => this.onClickCrearCuenta(e)}>
+              className={classes.submit} onClick={this.onClickCrearCuenta}>
               Crear Cuenta
             </Button>
           </form>

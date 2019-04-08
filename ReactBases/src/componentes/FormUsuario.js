@@ -44,19 +44,16 @@ const styles = theme => ({
   submit: {
     marginTop: theme.spacing.unit * 2,
   },
-
   textField:{
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
     width: 200,
   }
 });
-
-
 class FormUsuario extends React.Component {
   state={
     type:this.props.location.state.type,
-    telefono:true,
+    phone:true,
     password:true,
     nombre:true,
     apellido:true,
@@ -65,41 +62,12 @@ class FormUsuario extends React.Component {
     numtarjeta:true,
     numcuenta:true,
   } 
-  onChangetelefono(e){
-    this.setState({telefono:e.target.value});
-    console.log(e.target.value)
-  }
-  onChangecontrasenia(e){
-    this.setState({password:e.target.value});
-    console.log(e.target.value)
-  }
-  onChangenombre(e){
-    this.setState({nombre:e.target.value});
-    console.log(e.target.value)
-  }
-  onChangeapellido(e){
-    this.setState({apellido:e.target.value});
-    console.log(e.target.value)
-  }
-  onChangefecha(e){
-    this.setState({fecha:e.target.value});
-    console.log(e.target.value)
-  }
-  onChangeemail(e){
-    this.setState({email:e.target.value});
-    console.log(e.target.value)
-  }
-  onChangenumtarjeta(e){
-    this.setState({numtarjeta:e.target.value});
-    console.log(e.target.value)
-  }
-  onChangenumcuenta(e){
-    this.setState({numcuenta:e.target.value});
-    console.log(e.target.value)
+  onHandleChange = name => event => {
+    this.setState({[name]: event.target.value})
   }
   onClickRegistrar = (e) => {
     e.preventDefault()
-    const telefono = this.state.telefono;
+    const phone = this.state.phone;
     const password = this.state.password;
     const nombre = this.state.nombre;
     const apellido = this.state.apellido;
@@ -108,7 +76,7 @@ class FormUsuario extends React.Component {
     const numtarjeta = this.state.numtarjeta;
     const numcuenta = this.state.numcuenta;
     if (this.state.type === 'User'){
-      axios.post(`http://localhost:5000/users/${telefono}/${password}/${nombre}/${apellido}/${fecha}/${email}/${numtarjeta}`).then(res => {
+      axios.post(`http://localhost:5000/users/${phone}/${password}/${nombre}/${apellido}/${fecha}/${email}/${numtarjeta}`).then(res => {
         const persons = res.data;
         console.log(persons)
         if(persons === 'Usuario creado exitosamente'){
@@ -118,7 +86,7 @@ class FormUsuario extends React.Component {
         }
       })
     } else if (this.state.type === 'Driver'){
-      axios.post(`http://localhost:5000/drivers/${telefono}/${password}/${nombre}/${apellido}/${fecha}/${email}/${numcuenta}`).then(res => {
+      axios.post(`http://localhost:5000/drivers/${phone}/${password}/${nombre}/${apellido}/${fecha}/${email}/${numcuenta}`).then(res => {
         const persons = res.data;
         console.log(persons)
         if(persons === 'Conductor creado exitosamente'){
@@ -155,7 +123,7 @@ class FormUsuario extends React.Component {
           </InputLabel>
           <Input
             id="celular"
-            onChange={e => {this.onChangetelefono(e)}}
+            onChange={this.onHandleChange('phone')}
             classes={{
               underline: classes.cssUnderline,
             }}
@@ -173,7 +141,7 @@ class FormUsuario extends React.Component {
           </InputLabel>
           <Input
             id="Nombre"
-            onChange={e => {this.onChangenombre(e)}}
+            onChange={this.onHandleChange('nombre')}
             classes={{
               underline: classes.cssUnderline,
             }}
@@ -191,7 +159,7 @@ class FormUsuario extends React.Component {
           </InputLabel>
           <Input
             id="Apellido"
-            onChange={e => {this.onChangeapellido(e)}}
+            onChange={this.onHandleChange('apellido')}
             classes={{
               underline: classes.cssUnderline,
             }}
@@ -209,7 +177,7 @@ class FormUsuario extends React.Component {
           </InputLabel>
           <Input
             id="email"
-            onChange={e => {this.onChangeemail(e)}}
+            onChange={this.onHandleChange('email')}
             classes={{
               underline: classes.cssUnderline,
             }}
@@ -229,7 +197,7 @@ class FormUsuario extends React.Component {
             </InputLabel>
             <Input
               id="cuenta"
-              onChange={e => {this.onChangenumcuenta(e)}}
+              onChange={this.onHandleChange('numcuenta')}
               classes={{
                 underline: classes.cssUnderline,
               }}
@@ -247,7 +215,7 @@ class FormUsuario extends React.Component {
             </InputLabel>
             <Input
               id="tarjeta"
-              onChange={e => {this.onChangenumtarjeta(e)}}
+              onChange={this.onHandleChange('numtarjeta')}
               classes={{
                 underline: classes.cssUnderline,
               }}
@@ -266,7 +234,7 @@ class FormUsuario extends React.Component {
               fullWidth
               id="Birthday"
               type="date"
-              onChange={e => {this.onChangefecha(e)}}
+              onChange={this.onHandleChange('fecha')}
               classes={{
                 underline: classes.cssUnderline,
               }}
@@ -275,7 +243,7 @@ class FormUsuario extends React.Component {
         </FormControl>
         <Fab
           type="submit" variant="extended" color="primary"
-          className={classes.submit} onClick={e=>this.onClickRegistrar(e)}>
+          className={classes.submit} onClick={this.onClickRegistrar}>
           <NavigationIcon/>
           Registrar
         </Fab>

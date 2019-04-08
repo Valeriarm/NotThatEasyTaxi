@@ -1,5 +1,5 @@
 /*LogIn Usuario*/
-CREATE OR REPLACE FUNCTION validarusuario(VARCHAR(15), Text) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION validar_usuario(VARCHAR(15), Text) RETURNS Text AS $$
 DECLARE
 	phone ALIAS FOR $1;
 	psword ALIAS FOR $2;
@@ -15,7 +15,7 @@ END;
 $$
 LANGUAGE plpgsql;
 /*LogIn Conductor*/
-CREATE OR REPLACE FUNCTION validarconductor(VARCHAR(15), Text) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION validar_conductor(VARCHAR(15), Text) RETURNS Text AS $$
 DECLARE
 	phone ALIAS FOR $1;
 	psword ALIAS FOR $2;
@@ -31,7 +31,7 @@ END;
 $$
 LANGUAGE plpgsql;
 /*Registrar Taxi*/
-CREATE OR REPLACE FUNCTION validartaxi(VARCHAR(6), Text) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION validar_taxi(VARCHAR(6), Text) RETURNS Text AS $$
 DECLARE
 	placataxi ALIAS FOR $1;
 	psword ALIAS FOR $2;
@@ -47,7 +47,7 @@ END;
 $$
 LANGUAGE plpgsql;
 /*Select a taxi*/
-CREATE OR REPLACE FUNCTION manejartaxi(VARCHAR(15), VARCHAR(6)) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION manejar_taxi(VARCHAR(15), VARCHAR(6)) RETURNS Text AS $$
 DECLARE
 	phone ALIAS FOR $1;
 	placataxi ALIAS FOR $2;
@@ -80,7 +80,7 @@ END;
 $$
 LANGUAGE plpgsql;
 /*Redimir Kilometros Conductor*/
-CREATE OR REPLACE FUNCTION redimirkilometros(Text) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION redimir_kilometros(Text) RETURNS Text AS $$
 DECLARE
 	phone ALIAS FOR $1;
 BEGIN
@@ -105,7 +105,7 @@ END;
 $$
 LANGUAGE plpgsql;
 /*Paga Kilometros Usuario*/
-CREATE OR REPLACE FUNCTION pagarkilometros(Text) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION pagar_kilometros(Text) RETURNS Text AS $$
 DECLARE
 	phone ALIAS FOR $1;
 BEGIN
@@ -127,7 +127,7 @@ END;
 $$
 LANGUAGE plpgsql;
 /*No eliminar un usuario si tiene deudas*/
-CREATE OR REPLACE FUNCTION cobrarondelete() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION cobrar_on_delete() RETURNS TRIGGER AS $$
 BEGIN
     IF NOT EXISTS(
         SELECT telefonousuario FROM servicio INNER JOIN usuario
@@ -141,7 +141,7 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
-CREATE TRIGGER delete_usuario_deuda AFTER DELETE ON usuario FOR EACH ROW EXECUTE PROCEDURE cobrarondelete();
+CREATE TRIGGER delete_usuario_deuda AFTER DELETE ON usuario FOR EACH ROW EXECUTE PROCEDURE cobrar_on_delete();
 /*Crea una solicitud recibiendo la ubicacion del usuario y luego encuentra el taxi mas cercano*/
 CREATE OR REPLACE FUNCTION crear_solicitud() RETURNS TRIGGER AS $$
 BEGIN
@@ -163,3 +163,25 @@ END;
 $$
 LANGUAGE plpgsql;
 CREATE TRIGGER create_solicitud AFTER INSERT ON solicitud FOR EACH ROW EXECUTE PROCEDURE crear_solicitud();
+/*Al crear un taxi se asocia con el usuario que lo registro en al tabla maneja*/
+CREATE OR REPLACE FUNCTION insert_taxi(VARCHAR(15),VARCHAR(6), TEXT, TEXT, TEXT, INTEGER, TEXT, DATE) RETURNS TEXT AS $$
+DECLARE
+	phone ALIAS FOR $1,
+	placa ALIAS FOR $2,
+	contrasenia ALIAS FOR $3,
+	marca ALIAS FOR $4,
+	modelo ALIAS FOR $5,
+	anio ALIAS FOR $6,
+	baul ALIAS FOR $7,
+	soat ALIAS FOR $8,
+BEGIN
+	IF EXISTS(
+		SELECT * FROM conductor WHERE telefonoconductor=phone;
+	)THEN
+		INSERT INTO taxi VALUES (placa, contrasenia, marca, modelo, anio, baul, soat, FALSE);
+		INSERT INTO maneja VALUES (placa, phone, FALSE);
+		RETURN "Taxi creado con exito";
+	END IF
+END;
+$$
+LANGUAGE plpgsql;
