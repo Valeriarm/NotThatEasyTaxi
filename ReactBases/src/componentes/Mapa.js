@@ -47,7 +47,7 @@ class CustomMap extends Component {
                         accessTocken= 'pk.eyJ1IjoidmFsZXJpYXJtIiwiYSI6ImNqdDU3Z285aTAzaWMzeW8zcWw2dzJ5c2gifQ.44erZi0QyJwNw__0LsjcQQ'
                     />
 
-                    <Marker id ="origen" position={this.state.origenMarker}/>
+                    <Marker id ="origen" positi on={this.state.origenMarker}/>
                     <Marker id = "destino" position={this.state.destinoMarker}/>
                 </Map>
                

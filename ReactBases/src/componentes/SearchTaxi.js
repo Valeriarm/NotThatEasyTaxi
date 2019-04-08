@@ -92,7 +92,8 @@ const styles = theme => ({
 
   },
   submit: {
-    marginTop: theme.spacing.unit * 2,
+    marginTop: theme.spacing.unit * 5,
+    marginLeft: theme.spacing.unit *20,
   },
   cssLabel: {
     '&$cssFocused': {
@@ -122,9 +123,6 @@ const styles = theme => ({
     marginRight: theme.spacing.unit*30,
   },
 });
-
-
-
 
 class PersistentDrawerLeft extends React.Component {
   state = {
@@ -231,8 +229,32 @@ class PersistentDrawerLeft extends React.Component {
             [classes.contentShift]: open,
           })}
         >
-          <div className={classes.drawerHeader} />
-                  
+        <div className={classes.drawerHeader} />
+          <FormControl className={classes.form}>
+            <InputLabel
+            htmlFor="Placa"
+            classes={{
+              focused: classes.cssFocused,
+            }}
+            >
+            Placa
+            </InputLabel>
+            <Input
+            id="placa"
+            classes={{
+              focused: classes.cssFocused,
+            }}
+            className={classes.cssUnderline}
+            >
+            </Input>
+          </FormControl>
+          <Fab
+            type="submit" variant="extended" color="primary"
+            className={classes.submit}
+          >
+            Cosultar
+          </Fab>
+                          
         </main>
       </div>
       
