@@ -100,7 +100,7 @@ FOREIGN KEY (taxi) REFERENCES Taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 /*LogIn Usuario*/
-CREATE OR REPLACE FUNCTION validarusuario(VARCHAR(15), Text) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION validar_usuario(VARCHAR(15), Text) RETURNS Text AS $$
 DECLARE
 	phone ALIAS FOR $1;
 	psword ALIAS FOR $2;
@@ -116,7 +116,7 @@ END;
 $$
 LANGUAGE plpgsql;
 /*LogIn Conductor*/
-CREATE OR REPLACE FUNCTION validarconductor(VARCHAR(15), Text) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION validar_conductor(VARCHAR(15), Text) RETURNS Text AS $$
 DECLARE
 	phone ALIAS FOR $1;
 	psword ALIAS FOR $2;
@@ -132,7 +132,7 @@ END;
 $$
 LANGUAGE plpgsql;
 /*Select a taxi*/
-CREATE OR REPLACE FUNCTION manejartaxi(VARCHAR(15), VARCHAR(6)) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION manejar_taxi(VARCHAR(15), VARCHAR(6)) RETURNS Text AS $$
 DECLARE
 	phone ALIAS FOR $1;
 	placataxi ALIAS FOR $2;
@@ -165,7 +165,7 @@ END;
 $$
 LANGUAGE plpgsql;
 /*Redimir Kilometros Conductor*/
-CREATE OR REPLACE FUNCTION redimirkilometros(Text) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION redimir_kilometros(Text) RETURNS Text AS $$
 DECLARE
 	phone ALIAS FOR $1;
 BEGIN
@@ -190,7 +190,7 @@ END;
 $$
 LANGUAGE plpgsql;
 /*Paga Kilometros Usuario*/
-CREATE OR REPLACE FUNCTION pagarkilometros(Text) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION pagar_kilometros(Text) RETURNS Text AS $$
 DECLARE
 	phone ALIAS FOR $1;
 BEGIN
@@ -212,7 +212,7 @@ END;
 $$
 LANGUAGE plpgsql;
 /*No eliminar un usuario si tiene deudas*/
-CREATE OR REPLACE FUNCTION cobrarondelete() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION cobrar_on_delete() RETURNS TRIGGER AS $$
 BEGIN
     IF NOT EXISTS(
         SELECT telefonousuario FROM servicio INNER JOIN usuario
@@ -248,95 +248,52 @@ END;
 $$
 LANGUAGE plpgsql;
 CREATE TRIGGER create_solicitud AFTER INSERT ON solicitud FOR EACH ROW EXECUTE PROCEDURE crear_solicitud();
+/*Al crear un taxi se asocia con el usuario que lo registro en al tabla maneja*/
+CREATE OR REPLACE FUNCTION insert_taxi(VARCHAR(15),VARCHAR(6), TEXT, TEXT, TEXT, INTEGER, TEXT, DATE) RETURNS TEXT AS $$
+DECLARE
+	phone ALIAS FOR $1,
+	placa ALIAS FOR $2,
+	contrasenia ALIAS FOR $3,
+	marca ALIAS FOR $4,
+	modelo ALIAS FOR $5,
+	anio ALIAS FOR $6,
+	baul ALIAS FOR $7,
+	soat ALIAS FOR $8,
+BEGIN
+	IF EXISTS(
+		SELECT * FROM conductor WHERE telefonoconductor=phone;
+	)THEN
+		INSERT INTO taxi VALUES (placa, contrasenia, marca, modelo, anio, baul, soat, FALSE);
+		INSERT INTO maneja VALUES (placa, phone, FALSE);
+		RETURN "Taxi creado con exito";
+	END IF
+END;
+$$
+LANGUAGE plpgsql;
 
 REVOKE ALL
 ON ALL TABLES IN SCHEMA public 
 FROM PUBLIC;
 
-DROP USER IF EXISTS usercreate;
-CREATE USER usercreate  WITH PASSWORD 'usercreate';
-GRANT INSERT ON usuario IN SCHEMA public TO usercreate;
-GRANT INSERT ON origenesfav IN SCHEMA public TO usercreate;
-GRANT INSERT ON servicio IN SCHEMA public TO usercreate;
-GRANT INSERT ON solicitud IN SCHEMA public TO usercreate;
+/*User users CRUD*/
 
-DROP USER IF EXISTS userread;
-CREATE USER userread  WITH PASSWORD 'userread';
-GRANT SELECT ON usuario IN SCHEMA public TO userread;
-GRANT SELECT ON origenesfav IN SCHEMA public TO userread;
-GRANT SELECT ON servicio IN SCHEMA public TO userread;
-GRANT SELECT ON solicitud IN SCHEMA public TO userread;
-
-DROP USER IF EXISTS userupdate;
-CREATE USER userupdate  WITH PASSWORD 'userupdate';
-GRANT UPDATE ON usuario IN SCHEMA public TO userupdate;
-GRANT UPDATE ON origenesfav IN SCHEMA public TO userupdate;
-GRANT UPDATE ON servicio IN SCHEMA public TO userupdate;
-GRANT UPDATE ON solicitud IN SCHEMA public TO userupdate;
-
-DROP USER IF EXISTS userdelete;
-CREATE USER userdelete  WITH PASSWORD 'userdelete';
-GRANT DELETE ON usuario IN SCHEMA public TO userdelete;
-GRANT DELETE ON origenesfav IN SCHEMA public TO userdelete;
-GRANT DELETE ON servicio IN SCHEMA public TO userdelete;
-GRANT DELETE ON solicitud IN SCHEMA public TO userdelete;
+DROP USER IF EXISTS usercrud;
+CREATE USER usercreate  WITH PASSWORD 'usercrud';
+GRANT ALL PRIVILEGES ON usuario IN SCHEMA public TO usercrud;
+GRANT ALL PRIVILEGES ON origenesfav IN SCHEMA public TO usercrud;
+GRANT ALL PRIVILEGES ON servicio IN SCHEMA public TO usercrud;
+GRANT ALL PRIVILEGES ON solicitud IN SCHEMA public TO usercrud;
 
 /*Driver users CRUD*/
 
-DROP USER IF EXISTS drivercreate;
-CREATE USER drivercreate  WITH PASSWORD 'drivercreate';
-GRANT INSERT ON conductor IN SCHEMA public TO drivercreate;
-GRANT INSERT ON maneja IN SCHEMA public TO drivercreate;
-GRANT INSERT ON servicio IN SCHEMA public TO drivercreate;
-
-DROP USER IF EXISTS driverread;
-CREATE USER driverread  WITH PASSWORD 'driverread';
-GRANT SELECT ON conductor IN SCHEMA public TO driverread;
-GRANT SELECT ON maneja IN SCHEMA public TO driverread;
-GRANT INSERT ON servicio IN SCHEMA public TO driverread;
-
-
-DROP USER IF EXISTS driverupdate;
-CREATE USER driverupdate  WITH PASSWORD 'driverupdate';
-GRANT UPDATE ON conductor IN SCHEMA public TO driverupdate;
-GRANT UPDATE ON maneja IN SCHEMA public TO driverupdate;
-GRANT INSERT ON servicio IN SCHEMA public TO driverupdate;
-
-DROP USER IF EXISTS driverdelete;
-CREATE USER driverdelete  WITH PASSWORD 'driverdelete';
-GRANT DELETE ON conductor IN SCHEMA public TO driverdelete;
-GRANT DELETE ON maneja IN SCHEMA public TO driverdelete;
-GRANT INSERT ON servicio IN SCHEMA public TO driverdelete;
-
-/*Taxi users CRUD*/
-
-DROP USER IF EXISTS taxicreate;
-CREATE USER taxicreate  WITH PASSWORD 'taxicreate';
-GRANT INSERT ON taxi IN SCHEMA public TO taxicreate;
-GRANT INSERT ON maneja IN SCHEMA public TO taxicreate;
-GRANT INSERT ON servicio IN SCHEMA public TO taxicreate;
-GRANT INSERT ON solicitud IN SCHEMA public TO taxicreate;
-
-DROP USER IF EXISTS taxiread;
-CREATE USER taxiread  WITH PASSWORD 'taxiread';
-GRANT SELECT ON taxi IN SCHEMA public TO taxiread;
-GRANT SELECT ON maneja IN SCHEMA public TO taxiread;
-GRANT SELECT ON servicio IN SCHEMA public TO taxiread;
-GRANT SELECT ON solicitud IN SCHEMA public TO taxiread;
-
-DROP USER IF EXISTS taxiupdate;
-CREATE USER taxiupdate  WITH PASSWORD 'taxiupdate';
-GRANT UPDATE ON taxi IN SCHEMA public TO taxiupdate;
-GRANT UPDATE ON maneja IN SCHEMA public TO taxiupdate;
-GRANT UPDATE ON servicio IN SCHEMA public TO taxiupdate;
-GRANT UPDATE ON solicitud IN SCHEMA public TO taxiupdate;
-
-DROP USER IF EXISTS taxidelete;
-CREATE USER taxidelete  WITH PASSWORD 'taxidelete';
-GRANT DELETE ON taxi IN SCHEMA public TO taxidelete;
-GRANT DELETE ON maneja IN SCHEMA public TO taxidelete;
-GRANT DELETE ON servicio IN SCHEMA public TO taxidelete;
-GRANT DELETE ON solicitud IN SCHEMA public TO taxidelete;
+DROP USER IF EXISTS drivercrud;
+CREATE USER drivercrud  WITH PASSWORD 'drivercrud';
+GRANT ALL PRIVILEGES ON taxi IN SCHEMA public TO drivercrud;
+GRANT ALL PRIVILEGES ON conductor IN SCHEMA public TO drivercrud;
+GRANT ALL PRIVILEGES ON maneja IN SCHEMA public TO drivercrud;
+GRANT ALL PRIVILEGES ON servicio IN SCHEMA public TO drivercrud;
+GRANT ALL PRIVILEGES ON solicitud IN SCHEMA public TO drivercrud;
+GRANT ALL PRIVILEGES ON reporte IN SCHEMA public TO drivercrud;
 
 /*Default insertions*/
 

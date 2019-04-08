@@ -425,7 +425,16 @@ app.put(`/drivers/:phone/:psword/:nombre/:apellido/:mail/:cuenta`,[
  * baul, soat y, ocupado
  */
 app.put(`/taxi/:placa/:soat`, [
-  check(`placa`).isAlphanumeric().isLength({min:6, max:6}),
+  check('placa').isAlphanumeric().isLength({min:6,max:6}).custom(value=>{
+    value = value.split('');
+    const letters = /^[A-Z]+$/;
+    if(!value[0].match(letters) || !value[1].match(letters) || !value[2].match(letters)){
+      return false;
+    }
+    if(isNan(value[3]) || isNan(value[4]) || isNan(value[5])){
+      return false;
+    }
+  }),
   check(`soat`).custom(value =>{
     value=value.split("-");
     console.log(value)
@@ -456,19 +465,5 @@ app.put(`/taxi/:placa/:soat`, [
       res.send(`Error creando el taxi, por favor intentelo de nuevo`)
     })
 })
-
-/* OTRA FORMA DE OBTENER LOS DATOS
-app.get(`/users/prueba`, (req, res) => {
-  const {username, password}=req.query
-  db.one(`SELECT validar_Usuario($1 ,$2)`, [username, password])
-  .then(function (data) {
-    console.log(`DATA:`, data.validar_usuario)
-    res.send(JSON.stringify(data.validar_usuario))
-  })
-  .catch(function (error) {
-    console.log(`ERROR:`, error)
-  })
-})
-*/
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
