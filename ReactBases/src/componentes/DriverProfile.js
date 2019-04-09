@@ -25,6 +25,7 @@ import ExitToApp from '@material-ui/icons/ExitToApp';
 import LocalTaxi from '@material-ui/icons/LocalTaxi';
 import Check from '@material-ui/icons/Check';
 import axios from 'axios';
+import driver from './images/taxi-driver.png'
 
 const drawerWidth = 240;
 
@@ -117,7 +118,11 @@ const styles = theme => ({
   },
   titleLabel: {
     marginLeft: theme.spacing.unit*50,
-  }
+  },
+  icon: {
+    width: 200,
+    height: 200,
+  },
 });
 
 
@@ -248,7 +253,7 @@ class PersistentDrawerLeft extends React.Component {
         <div className={classes.drawerHeader} />
           <Paper className={classes.paper}>
             <div>
-             
+             <img src={driver} className={classes.icon}/>
             </div>
             <div>
             <TextField

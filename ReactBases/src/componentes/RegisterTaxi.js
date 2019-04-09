@@ -132,6 +132,16 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit*90,
     marginRight: theme.spacing.unit*30,
   },
+  background:{
+    objectFit:'cover',
+    width: '100%',
+    height: '100%',
+    position: 'fixed',
+    zIndex: -1,
+    top: 0,
+    left: 0,
+
+  },
 });
 
 

@@ -13,7 +13,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import { purple, deepPurple } from '@material-ui/core/colors';
 import TextField from '@material-ui/core/TextField';
-import HomeIcon from'@material-ui/icons/Home';
+import HomeIcon from '@material-ui/icons/Home';
 import Person from '@material-ui/icons/Person';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -23,6 +23,7 @@ import { Paper, Fab } from '@material-ui/core';
 import SimpleCard from './uploadImage';
 import EditIcon from '@material-ui/icons/Edit';
 import ExitToApp from '@material-ui/icons/ExitToApp';
+import perfilUsuario from './images/businessman.png';
 
 
 const drawerWidth = 240;
@@ -47,10 +48,10 @@ const styles = theme => ({
   },
   fab: {
     position: 'absolute',
-    bottom: theme.spacing.unit * 28,
-    right: theme.spacing.unit * 15,
+    bottom: theme.spacing.unit ,
+    right: theme.spacing.unit ,
   },
-  
+
   menuButton: {
     marginLeft: 12,
     marginRight: 20,
@@ -109,10 +110,14 @@ const styles = theme => ({
     padding: `${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
   },
   logOutButton: {
-    marginLeft: theme.spacing.unit*50,
+    marginLeft: theme.spacing.unit * 50,
   },
   titleLabel: {
-    marginLeft: theme.spacing.unit*50,
+    marginLeft: theme.spacing.unit * 50,
+  },
+  icon: {
+    width: 200,
+    height: 200,
   }
 });
 
@@ -134,23 +139,23 @@ class PersistentDrawerLeft extends React.Component {
 
   handleClick = () => {
     this.console.log("funciona");
-    
+
   };
 
   onClickProfileUser = (e) => {
     e.preventDefault()
-      this.props.history.push({pathname:"/ProfileUser/", state:{phone: this.state.phone}})
+    this.props.history.push({ pathname: "/ProfileUser/", state: { phone: this.state.phone } })
   }
 
   onClickSideBar = (e) => {
     e.preventDefault()
-    this.props.history.push({pathname:"/SideBar/", state:{phone: this.state.phone}})
+    this.props.history.push({ pathname: "/SideBar/", state: { phone: this.state.phone } })
   }
 
 
   render() {
 
-    const { classes , theme } = this.props;
+    const { classes, theme } = this.props;
     const { open } = this.state;
 
     return (
@@ -164,20 +169,20 @@ class PersistentDrawerLeft extends React.Component {
         >
           <Toolbar disableGutters={!open} >
             <IconButton
-              color = "inherit"
+              color="inherit"
               aria-label="Open drawer"
               onClick={this.handleDrawerOpen}
               className={classNames(classes.menuButton, open && classes.hide)}
             >
-              <MenuIcon/>
+              <MenuIcon />
             </IconButton>
             <Typography variant="h6" color="inherit" noWrap className={classes.titleLabel}>
               Not That Easy Taxi
             </Typography>
             <IconButton
-              color = "inherit"
+              color="inherit"
             >
-              <ExitToApp/>
+              <ExitToApp />
             </IconButton>
           </Toolbar>
         </AppBar>
@@ -198,96 +203,94 @@ class PersistentDrawerLeft extends React.Component {
           </div>
           <Divider />
           <ListItem button onClick={this.onClickSideBar}>
-          <ListItemIcon>
-          <HomeIcon/>
-          </ListItemIcon>
-          <ListItemText primary="Inicio" />
-        </ListItem>
-        <ListItem button onClick={this.onClickProfileUser}>
-          <ListItemIcon>
-          <Person/>
-          </ListItemIcon>
-          <ListItemText primary="Perfil" />
-        </ListItem>
+            <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
+            <ListItemText primary="Inicio" />
+          </ListItem>
+          <ListItem button onClick={this.onClickProfileUser}>
+            <ListItemIcon>
+              <Person />
+            </ListItemIcon>
+            <ListItemText primary="Perfil" />
+          </ListItem>
         </Drawer>
         <main
           className={classNames(classes.content, {
             [classes.contentShift]: open,
           })}
         >
-        <div className={classes.drawerHeader} />
+          <div className={classes.drawerHeader} />
           <Paper className={classes.paper}>
             <div>
-              <SimpleCard/>
+            <img src={perfilUsuario} className={classes.icon} />
             </div>
             <div>
-            <TextField
-            id="standard-error"
-            label="Nombre"
-            className={classes.textField}
-            margin="normal"
-            InputProps={{
-                readOnly: true,
-            }}
-            />
-            <TextField
-            id="standard-error"
-            label="Apellido"
-            className={classes.textField}
-            margin="normal"
-            InputProps={{
-                readOnly: true,
-            }}
-            />
-            <TextField
-            id="standard-error"
-            label="Telefono"
-            className={classes.textField}
-            margin="normal"
-            InputProps={{
-                readOnly: true,
-            }}
-            />
+              <TextField
+                id="standard-error"
+                label="Nombre"
+                className={classes.textField}
+                margin="normal"
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+              <TextField
+                id="standard-error"
+                label="Apellido"
+                className={classes.textField}
+                margin="normal"
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+              <TextField
+                id="standard-error"
+                label="Telefono"
+                className={classes.textField}
+                margin="normal"
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
             </div>
             <div>
-            <TextField
-            id="standard-error"
-            label="Tarjeta"
-            className={classes.textField}
-            margin="normal"
-            InputProps={{
-                readOnly: true,
-            }}
-            />
-            <TextField
-            id="standard-error"
-            label="Email"
-            className={classes.textField}
-            margin="normal"
-            InputProps={{
-                readOnly: true,
-            }}
-            />
-            <TextField
-            id="standard-error"
-            label="Fecha Nacimiento"
-            className={classes.textField}
-            margin="normal"
-            InputProps={{
-                readOnly: true,
-            }}
-            />
-            </div>
-            <div>
-            <Fab color="primary" aria-label="Edit" className={classes.fab}>
-                <EditIcon/>
-            </Fab>
-            </div>
+              <TextField
+                id="standard-error"
+                label="Tarjeta"
+                className={classes.textField}
+                margin="normal"
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+              <TextField
+                id="standard-error"
+                label="Email"
+                className={classes.textField}
+                margin="normal"
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+              <TextField
+                id="standard-error"
+                label="Fecha Nacimiento"
+                className={classes.textField}
+                margin="normal"
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+            </div> 
+              <Fab color="primary" aria-label="Edit" className={classes.textField} >
+                <EditIcon />
+              </Fab>
           </Paper>
-          
+
         </main>
       </div>
-      
+
     );
   }
 }
