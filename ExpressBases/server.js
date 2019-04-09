@@ -309,7 +309,7 @@ app.post('/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocu
     if(!value[0].match(letters) || !value[1].match(letters) || !value[2].match(letters)){
       return false;
     }
-    if(isNan(value[3]) || isNan(value[4]) || isNan(value[5])){
+    if(isNaN(value[3]) || isNaN(value[4]) || isNaN(value[5])){
       return false;
     }
   }),
@@ -318,14 +318,15 @@ app.post('/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocu
   check('modelo').isAlphanumeric(),
   check('anio').isNumeric().isLength({min:4}),
   check('baul').isAlpha(),
-  check('soat').custom(value =>{
+  check(`soat`).isLength({min:10}),
+  check(`soat`).custom(value =>{
     value=value.split("-");
     console.log(value)
-    if(isNaN(value[0]) || value[0].length!==2){
+    if(isNaN(value[0])){
       return false
     } else if (isNaN(value[1]) || value[1].length!==2){
       return false
-    } else if (isNaN(value[2])){
+    } else if (isNaN(value[2]) || value[2].length!==2){
       return false
     } else {return true}
   }),

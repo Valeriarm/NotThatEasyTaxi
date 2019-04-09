@@ -180,6 +180,7 @@ class PersistentDrawerLeft extends React.Component {
     soat: true,
     anio: true,
     tamanio: true,
+    ocupado: false,
   };
 
   handleDrawerOpen = () => {
@@ -218,10 +219,12 @@ class PersistentDrawerLeft extends React.Component {
     const anio = this.state.anio;
     const soat = this.state.soat;
     const baul = this.state.tamanio;
+    const ocupado = this.state.ocupado;
 
-    axios.post(`http://localhost:5000/taxi/${phone}/${placa}/${password}/${marca}/${modelo}/${anio}/${baul}/${soat}/false`).then(res => {
+    axios.post(`http://localhost:5000/taxi/${phone}/${placa}/${password}/${marca}/${modelo}/${anio}/${baul}/${soat}/${ocupado}`).then(res => {
         const validation = res.data;
         console.log(validation)
+        console.log(password)
         if(validation === 'Taxi creado exitosamente'){
           alert('Taxi creado exitosamente')
         } else if (validation === 'Error creando el taxi, por favor intentelo de nuevo'){
@@ -355,7 +358,7 @@ class PersistentDrawerLeft extends React.Component {
               focused: classes.cssFocused,
             }}
           >
-        password          
+        Password          
         </InputLabel>
           <Input
             id="password"
@@ -363,6 +366,8 @@ class PersistentDrawerLeft extends React.Component {
               underline: classes.cssUnderline,
             }}
             onChange={this.handleChange('password')}
+            type ="password"
+            
           />
         </FormControl>
         <FormControl >
