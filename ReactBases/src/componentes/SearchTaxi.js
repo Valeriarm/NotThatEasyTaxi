@@ -11,7 +11,8 @@ import LocalTaxi from '@material-ui/icons/LocalTaxi';
 import {purple, deepPurple} from '@material-ui/core/colors';
 import { InputLabel, FormControl, Input, Fab, ListItemIcon, ListItemText ,
 Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar , 
-Toolbar, withStyles} from '@material-ui/core';
+Toolbar, withStyles, Paper, Avatar} from '@material-ui/core';
+import Search from '@material-ui/icons/Search';
 
 
 
@@ -72,7 +73,24 @@ const styles = theme => ({
     }),
     marginLeft: 0,
   },
+  paper: {
+    marginTop: theme.spacing.unit * 8,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
+  },
 
+  avatar: {
+    margin: theme.spacing.unit*2,
+    backgroundColor: theme.palette.primary.main,
+  },
+  form: { // Fix IE 11 issue.
+    marginTop: theme.spacing.unit,
+  },
+  submit: {
+    marginTop: theme.spacing.unit * 2,
+  },
   palette: {
     primary: deepPurple,
     secondary: purple,
@@ -84,17 +102,8 @@ const styles = theme => ({
   titleLabel: {
     marginLeft: theme.spacing.unit*50,
   },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing.unit*2,
-    marginLeft: theme.spacing.unit*15,
-    display: 'block',
 
-  },
-  submit: {
-    marginTop: theme.spacing.unit * 5,
-    marginLeft: theme.spacing.unit *20,
-  },
+
   cssLabel: {
     '&$cssFocused': {
       color: purple[500],
@@ -230,6 +239,14 @@ class PersistentDrawerLeft extends React.Component {
           })}
         >
         <div className={classes.drawerHeader} />
+        <CssBaseline />
+        <Paper className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <Search/>
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Consultar
+          </Typography>
           <FormControl className={classes.form}>
             <InputLabel
             htmlFor="Placa"
@@ -248,13 +265,31 @@ class PersistentDrawerLeft extends React.Component {
             >
             </Input>
           </FormControl>
+          <FormControl className={classes.form}>
+            <InputLabel
+            htmlFor="Contrasenia"
+            classes={{
+              focused: classes.cssFocused,
+            }}
+            >
+            Contrasenia
+            </InputLabel>
+            <Input
+            id="Contrasenia"
+            classes={{
+              focused: classes.cssFocused,
+            }}
+            className={classes.cssUnderline}
+            >
+            </Input>
+          </FormControl>
           <Fab
             type="submit" variant="extended" color="primary"
             className={classes.submit}
           >
             Cosultar
           </Fab>
-                          
+        </Paper>     
         </main>
       </div>
       

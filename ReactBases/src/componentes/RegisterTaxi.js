@@ -11,7 +11,8 @@ import LocalTaxi from '@material-ui/icons/LocalTaxi';
 import {purple, deepPurple} from '@material-ui/core/colors';
 import { InputLabel, FormControl, Input, Fab, ListItemIcon, ListItemText ,
 Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar , 
-Toolbar, withStyles} from '@material-ui/core';
+Toolbar, withStyles , Paper, Avatar} from '@material-ui/core';
+import Add from '@material-ui/icons/Add';
 
 
 
@@ -27,6 +28,15 @@ const styles = theme => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
+
+  paper: {
+    marginTop: theme.spacing.unit * 8,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
+  },
+
   appBarShift: {
     width: `calc(100% - ${drawerWidth}px)`,
     marginLeft: drawerWidth,
@@ -84,16 +94,16 @@ const styles = theme => ({
   titleLabel: {
     marginLeft: theme.spacing.unit*50,
   },
-  form: {
-    width: '100%',
+  avatar: {
+    margin: theme.spacing.unit*2,
+    backgroundColor: theme.palette.primary.main,
+  },
+  form: { // Fix IE 11 issue.
     marginTop: theme.spacing.unit*2,
-    marginLeft: theme.spacing.unit*15,
-    display: 'block',
-
   },
   submit: {
-    marginTop: theme.spacing.unit * 5,
-    marginLeft: theme.spacing.unit * 20
+    marginTop: theme.spacing.unit * 2,
+    
   },
   cssLabel: {
     '&$cssFocused': {
@@ -232,6 +242,14 @@ class PersistentDrawerLeft extends React.Component {
           })}
         >
           <div className={classes.drawerHeader} />
+          <CssBaseline />
+        <Paper className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <Add/>
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Registrar
+          </Typography>
           <FormControl className={classes.form}>
             <InputLabel
               htmlFor="Placa"
@@ -272,7 +290,7 @@ class PersistentDrawerLeft extends React.Component {
           >         
             Registrar
           </Fab>
-                  
+        </Paper>
         </main>
       </div>
       

@@ -218,6 +218,29 @@ app.get(`/drivers/:phone/`,[
   })
 })
 
+/**
+ * Obtiene los datos de un usuario para cargarlos en su perfil
+ */
+app.get(`/users/:phone/`,[
+  check(`phone`).isNumeric().isLength({min:10, max:10}),
+],(req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log({errors: errors.array()})
+    return res.send(JSON.stringify("Credenciales invalidas"));
+  }
+  const phone = req.params.phone;
+  db.one(`SELECT * FROM usuario WHERE telefonousuario= $1`, [escape(phone)])
+  .then(function (data) {
+    console.log(data )
+    res.send(JSON.stringify(data))
+  })
+  .catch(function (error) {
+    console.log(`ERROR:`, error)
+    res.send(JSON.stringify("Credenciales invalidas"))
+  })
+})
+
 // POST REQUESTS
 
 /**
@@ -299,7 +322,7 @@ app.post(`/drivers/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta`,[
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.log({errors: errors.array()})
-      return res.status(422).json({ errors: errors.array() });
+      return res.send(`Error en registro`);
     }
     const tel=req.params.tel;
     const psword=req.params.psword;
@@ -358,7 +381,7 @@ app.post('/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocu
   const errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.log({errors: errors.array()})
-      return res.status(422).json({ errors: errors.array() });
+      return res.send(`Error en Registro`);
     }
   const phone = req.params.phone;
   const placa = req.params.placa;
@@ -524,7 +547,7 @@ app.put(`/users/:tel/:psword/:nombre/:apellido/:mail/:tarjeta`, [
   const errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.log({errors: errors.array()})
-      return res.status(422).json({ errors: errors.array() });
+      return res.send(`Error en Registro`);
     }
   const tel = req.params.tel;
   const psword = req.params.psword;
@@ -559,7 +582,7 @@ app.put(`/drivers/:phone/:psword/:nombre/:apellido/:mail/:cuenta`,[
   const errors = validationResult(req);
     if(!errors.isEmpty()){
       console.log({errors: errors.array()})
-      return res.status(422).json({ errors: errors.array() });
+      return res.send(`Error al Modificar`);
     }
   const phone = req.params.phone;
   const psword = req.params.psword;
@@ -567,7 +590,7 @@ app.put(`/drivers/:phone/:psword/:nombre/:apellido/:mail/:cuenta`,[
   const apellido = req.params.apellido;
   const mail = req.params.mail;
   const cuenta = req.params.cuenta;
-  db.none(`UPDATE usuario SET contrasenia=$2, nombreConductor=$3, apellidoConductor=$4, email=$5, numCuenta=$6 WHERE phone=$1`,
+  db.none(`UPDATE conductor SET contrasenia=$2, nombreConductor=$3, apellidoConductor=$4, email=$5, numCuenta=$6 WHERE telefonoconductor=$1`,
     [escape(phone), escape(psword), escape(nombre), 
       escape(apellido), escape(mail), escape(cuenta)])
       .then((data)=>{

@@ -375,6 +375,12 @@ INSERT INTO conductor VALUES ('3012617187', '12345678', 'Valeria', 'Rivera','199
 INSERT INTO usuario VALUES ('3012617187', '12345678', 'Valeria', 'Rivera','1998-11-19', 'valeriarm@gmail.com', '123454313');
 SELECT insert_taxi('3166443198','CMP217','12345678','Hyundai','Accent',2016,'Mediano','2020-10-01');
 SELECT insert_taxi('3012617187','DEO840','12345678','Renault','Logan',2016,'Mediano','2020-10-01');
+<<<<<<< HEAD
 INSERT INTO reporte VALUES (DEFAULT, 'CMP217', '2019-04-09T03:42:13.346Z', ST_GeomFromText('POINT(3.4394 -76.529)', 4326));
 INSERT INTO reporte VALUES (DEFAULT, 'DEO840', '2019-04-09T03:43:45.346Z', ST_GeomFromText('POINT(3.4562 -76.327)', 4326));
 SELECT * FROM usuario;
+=======
+INSERT INTO registro VALUES (DEFAULT, 'CMP217', '2019-04-09T03:42:13.346Z', ST_GeomFromText('POINT(3.4394 -76.529)', 4326));
+INSERT INTO registro VALUES (DEFAULT, 'DEO840', '2019-04-09T03:43:45.346Z', ST_GeomFromText('POINT(3.4562 -76.327)', 4326));
+SELECT * FROM usuario;
+>>>>>>> 19617d373e4bad91d4096cd2cada9d6c913f7bf8

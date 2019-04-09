@@ -11,8 +11,9 @@ import LocalTaxi from '@material-ui/icons/LocalTaxi';
 import {purple, deepPurple} from '@material-ui/core/colors';
 import { InputLabel, FormControl, Input, Fab, ListItemIcon, ListItemText ,
 Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar , 
-Toolbar, withStyles, TextField, MenuItem, } from '@material-ui/core';
+Toolbar, withStyles, TextField, MenuItem, Paper, Avatar, } from '@material-ui/core';
 import axios from 'axios'
+import Search from '@material-ui/icons/Search'; 
 
 
 
@@ -99,6 +100,20 @@ const styles = theme => ({
   titleLabel: {
     marginLeft: theme.spacing.unit*50,
   },
+
+  paper: {
+    marginTop: theme.spacing.unit *-0.5,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
+  },
+
+  avatar: {
+    margin: theme.spacing.unit*2,
+    backgroundColor: theme.palette.primary.main,
+  },
+
   form: {
     width: '100%', 
     marginTop: theme.spacing.unit*2,
@@ -204,7 +219,7 @@ class PersistentDrawerLeft extends React.Component {
     const soat = this.state.soat;
     const baul = this.state.tamanio;
 
-    axios.post(`http://localhost:5000/taxi/${phone}/${placa}/${password}/${marca}/${modelo}/${anio}/${baul}/${soat}`).then(res => {
+    axios.post(`http://localhost:5000/taxi/${phone}/${placa}/${password}/${marca}/${modelo}/${anio}/${baul}/${soat}/false`).then(res => {
         const validation = res.data;
         console.log(validation)
         if(validation === 'Taxi creado exitosamente'){
@@ -292,13 +307,13 @@ class PersistentDrawerLeft extends React.Component {
           })}
         >
           <div className={classes.drawerHeader} />
-          <center>
-          <Typography component="h1" variant="h4" color="primary">
-          <br/>
-            Agregar Taxi
+          <Paper className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <Search/>
+          </Avatar>
+          <Typography component="h1" variant="h5">
+          Agregar
           </Typography>
-          </center>
-          <div className={classes.paper}>
           <FormControl >
           <InputLabel
             htmlFor="Marca"
@@ -428,10 +443,11 @@ class PersistentDrawerLeft extends React.Component {
         <Fab
           type="submit" variant="extended" color="primary"
           className={classes.submit}
+          onClick={this.onClickAgregar}
         >         
           Agregar
         </Fab>
-        </div>
+        </Paper>
         </main>
       </div>
       

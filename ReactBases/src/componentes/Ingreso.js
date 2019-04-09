@@ -105,6 +105,7 @@ class SignIn extends React.Component {
       alert("Unknown Error")
     }
   }
+  
   render(){
     const { classes } = this.props;
     return (
@@ -124,7 +125,7 @@ class SignIn extends React.Component {
             </FormControl>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="password">Contrasena</InputLabel>
-              <Input name="password" type="password" id="password" onChange={this.onHandleChange('password')}/>
+              <Input name="password" helperText = "Minimo 8 caracteres" type="password" id="password" onChange={this.onHandleChange('password')}/>
             </FormControl>
             
             <Button
