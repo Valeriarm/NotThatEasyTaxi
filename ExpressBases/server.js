@@ -439,13 +439,13 @@ app.post(`/users/favorites/:phone/:lat/:lng`,
  * Crea una Solicitud recibiendo, telefono del usuario y coordenadas del usuario
  * El encargado de crear una solicitud es el usuario
  */
-app.post(`/users/request/:phoneuser/:latIn/:lngIn`, 
+app.post(`/users/request/:phoneuser/:latIn/:lngIn/:latFin/:lngFin`, 
   [
     check(`phone`).isNumeric().isLength({min: 10, max: 10}),
     check(`latIn`).isNumeric(),
     check(`lngIn`).isNumeric(),
     check(`latFin`).isNumeric(),
-    check(`lngFin`).isNumeric()
+    check(`lngFin`).isNumeric(),
   ], (req,res)=>{
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -456,11 +456,11 @@ app.post(`/users/request/:phoneuser/:latIn/:lngIn`,
     const latIn = req.params.lat;
     const lngIn = req.params.lng;
     db.one()
-    db.none(`INSERT INTO solicitud VALUES ($1, ST_GeomFromText('POINT($2 $3)', 4326))`,
+    db.none(`INSERT INTO solicitud VALUES ($1, ST_GeomFromText('POINT($2 $3)', 4326), ST_GeomFromText('POINT($2 $3)', 4326))`,
     [escape(phone), escape(latIn), escape(lngIn)])
     .then((data)=>{
       console.log(`DATA: `, data)
-      res.send(`Solicitud de servicio aceptada`)
+      res.send(`Solicitud de servicio creada`)
     })
     .catch((error)=>{
       console.log(`ERROR`, error)
@@ -470,11 +470,11 @@ app.post(`/users/request/:phoneuser/:latIn/:lngIn`,
 )
 /**
  * Crea un Servicio recibiendo, telefono del usuario, telefono del conductor,
- * placa del taxi, punto de partida, punto de llegada, hora de inicio, hora de
- * llegada, comprobante de pago usuario y comprobante de pago conductor
+ * placa del taxi, hora de inicio, hora de llegada, comprobante de pago usuario y 
+ * comprobante de pago conductor
  * El encargado de crear un servicio es el conductor
  */
-app.post(`/users/request/:phone/:lat/:lng`, 
+app.post(`/users/request/:phoneuser/:phonedriver/:lat/:lng`, 
   [
     check(`phone`).isNumeric().isLength({min: 10, max: 10}),
     check(`lat`).isNumeric(),
