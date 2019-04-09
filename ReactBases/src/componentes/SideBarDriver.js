@@ -155,8 +155,9 @@ class PersistentDrawerLeft extends React.Component {
         const apellido = driver.apellidoconductor;
         const email = driver.email;
         const numcuenta = driver.numcuenta;
+        const contrasenia = driver.contrasenia;
         console.log(driver)
-          this.props.history.push({pathname:"/ProfileDriver/", state:{phone:phone, nombre, apellido: apellido, email: email, numcuenta: numcuenta}})
+          this.props.history.push({pathname:"/ProfileDriver/", state:{phone:phone, nombre: nombre, apellido: apellido, email: email, numcuenta: numcuenta, contrasenia: contrasenia}})
       })
   };
 
