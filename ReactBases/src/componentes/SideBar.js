@@ -177,22 +177,28 @@ class PersistentDrawerLeft extends React.Component {
         console.log(persons);
       })
   }
-
+  /*Crea una solicitud*/
   onClickConfirmar = () => {
     const phone = this.state.phone;
-    const lat = this.state.destino.lat;
-    const lng = this.state.destino.lng;
-    console.log(lat);
-    console.log(lat);
-    axios.post(`http://localhost:5000/users/favorites/${phone}/${lat}/${lng}`).then(res => {
+    const latIn = this.state.origen.lat;
+    const lngIn = this.state.origen.lng;
+    const latFin = this.state.destino.lat;
+    const lngFin = this.state.destino.lng;
+    console.log(latIn);
+    console.log(latIn);
+    axios.post(`http://localhost:5000/users/request/${phone}/${latIn}/${lngIn}/${latFin}/${lngFin}`).then(res => {
         const persons = res.data;
         console.log(persons);
       })
   }
-
+  /*Check for a request*/ 
   checkForDriver = setInterval(()=>{
-    return 1;
-  }, 200)
+    const phone = this.state.phone;
+    axios.get(`http://localhost:5000/users/request/${phone}`).then(res => {
+        const persons = res.data;
+        console.log(persons);
+      })
+  }, 1000)
 
   addService = () => {
 

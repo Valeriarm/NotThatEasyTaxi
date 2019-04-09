@@ -126,29 +126,8 @@ END;
 $$
 LANGUAGE plpgsql;
 CREATE TRIGGER delete_usuario_deuda AFTER DELETE ON usuario FOR EACH ROW EXECUTE PROCEDURE cobrar_on_delete();
-/*Crea una solicitud recibiendo la ubicacion del usuario y luego encuentra el taxi mas cercano*/
-CREATE OR REPLACE FUNCTION crear_solicitud() RETURNS TRIGGER AS $$
-BEGIN
-	IF EXISTS(
-		WITH reporte_taxi AS (SELECT taxi,horaactual, coordenada FROM reporte),
-			taxis AS (SELECT taxi, MAX (horaactual) AS horaactual FROM reporte_taxi Group by taxi),
-			taxi_cercano AS (SELECT *, ST_Distance(coordenada,new.coordenada)
-						 FROM taxis NATURAL JOIN reporte),
-			taxi_mas_cercano AS (SELECT taxi, MIN(st_distance) 
-							 AS distance FROM taxi_cercano 
-							 GROUP BY taxi ORDER BY distance LIMIT 1) 
-			SELECT taxi INTO TEMPORARY placataxi FROM taxi_mas_cercano WHERE distance < 20
-	)THEN INSERT INTO solicitud VALUES (Default, new.usuario, new.posicionusuario, placataxi.taxi, TRUE);
-	RETURN NEW;
-	END IF;
-	RAISE EXCEPTION 'No hay conductores cerca de usted'
-	USING HINT = 'Por favor intentelo mas tarde o cambie de posicion';
-END;
-$$
-LANGUAGE plpgsql;
-CREATE TRIGGER create_solicitud AFTER INSERT ON solicitud FOR EACH ROW EXECUTE PROCEDURE crear_solicitud();
 /*Al crear un taxi se asocia con el usuario que lo registro en al tabla maneja*/
-CREATE OR REPLACE FUNCTION insert_taxi(VARCHAR(15),VARCHAR(6), TEXT, TEXT, TEXT, INTEGER, TEXT, DATE) RETURNS TEXT AS $$
+CREATE OR REPLACE FUNCTION insert_taxi(VARCHAR(15),VARCHAR(6), TEXT, TEXT, TEXT, INTEGER, TEXT, DATE, BOOLEAN) RETURNS TEXT AS $$
 DECLARE
 	phone ALIAS FOR $1;
 	placa ALIAS FOR $2;
@@ -169,8 +148,8 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
-/*Buscar por solicitudes activas*/
-CREATE OR REPLACE FUNCTION buscar_solicitudes(VARCHAR(6)) RETURNS Text AS $$
+/*Buscar por solicitudes activas por placa*/
+CREATE OR REPLACE FUNCTION buscar_solicitudes_conductor(VARCHAR(6)) RETURNS Text AS $$
 DECLARE
 	placa ALIAS FOR $1;
 BEGIN
@@ -182,3 +161,80 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+/*Buscar por solicitudes activas por telefono*/
+CREATE OR REPLACE FUNCTION buscar_solicitudes_usuario(VARCHAR(15)) RETURNS Text AS $$
+DECLARE
+	phone ALIAS FOR $1;
+BEGIN
+	IF EXISTS (
+		SELECT * FROM solicitud WHERE usuario=phone AND activa=TRUE
+	)THEN RETURN "Solicitud encontrado";
+	END IF;
+	RETURN "Buscando Solicitudes";
+END;
+$$
+LANGUAGE plpgsql;
+/*Buscar por servicios activas*/
+CREATE OR REPLACE FUNCTION buscar_servicios(VARCHAR(15)) RETURNS Text AS $$
+DECLARE
+	phone ALIAS FOR $1;
+BEGIN
+	IF EXISTS (
+		SELECT * FROM servicio WHERE taxi=phone
+	)THEN RETURN "Servicio encontrado";
+	END IF;
+	RETURN "Buscando Servicio";
+END;
+$$
+LANGUAGE plpgsql;
+/*Crea una solicitud recibiendo la ubicacion del usuario y luego encuentra el taxi mas cercano*/
+CREATE OR REPLACE FUNCTION crear_solicitud() RETURNS TRIGGER AS $$
+DECLARE
+	placa_taxi VARCHAR(6) := (
+		WITH reporte_taxi AS (SELECT taxi,horaactual, coordenada FROM reporte),
+			taxis AS (SELECT taxi, MAX (horaactual) AS horaactual FROM reporte_taxi Group by taxi),
+			taxi_cercano AS (SELECT *, ST_Distance(coordenada,new.posicionusuario)
+						 FROM taxis NATURAL JOIN reporte),
+			taxi_mas_cercano AS (SELECT taxi, MIN(st_distance) 
+							 AS distance FROM taxi_cercano 
+							 GROUP BY taxi ORDER BY distance LIMIT 1),
+			taxi_chosen AS (SELECT taxi FROM taxi_mas_cercano WHERE distance < 20)
+			SELECT taxi FROM taxi_chosen);
+	tel_conductor VARCHAR(15) := (
+		WITH reporte_taxi AS (SELECT taxi,horaactual, coordenada FROM reporte),
+			taxis AS (SELECT taxi, MAX (horaactual) AS horaactual FROM reporte_taxi Group by taxi),
+			taxi_cercano AS (SELECT *, ST_Distance(coordenada,new.posicionusuario)
+						 FROM taxis NATURAL JOIN reporte),
+			taxi_mas_cercano AS (SELECT taxi, MIN(st_distance) 
+							 AS distance FROM taxi_cercano 
+							 GROUP BY taxi ORDER BY distance LIMIT 1),
+			taxi_chosen AS (SELECT taxi FROM taxi_mas_cercano WHERE distance < 20),
+			driver_chosen AS (SELECT conductor FROM maneja NATURAL JOIN taxi_chosen
+							  WHERE chosen = TRUE)
+			SELECT conductor FROM driver_chosen);
+BEGIN
+	IF NOT EXISTS (WITH reporte_taxi AS (SELECT taxi,horaactual, coordenada FROM reporte),
+			taxis AS (SELECT taxi, MAX (horaactual) AS horaactual FROM reporte_taxi Group by taxi),
+			taxi_cercano AS (SELECT *, ST_Distance(coordenada,new.posicionusuario)
+						 FROM taxis NATURAL JOIN reporte),
+			taxi_mas_cercano AS (SELECT taxi, MIN(st_distance) 
+							 AS distance FROM taxi_cercano 
+							 GROUP BY taxi ORDER BY distance LIMIT 1),
+			taxi_chosen AS (SELECT taxi FROM taxi_mas_cercano WHERE distance < 20),
+			driver_chosen AS (SELECT conductor FROM maneja 
+							  WHERE chosen = TRUE)
+			SELECT * FROM driver_chosen,taxi_chosen
+	)THEN RAISE EXCEPTION 'No hay conductores cerca de usted'
+	USING HINT = 'Por favor intentelo mas tarde o cambie de posicion';
+	END IF;
+	BEGIN
+		NEW.taxi=placa_taxi;
+		NEW.conductor=tel_conductor;
+		NEW.activa=True;
+	END;
+	RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+DROP TRIGGER create_solicitud ON solicitud;
+CREATE TRIGGER create_solicitud BEFORE INSERT ON solicitud FOR EACH ROW EXECUTE PROCEDURE crear_solicitud();

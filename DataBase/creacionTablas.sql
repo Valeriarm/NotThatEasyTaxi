@@ -23,7 +23,7 @@ PRIMARY KEY (telefonousuario)
 
 CREATE TABLE origenesfav(
 origen GEOMETRY(POINT) NOT NULL,
-telefonousuario TEXT NOT NULL,
+telefonousuario VARCHAR(15) NOT NULL,
 PRIMARY KEY (origen, telefonousuario),
 FOREIGN KEY (telefonousuario) REFERENCES Usuario(telefonousuario) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -53,8 +53,8 @@ PRIMARY KEY (placa)
 
 CREATE TABLE servicio(
 idservicio SERIAL NOT NULL,
-usuario TEXT NOT NULL,
-conductor TEXT NOT NULL,
+usuario VARCHAR(15) NOT NULL,
+conductor VARCHAR(15) NOT NULL,
 taxi VARCHAR(6) NOT NULL,
 calificacionusuario INTEGER,
 calificacionconductor INTEGER,
@@ -72,9 +72,11 @@ FOREIGN KEY (taxi) REFERENCES taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE
 
 CREATE TABLE solicitud(
 idsolicitud SERIAL NOT NULL,
-usuario TEXT NOT NULL,
+usuario VARCHAR(15) NOT NULL,
 posicionusuario GEOMETRY(POINT) NOT NULL,
+posicionfinal GEOMETRY(POINT) NOT NULL,
 taxi VARCHAR(6) NOT NULL,
+conductor VARCHAR(15) NOT NULL,
 activa BOOLEAN NOT NULL,
 PRIMARY KEY (idsolicitud),
 FOREIGN KEY (usuario) REFERENCES Usuario(telefonousuario) ON DELETE CASCADE ON UPDATE CASCADE,
