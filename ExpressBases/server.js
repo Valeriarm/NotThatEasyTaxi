@@ -124,9 +124,58 @@ app.get(`/drivers/taxi/:phone/:placa`,[
   })
 })
 /**
- * Busca por solicitudes activas
+ * Busca por solicitudes activas conductor
  */
-app.get(`/drivers/taxi/request/:placa`,[
+app.get(`/drivers/taxi/request/:placa/:phone`,[
+  check(`placa`).isAlphanumeric().isLength({min:6, max:6}),
+  check(`phone`).isNumeric().isLength({min:10,max:10})
+], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log({errors: errors.array()})
+    return res.send(JSON.stringify("Credenciales invalidas"));
+  }
+  const placa = req.params.placa
+  console.log(phone + "-" + placa)
+  db.one(`SELECT buscar_solicitudes_conductor($1)`, [escape(placa)])
+  .then(function (data) {
+    console.log(`DATA:`, data.buscar_solicitudes)
+    res.send(JSON.stringify(data.buscar_solicitudes))
+  })
+  .catch(function (error) {
+    console.log(`ERROR:`, error)
+    res.send(JSON.stringify("Credenciales invalidas"))
+  })
+})
+/**
+ * Busca por solicitudes activas usuario
+ */
+app.get(`/user/request/:phone`,[
+  check(`phone`).isNumeric().isLength({min:10, max:10})
+], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log({errors: errors.array()})
+    return res.send(JSON.stringify("Credenciales invalidas"));
+  }
+  const phone = req.params.phone
+  console.log(phone + "-" + placa)
+  db.one(`SELECT buscar_solicitudes_usuario($1)`, [escape(phone)])
+  .then(function (data) {
+    console.log(`DATA:`, data.buscar_solicitudes)
+    res.send(JSON.stringify(data.buscar_solicitudes))
+  })
+  .catch(function (error) {
+    console.log(`ERROR:`, error)
+    res.send(JSON.stringify("Credenciales invalidas"))
+  })
+})
+/**
+ * Busca por servicios activos usuario
+ * El usuario constantemente estara usando esta consulta para ver si el servicio que ha solicitado
+ * ha sido aceptado
+ */
+app.get(`/users/request/:phone`,[
   check(`placa`).isAlphanumeric().isLength({min:6, max:6})
 ], (req, res) => {
   const errors = validationResult(req);
@@ -136,18 +185,16 @@ app.get(`/drivers/taxi/request/:placa`,[
   }
   const placa = req.params.placa
   console.log(phone + "-" + placa)
-  db.one(`SELECT manejar_taxi($1)`, [escape(placa)])
+  db.one(`SELECT buscar_servicios($1)`, [escape(placa)])
   .then(function (data) {
-    console.log(`DATA:`, data.manejar_taxi)
-    res.send(JSON.stringify(data.manejar_taxi))
+    console.log(`DATA:`, data.buscar_servicios)
+    res.send(JSON.stringify(data.buscar_servicios))
   })
   .catch(function (error) {
     console.log(`ERROR:`, error)
     res.send(JSON.stringify("Credenciales invalidas"))
   })
 })
-
-
 /**
  * Obtiene los datos de un conductor para cargarlos en su perfil
  */
@@ -239,7 +286,7 @@ app.post(`/users/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:tarjeta`, [
         escape(tarjeta)])
         .then((data)=>{
           console.log(`DATA: `, data)
-          res.send(`Usuario creado exitosamente`)
+          res.send(JSON.stringify(`Usuario creado exitosamente`))
         })
         .catch((error)=>{
           console.log(req.params)
@@ -339,13 +386,13 @@ app.post('/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocu
     }
   const phone = req.params.phone;
   const placa = req.params.placa;
+  const contrasenia = req.params.contrasenia;
   const marca = req.params.marca;
   const modelo = req.params.modelo;
   const anio = req.params.anio;
   const baul = req.params.baul;
   const soat = req.params.soat;
   const ocupado = req.params.ocupado;
-  const contrasenia = req.params.contrasenia;
   db.none('SELECT insert_taxi($1,$2,$3,$4,$5,$6,$7,$8,$9)',
     [escape(phone), escape(placa), escape(contrasenia),escape(marca), 
       escape(modelo), escape(anio), escape(baul), escape(soat), 
@@ -388,11 +435,46 @@ app.post(`/users/favorites/:phone/:lat/:lng`,
     })
   }
 )
-
 /**
  * Crea una Solicitud recibiendo, telefono del usuario y coordenadas del usuario
+ * El encargado de crear una solicitud es el usuario
  */
-app.post(`/users/service/:phone/:lat/:lng`, 
+app.post(`/users/request/:phoneuser/:latIn/:lngIn`, 
+  [
+    check(`phone`).isNumeric().isLength({min: 10, max: 10}),
+    check(`latIn`).isNumeric(),
+    check(`lngIn`).isNumeric(),
+    check(`latFin`).isNumeric(),
+    check(`lngFin`).isNumeric()
+  ], (req,res)=>{
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log({errors: errors.array()})
+      return res.status(422).json({ errors: errors.array() });
+    }
+    const phone = req.params.phone;
+    const latIn = req.params.lat;
+    const lngIn = req.params.lng;
+    db.one()
+    db.none(`INSERT INTO solicitud VALUES ($1, ST_GeomFromText('POINT($2 $3)', 4326))`,
+    [escape(phone), escape(latIn), escape(lngIn)])
+    .then((data)=>{
+      console.log(`DATA: `, data)
+      res.send(`Solicitud de servicio aceptada`)
+    })
+    .catch((error)=>{
+      console.log(`ERROR`, error)
+      res.send(`Error, por favor intentelo de nuevo`)
+    })
+  }
+)
+/**
+ * Crea un Servicio recibiendo, telefono del usuario, telefono del conductor,
+ * placa del taxi, punto de partida, punto de llegada, hora de inicio, hora de
+ * llegada, comprobante de pago usuario y comprobante de pago conductor
+ * El encargado de crear un servicio es el conductor
+ */
+app.post(`/users/request/:phone/:lat/:lng`, 
   [
     check(`phone`).isNumeric().isLength({min: 10, max: 10}),
     check(`lat`).isNumeric(),
@@ -418,7 +500,37 @@ app.post(`/users/service/:phone/:lat/:lng`,
     })
   }
 )
-
+/**
+ * Crea un reporte para un taxi recibiendo la placa del taxi 
+ * la hora actual y la coordenada en la que se encuentra
+ */
+app.post(`/users/taxi/report/:placa/:lat/:lng`,
+  [
+    check(`placa`).isNumeric().isLength({min: 6, max: 6}),
+    check(`lat`).isNumeric(),
+    check(`lng`).isNumeric()
+  ], (req,res)=>{
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log({errors: errors.array()})
+      return res.status(422).json({ errors: errors.array() });
+    }
+    const placa = req.params.placa;
+    const lat = req.params.lat;
+    const lng = req.params.lng;
+    const hora = new Date();
+    db.none(`INSERT INTO reporte VALUES (Default, $1, $2, ST_GeomFromText('POINT($3 $4)', 4326))`,
+    [escape(placa), hora ,escape(lat), escape(lng)])
+    .then((data)=>{
+      console.log(`DATA: `, data)
+      res.send(`Solicitud de servicio creada`)
+    })
+    .catch((error)=>{
+      console.log(`ERROR`, error)
+      res.send(`Error, por favor intentelo de nuevo`)
+    })
+  }
+)
 // PUT REQUESTS
 
 /**
@@ -503,7 +615,7 @@ app.put(`/taxi/:placa/:soat`, [
     if(!value[0].match(letters) || !value[1].match(letters) || !value[2].match(letters)){
       return false;
     }
-    if(isNan(value[3]) || isNan(value[4]) || isNan(value[5])){
+    if(isNaN(value[3]) || isNaN(value[4]) || isNaN(value[5])){
       return false;
     }
   }),
@@ -537,5 +649,52 @@ app.put(`/taxi/:placa/:soat`, [
       res.send(`Error creando el taxi, por favor intentelo de nuevo`)
     })
 })
+/**El Usuario modifica el servicio para ponerle la calificacion al conductor
+ */
+app.put(`/users/services/:phone/:calificacion`, [
+  check(`phone`).isNumeric().isLength({min:10,max:10}),
+  check(`calificacion`).isFloat(),
+],(req, res) => {
+  const errors = validationResult(req);
+    if(!errors.isEmpty()){
+      console.log({errors: errors.array()})
+      return res.status(422).json({ errors: errors.array()});
+    }
+  const placa = req.params.placa;
+  const soat = req.params.soat;
+  db.none(`UPDATE servicio SET soat=$2 WHERE placa=$1`,
+    [escape(placa), escape(soat)])
+    .then((data)=>{
+      console.log(`DATA: `, data)
+      res.send(`Taxi creado exitosamente`)
+    })
+    .catch((error)=>{
+      console.log(`ERROR`, error)
+      res.send(`Error creando el taxi, por favor intentelo de nuevo`)
+    })
+})
+/**El Conductor modifica el servicio para ponerle la calificacion al usuario */
+app.put(`/drivers/services/:phone/:calificacion`, [
+  check(`phone`).isNumeric().isLength({min:10,max:10}),
+  check(`calificacion`).isFloat(),
 
+],(req, res) => {
+  const errors = validationResult(req);
+    if(!errors.isEmpty()){
+      console.log({errors: errors.array()})
+      return res.status(422).json({ errors: errors.array()});
+    }
+  const placa = req.params.placa;
+  const soat = req.params.soat;
+  db.none(`UPDATE taxi SET soat=$2 WHERE placa=$1`,
+    [escape(placa), escape(soat)])
+    .then((data)=>{
+      console.log(`DATA: `, data)
+      res.send(`Taxi creado exitosamente`)
+    })
+    .catch((error)=>{
+      console.log(`ERROR`, error)
+      res.send(`Error creando el taxi, por favor intentelo de nuevo`)
+    })
+})
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
