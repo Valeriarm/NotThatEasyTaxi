@@ -11,8 +11,12 @@ const zoomLevel = 12.4;
 class CustomMapDriver extends Component {
     state={
         origenMarker:{lat:true , lng:true},
-        destinoMarker: {lat:true , lng:true},
     };
+
+    setLocation =(e)=>{
+        this.setState({origenMarker: e.latlng});
+        this.props.getCoordinates(this.state.origenMarker);
+    }
 
     render() {
         return (
@@ -23,6 +27,7 @@ class CustomMapDriver extends Component {
                     zoom={zoomLevel}
                     zoomControl={false}
                     doubleClickZoom={false}
+                    onclick={this.setLocation.bind(this)}
                 >
                     <TileLayer
                         url = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidmFsZXJpYXJtIiwiYSI6ImNqdDU3Z285aTAzaWMzeW8zcWw2dzJ5c2gifQ.44erZi0QyJwNw__0LsjcQQ'
@@ -32,7 +37,6 @@ class CustomMapDriver extends Component {
                     />
 
                     <Marker id ="origen" position={this.state.origenMarker}/>
-                    <Marker id = "destino" position={this.state.destinoMarker}/>
                 </Map>
                
             </div>
