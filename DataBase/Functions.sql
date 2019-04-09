@@ -127,7 +127,7 @@ $$
 LANGUAGE plpgsql;
 CREATE TRIGGER delete_usuario_deuda AFTER DELETE ON usuario FOR EACH ROW EXECUTE PROCEDURE cobrar_on_delete();
 /*Al crear un taxi se asocia con el usuario que lo registro en al tabla maneja*/
-CREATE OR REPLACE FUNCTION insert_taxi(VARCHAR(15),VARCHAR(6), TEXT, TEXT, TEXT, INTEGER, TEXT, DATE, BOOLEAN) RETURNS TEXT AS $$
+CREATE OR REPLACE FUNCTION insert_taxi(VARCHAR(15),VARCHAR(6), TEXT, TEXT, TEXT, INTEGER, TEXT, DATE) RETURNS TEXT AS $$
 DECLARE
 	phone ALIAS FOR $1;
 	placa ALIAS FOR $2;
@@ -143,7 +143,7 @@ BEGIN
 	)THEN
 		INSERT INTO taxi VALUES (placa, contrasenia, marca, modelo, anio, baul, soat, FALSE);
 		INSERT INTO maneja VALUES (placa, phone, FALSE);
-		RETURN "Taxi creado con exito";
+		RETURN 'Taxi creado con exito';
 	END IF;
 END;
 $$
@@ -155,9 +155,9 @@ DECLARE
 BEGIN
 	IF EXISTS (
 		SELECT * FROM solicitud WHERE taxi=placa AND activa=TRUE
-	)THEN RETURN "Solicitud encontrado";
+	)THEN RETURN 'Solicitud encontrado';
 	END IF;
-	RETURN "Buscando Solicitudes";
+	RETURN 'Buscando Solicitudes';
 END;
 $$
 LANGUAGE plpgsql;
@@ -168,9 +168,9 @@ DECLARE
 BEGIN
 	IF EXISTS (
 		SELECT * FROM solicitud WHERE usuario=phone AND activa=TRUE
-	)THEN RETURN "Solicitud encontrado";
+	)THEN RETURN 'Solicitud encontrado';
 	END IF;
-	RETURN "Buscando Solicitudes";
+	RETURN 'Buscando Solicitudes';
 END;
 $$
 LANGUAGE plpgsql;
@@ -181,9 +181,9 @@ DECLARE
 BEGIN
 	IF EXISTS (
 		SELECT * FROM servicio WHERE taxi=phone
-	)THEN RETURN "Servicio encontrado";
+	)THEN RETURN 'Servicio encontrado';
 	END IF;
-	RETURN "Buscando Servicio";
+	RETURN 'Buscando Servicio';
 END;
 $$
 LANGUAGE plpgsql;
