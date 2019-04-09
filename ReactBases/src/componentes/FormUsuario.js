@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {withStyles} from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import Fab from '@material-ui/core/Fab';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,7 +12,8 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import axios from 'axios'
 import NavigationIcon from '@material-ui/icons/Check'
-
+import fondo from './images/fondo.png';
+import { Button } from '@material-ui/core';
 const styles = theme => ({
   main: {
     width: 'auto',
@@ -27,14 +28,14 @@ const styles = theme => ({
     },
   },
   paper: {
-    marginTop: theme.spacing.unit * 8,
+    marginTop: theme.spacing.unit * 5,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
   },
   avatar: {
-    margin: theme.spacing.unit*2,
+    margin: theme.spacing.unit * 2,
     backgroundColor: theme.palette.primary.main,
   },
   form: {
@@ -44,27 +45,38 @@ const styles = theme => ({
   submit: {
     marginTop: theme.spacing.unit * 2,
   },
-  textField:{
+  textField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
     width: 200,
-  }
+  },
+  background: {
+    objectFit: 'cover',
+    width: '100%',
+    height: '100%',
+    position: 'fixed',
+    zIndex: -1,
+    top: 0,
+    left: 0,
+    opacity: 0.75,
+
+  },
 });
 
 class FormUsuario extends React.Component {
-  state={
-    type:this.props.location.state.type,
-    phone:true,
-    password:true,
-    nombre:true,
-    apellido:true,
-    fecha:true,
-    email:true,
-    numtarjeta:true,
-    numcuenta:true,
-  } 
+  state = {
+    type: this.props.location.state.type,
+    phone: true,
+    password: true,
+    nombre: true,
+    apellido: true,
+    fecha: true,
+    email: true,
+    numtarjeta: true,
+    numcuenta: true,
+  }
   onHandleChange = name => event => {
-    this.setState({[name]: event.target.value})
+    this.setState({ [name]: event.target.value })
   }
   onClickRegistrar = (e) => {
     e.preventDefault()
@@ -76,173 +88,173 @@ class FormUsuario extends React.Component {
     const email = this.state.email;
     const numtarjeta = this.state.numtarjeta;
     const numcuenta = this.state.numcuenta;
-    if (this.state.type === 'User'){
+    if (this.state.type === 'User') {
       axios.post(`http://localhost:5000/users/${phone}/${password}/${nombre}/${apellido}/${fecha}/${email}/${numtarjeta}`).then(res => {
         const persons = res.data;
         console.log(persons)
-        if(persons === 'Usuario creado exitosamente'){
+        if (persons === 'Usuario creado exitosamente') {
           alert('Usuario creado exitosamente')
-        } else{
+        } else {
           alert(persons)
         }
       })
-    } else if (this.state.type === 'Driver'){
+    } else if (this.state.type === 'Driver') {
       axios.post(`http://localhost:5000/drivers/${phone}/${password}/${nombre}/${apellido}/${fecha}/${email}/${numcuenta}`).then(res => {
         const persons = res.data;
         console.log(persons)
-        if(persons === 'Conductor creado exitosamente'){
+        if (persons === 'Conductor creado exitosamente') {
           alert('Conductor creado exitosamente')
-          this.props.history.push({pathname:"/"})
-        } else{
+          this.props.history.push({ pathname: "/" })
+        } else {
           alert(persons)
         }
       })
     }
   }
-  render(){
+  render() {
     const { classes } = this.props;
 
     return (
       <main className={classes.main}>
+        <img src={fondo} className={classes.background} />
         <CssBaseline />
         <Paper className={classes.paper}>
-          <Avatar>
-            <LockOutlinedIcon/>
+          <Avatar className={classes.avatar}>
+            <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             Registrar
           </Typography>
-          <FormControl >
-          <InputLabel
-            htmlFor="Celular"
-            classes={{
-              InputLabel: classes.cssLabel,
-              focused: classes.cssFocused,
-            }}
-          >
-            Celular
+          <FormControl className={classes.form}>
+            <InputLabel
+              htmlFor="Celular"
+              classes={{
+                InputLabel: classes.cssLabel,
+                focused: classes.cssFocused,
+              }}
+            >
+              Celular
           </InputLabel>
-          <Input
-            id="celular"
-            onChange={this.onHandleChange('phone')}
-            classes={{
-              underline: classes.cssUnderline,
-            }}
-          />
-        </FormControl>
-        <FormControl >
-          <InputLabel
-            htmlFor="Contrasenia"
-            classes={{
-              InputLabel: classes.cssLabel,
-              focused: classes.cssFocused,
-            }}
-          >
-            Contrasenia
+            <Input
+              id="celular"
+              onChange={this.onHandleChange('phone')}
+              classes={{
+                underline: classes.cssUnderline,
+              }}
+            />
+          </FormControl>
+          <FormControl className={classes.form}>
+            <InputLabel
+              htmlFor="Contrasenia"
+              classes={{
+                InputLabel: classes.cssLabel,
+                focused: classes.cssFocused,
+              }}
+            >
+              Contrasenia
           </InputLabel>
-          <Input
-            id="Contrasenia"
-            onChange={this.onHandleChange('password')}
-            classes={{
-              underline: classes.cssUnderline,
-            }}
-            type="password"
-            helperText = "Minimo 8 caracteres"
-          />
-        </FormControl>
-        <FormControl >
-          <InputLabel
-            htmlFor="Nombre"
-            classes={{
-              InputLabel: classes.cssLabel,
-              focused: classes.cssFocused,
-            }}
-          >
-            Nombre
+            <Input
+              id="Contrasenia"
+              onChange={this.onHandleChange('password')}
+              classes={{
+                underline: classes.cssUnderline,
+              }}
+              type="password"
+            />
+          </FormControl>
+          <FormControl className={classes.form}>
+            <InputLabel
+              htmlFor="Nombre"
+              classes={{
+                InputLabel: classes.cssLabel,
+                focused: classes.cssFocused,
+              }}
+            >
+              Nombre
           </InputLabel>
-          <Input
-            id="Nombre"
-            onChange={this.onHandleChange('nombre')}
-            classes={{
-              underline: classes.cssUnderline,
-            }}
-          />
-        </FormControl>
-        <FormControl >
-          <InputLabel
-            htmlFor="Apellido"
-            classes={{
-              InputLabel: classes.cssLabel,
-              focused: classes.cssFocused,
-            }}
-          >
-            Apellido
+            <Input
+              id="Nombre"
+              onChange={this.onHandleChange('nombre')}
+              classes={{
+                underline: classes.cssUnderline,
+              }}
+            />
+          </FormControl>
+          <FormControl className={classes.form}>
+            <InputLabel
+              htmlFor="Apellido"
+              classes={{
+                InputLabel: classes.cssLabel,
+                focused: classes.cssFocused,
+              }}
+            >
+              Apellido
           </InputLabel>
-          <Input
-            id="Apellido"
-            onChange={this.onHandleChange('apellido')}
-            classes={{
-              underline: classes.cssUnderline,
-            }}
-          />
-        </FormControl>
-        <FormControl >
-          <InputLabel
-            htmlFor="Email"
-            classes={{
-              InputLabel: classes.cssLabel,
-              focused: classes.cssFocused,
-            }}
-          >
-            Email
+            <Input
+              id="Apellido"
+              onChange={this.onHandleChange('apellido')}
+              classes={{
+                underline: classes.cssUnderline,
+              }}
+            />
+          </FormControl>
+          <FormControl className={classes.form}>
+            <InputLabel
+              htmlFor="Email"
+              classes={{
+                InputLabel: classes.cssLabel,
+                focused: classes.cssFocused,
+              }}
+            >
+              Email
           </InputLabel>
-          <Input
-            id="email"
-            onChange={this.onHandleChange('email')}
-            classes={{
-              underline: classes.cssUnderline,
-            }}
-          />
-        </FormControl>
+            <Input
+              id="email"
+              onChange={this.onHandleChange('email')}
+              classes={{
+                underline: classes.cssUnderline,
+              }}
+            />
+          </FormControl>
 
-        {this.state.type === 'Driver' ? 
-          <FormControl >
-            <InputLabel
-              htmlFor="Cuenta"
-              classes={{
-                InputLabel: classes.cssLabel,
-                focused: classes.cssFocused,
-              }}
-            >
-              Cuenta
+          {this.state.type === 'Driver' ?
+            <FormControl className={classes.form}>
+              <InputLabel
+                htmlFor="Cuenta"
+                classes={{
+                  InputLabel: classes.cssLabel,
+                  focused: classes.cssFocused,
+                }}
+              >
+                Cuenta
             </InputLabel>
-            <Input
-              id="cuenta"
-              onChange={this.onHandleChange('numcuenta')}
-              classes={{
-                underline: classes.cssUnderline,
-              }}
-            />
-          </FormControl>:
-          <FormControl >
-            <InputLabel
-              htmlFor="Tarjeta"
-              classes={{
-                InputLabel: classes.cssLabel,
-                focused: classes.cssFocused,
-              }}
-            >
-              Tarjeta
+              <Input
+                id="cuenta"
+                onChange={this.onHandleChange('numcuenta')}
+                classes={{
+                  underline: classes.cssUnderline,
+                }}
+              />
+            </FormControl> :
+            <FormControl className={classes.form}>
+              <InputLabel
+                htmlFor="Tarjeta"
+                classes={{
+                  InputLabel: classes.cssLabel,
+                  focused: classes.cssFocused,
+                }}
+              >
+                Tarjeta
             </InputLabel>
-            <Input
-              id="tarjeta"
-              onChange={this.onHandleChange('numtarjeta')}
-              classes={{
-                underline: classes.cssUnderline,
-              }}
-            />
-        </FormControl>}
-        <FormControl >
+              <Input
+                id="tarjeta"
+                onChange={this.onHandleChange('numtarjeta')}
+                classes={{
+                  underline: classes.cssUnderline,
+                }}
+              />
+            </FormControl>}
+          <FormControl className={classes.form}>
             <InputLabel
               htmlFor="Birthday"
               classes={{
@@ -259,15 +271,13 @@ class FormUsuario extends React.Component {
               classes={{
                 underline: classes.cssUnderline,
               }}
-              className={classes.textField}
+              className={classes.form}
             />
-        </FormControl>
-        <Fab
-          type="submit" variant="extended" color="primary"
-          className={classes.submit} onClick={this.onClickRegistrar}>
-          <NavigationIcon/>
-          Registrar
-        </Fab>
+          </FormControl>
+          <Button type="submit" fullWidth variant="contained" color="secondary"
+            className={classes.submit} onClick={this.onClickRegistrar}>
+            Registrar
+            </Button>
         </Paper>
       </main>
     );

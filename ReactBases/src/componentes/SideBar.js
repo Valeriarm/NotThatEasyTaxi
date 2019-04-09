@@ -201,9 +201,6 @@ class PersistentDrawerLeft extends React.Component {
       })
   }, 1000)
 
-  addService = () => {
-
-  }
 
   handleItemClick = (e) => {console.log(e.target.innerHTML)}
 
