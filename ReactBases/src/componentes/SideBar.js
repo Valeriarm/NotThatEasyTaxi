@@ -146,6 +146,7 @@ class PersistentDrawerLeft extends React.Component {
 
   onClickProfileUser = (e) => {
     e.preventDefault()
+    
       this.props.history.push({pathname:"/ProfileUser/", state:{phone: this.state.phone}})
   };
 
