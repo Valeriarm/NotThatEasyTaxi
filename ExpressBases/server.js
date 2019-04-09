@@ -351,28 +351,31 @@ app.post(`/drivers/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta`,[
 app.post('/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocupado', [
   check('phone').isNumeric().isLength({min:10, max:10}),
   check('placa').isAlphanumeric().isLength({min:6,max:6}).custom(value=>{
+    console.log(value)
     value = value.split('');
     const letters = /^[A-Z]+$/;
     if(!value[0].match(letters) || !value[1].match(letters) || !value[2].match(letters)){
+      console.log("problema en letras")
       return false;
-    }
-    if(isNaN(value[3]) || isNaN(value[4]) || isNaN(value[5])){
+    } else if(isNaN(value[3]) || isNaN(value[4]) || isNaN(value[5])){
+      console.log("problema en numeros")
       return false;
-    }
+    } else {return true}
   }),
   check('contrasenia').isLength({min:8}),
   check('marca').isAlphanumeric(),
   check('modelo').isAlphanumeric(),
   check('anio').isNumeric().isLength({min:4}),
   check('baul').isAlpha(),
-  check('soat').custom(value =>{
+  check(`soat`).isLength({min:10}),
+  check(`soat`).custom(value =>{
     value=value.split("-");
     console.log(value)
-    if(isNaN(value[0]) || value[0].length!==2){
+    if(isNaN(value[0])){
       return false
     } else if (isNaN(value[1]) || value[1].length!==2){
       return false
-    } else if (isNaN(value[2])){
+    } else if (isNaN(value[2]) || value[2].length!==2){
       return false
     } else {return true}
   }),
@@ -391,11 +394,9 @@ app.post('/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocu
   const anio = req.params.anio;
   const baul = req.params.baul;
   const soat = req.params.soat;
-  const ocupado = req.params.ocupado;
-  db.none('SELECT insert_taxi($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+  db.one('SELECT insert_taxi($1,$2,$3,$4,$5,$6,$7,$8)',
     [escape(phone), escape(placa), escape(contrasenia),escape(marca), 
-      escape(modelo), escape(anio), escape(baul), escape(soat), 
-      escape(ocupado)])
+      escape(modelo), escape(anio), escape(baul), escape(soat)])
     .then((data)=>{
       console.log(`DATA: `, data)
       res.send(`Taxi creado exitosamente`)

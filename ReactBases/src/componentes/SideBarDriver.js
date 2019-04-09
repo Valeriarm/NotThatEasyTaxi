@@ -127,8 +127,6 @@ const styles = theme => ({
 });
 
 
-
-
 class PersistentDrawerLeft extends React.Component {
   state = {
     phone: this.props.location.state.phone,
@@ -185,7 +183,7 @@ class PersistentDrawerLeft extends React.Component {
 
     const { classes , theme } = this.props;
     const { open } = this.state;
-    const {posicionActual, origen, destino} = this.state;   
+    const {posicionActual} = this.state;   
 
     return (
       <div className={classes.root}>

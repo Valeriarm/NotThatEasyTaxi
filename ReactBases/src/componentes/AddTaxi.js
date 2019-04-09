@@ -5,15 +5,17 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ExitToApp from '@material-ui/icons/ExitToApp';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import HomeIcon from'@material-ui/icons/Home';
+import HomeIcon from '@material-ui/icons/Home';
 import Person from '@material-ui/icons/Person';
 import LocalTaxi from '@material-ui/icons/LocalTaxi';
-import {purple, deepPurple} from '@material-ui/core/colors';
-import { InputLabel, FormControl, Input, Fab, ListItemIcon, ListItemText ,
-Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar , 
-Toolbar, withStyles, TextField, MenuItem, Paper, Avatar, } from '@material-ui/core';
+import { purple, deepPurple } from '@material-ui/core/colors';
+import {
+  InputLabel, FormControl, Input, Fab, ListItemIcon, ListItemText,
+  Divider, ListItem, Typography, IconButton, CssBaseline, Drawer, AppBar,
+  Toolbar, withStyles, TextField, MenuItem, Paper, Avatar,
+} from '@material-ui/core';
 import axios from 'axios'
-import Search from '@material-ui/icons/Search'; 
+import Search from '@material-ui/icons/Search';
 
 
 
@@ -33,14 +35,6 @@ const styles = theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-  },
-
-  paper: {
-    marginTop: theme.spacing.unit * 2,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`,
   },
 
   appBarShift: {
@@ -95,14 +89,14 @@ const styles = theme => ({
   },
 
   logOutButton: {
-    marginLeft: theme.spacing.unit*50,
+    marginLeft: theme.spacing.unit * 50,
   },
   titleLabel: {
-    marginLeft: theme.spacing.unit*50,
+    marginLeft: theme.spacing.unit * 50,
   },
 
   paper: {
-    marginTop: theme.spacing.unit *-0.5,
+    marginTop: theme.spacing.unit * -0.5,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -110,14 +104,14 @@ const styles = theme => ({
   },
 
   avatar: {
-    margin: theme.spacing.unit*2,
+    margin: theme.spacing.unit * 2,
     backgroundColor: theme.palette.primary.main,
   },
 
   form: {
-    width: '100%', 
-    marginTop: theme.spacing.unit*2,
-    marginLeft: theme.spacing.unit*15,
+    width: '100%',
+    marginTop: theme.spacing.unit * 2,
+    marginLeft: theme.spacing.unit * 15,
     display: 'block',
 
   },
@@ -128,7 +122,7 @@ const styles = theme => ({
     '&$cssFocused': {
       color: purple[500],
     },
-    marginTop: theme.spacing.unit*2,
+    marginTop: theme.spacing.unit * 2,
   },
   cssFocused: {},
   cssUnderline: {
@@ -138,48 +132,49 @@ const styles = theme => ({
   },
 
   servicio: {
-    marginTop: theme.spacing.unit*-4.4,
-    marginLeft: theme.spacing.unit*45,
+    marginTop: theme.spacing.unit * -4.4,
+    marginLeft: theme.spacing.unit * 45,
   },
   favoritos: {
-    marginTop: theme.spacing.unit*-13,
-    marginLeft: theme.spacing.unit*45,
+    marginTop: theme.spacing.unit * -13,
+    marginLeft: theme.spacing.unit * 45,
   },
 
-  menuFavoritos:{
-    marginTop: theme.spacing.unit*-2,
-    marginLeft: theme.spacing.unit*90,
-    marginRight: theme.spacing.unit*30,
+  menuFavoritos: {
+    marginTop: theme.spacing.unit * -2,
+    marginLeft: theme.spacing.unit * 90,
+    marginRight: theme.spacing.unit * 30,
   },
 });
 
 
 const currencies = [
-    {
-      value: 'Grande',
-      label: 'Grande',
-    },
-    {
-      value: 'Pequenio',
-      label: 'Pequenio',
-    },
-    {
-      value: 'Mediano',
-      label: 'Mediano',
-    },
-  ];
+  {
+    value: 'Grande',
+    label: 'Grande',
+  },
+  {
+    value: 'Pequenio',
+    label: 'Pequenio',
+  },
+  {
+    value: 'Mediano',
+    label: 'Mediano',
+  },
+];
 
 class PersistentDrawerLeft extends React.Component {
   state = {
     phone: this.props.location.state.phone,
     currency: true,
-    password:true,
+    password: true,
     placa: true,
-    marca:true,
+    marca: true,
     modelo: true,
     soat: true,
     anio: true,
     tamanio: true,
+    ocupado: false,
   };
 
   handleDrawerOpen = () => {
@@ -192,17 +187,17 @@ class PersistentDrawerLeft extends React.Component {
 
   onClickProfileUser = (e) => {
     e.preventDefault()
-      this.props.history.push({pathname:"/ProfileDriver/", state:{phone: this.state.phone}})
+    this.props.history.push({ pathname: "/ProfileDriver/", state: { phone: this.state.phone } })
   };
 
   onClickSideBar = (e) => {
     e.preventDefault()
-    this.props.history.push({pathname:"/SideBarDriver/", state:{phone: this.state.phone}})
+    this.props.history.push({ pathname: "/SideBarDriver/", state: { phone: this.state.phone } })
   };
 
   onClickTaxi = (e) => {
     e.preventDefault()
-    this.props.history.push({pathname:"/Taxi/", state:{phone: this.state.phone}})
+    this.props.history.push({ pathname: "/Taxi/", state: { phone: this.state.phone } })
   };
 
   handleChange = name => event => {
@@ -218,23 +213,25 @@ class PersistentDrawerLeft extends React.Component {
     const anio = this.state.anio;
     const soat = this.state.soat;
     const baul = this.state.tamanio;
+    const ocupado = this.state.ocupado;
 
-    axios.post(`http://localhost:5000/taxi/${phone}/${placa}/${password}/${marca}/${modelo}/${anio}/${baul}/${soat}/false`).then(res => {
-        const validation = res.data;
-        console.log(validation)
-        if(validation === 'Taxi creado exitosamente'){
-          alert('Taxi creado exitosamente')
-        } else if (validation === 'Error creando el taxi, por favor intentelo de nuevo'){
-          alert('Error creando el taxi, por favor intentelo de nuevo')
-        } else if (validation === phone){
-          this.props.history.push({pathname:"/SideBar/", state:{phone:this.state.phone}})
-        }
-      })
+    axios.post(`http://localhost:5000/taxi/${phone}/${placa}/${password}/${marca}/${modelo}/${anio}/${baul}/${soat}/${ocupado}`).then(res => {
+      const validation = res.data;
+      console.log(validation)
+      console.log(password)
+      if (validation === 'Taxi creado exitosamente') {
+        alert('Taxi creado exitosamente')
+      } else if (validation === 'Error creando el taxi, por favor intentelo de nuevo') {
+        alert('Error creando el taxi, por favor intentelo de nuevo')
+      } else if (validation === phone) {
+        this.props.history.push({ pathname: "/SideBar/", state: { phone: this.state.phone } })
+      }
+    })
   }
 
   render() {
 
-    const { classes , theme } = this.props;
+    const { classes, theme } = this.props;
     const { open } = this.state;
 
 
@@ -249,20 +246,20 @@ class PersistentDrawerLeft extends React.Component {
         >
           <Toolbar disableGutters={!open} >
             <IconButton
-              color = "inherit"
+              color="inherit"
               aria-label="Open drawer"
               onClick={this.handleDrawerOpen}
               className={classNames(classes.menuButton, open && classes.hide)}
             >
-              <MenuIcon/>
+              <MenuIcon />
             </IconButton>
             <Typography variant="h6" color="inherit" noWrap className={classes.titleLabel}>
               Not That Easy Taxi
             </Typography>
             <IconButton
-              color = "inherit"
+              color="inherit"
             >
-              <ExitToApp/>
+              <ExitToApp />
             </IconButton>
           </Toolbar>
         </AppBar>
@@ -283,23 +280,23 @@ class PersistentDrawerLeft extends React.Component {
           </div>
           <Divider />
           <ListItem button onClick={this.onClickSideBar}>
-          <ListItemIcon>
-          <HomeIcon/>
-          </ListItemIcon>
-          <ListItemText primary="Inicio" />
-        </ListItem>
-        <ListItem button onClick={this.onClickProfileUser}>
-          <ListItemIcon>
-          <Person/>
-          </ListItemIcon>
-          <ListItemText primary="Perfil" />
-        </ListItem>
-        <ListItem button  onClick = {this.onClickTaxi}>
-          <ListItemIcon>
-          <LocalTaxi/>
-          </ListItemIcon>
-          <ListItemText primary="Taxi" />
-        </ListItem>
+            <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
+            <ListItemText primary="Inicio" />
+          </ListItem>
+          <ListItem button onClick={this.onClickProfileUser}>
+            <ListItemIcon>
+              <Person />
+            </ListItemIcon>
+            <ListItemText primary="Perfil" />
+          </ListItem>
+          <ListItem button onClick={this.onClickTaxi}>
+            <ListItemIcon>
+              <LocalTaxi />
+            </ListItemIcon>
+            <ListItemText primary="Taxi" />
+          </ListItem>
         </Drawer>
         <main
           className={classNames(classes.content, {
@@ -308,149 +305,151 @@ class PersistentDrawerLeft extends React.Component {
         >
           <div className={classes.drawerHeader} />
           <Paper className={classes.paper}>
-          <Avatar className={classes.avatar}>
-            <Search/>
-          </Avatar>
-          <Typography component="h1" variant="h5">
-          Agregar
+            <Avatar className={classes.avatar}>
+              <Search />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Agregar
           </Typography>
-          <FormControl >
-          <InputLabel
-            htmlFor="Marca"
-            classes={{
-              focused: classes.cssFocused,
-            }}
-          >
-            Marca
+            <FormControl >
+              <InputLabel
+                htmlFor="Marca"
+                classes={{
+                  focused: classes.cssFocused,
+                }}
+              >
+                Marca
           </InputLabel>
-          <Input
-            id="Marca"
-            classes={{
-              underline: classes.cssUnderline,
-            }}
-            onChange={this.handleChange('marca')}
-          />
-        </FormControl>
-        <FormControl >
-          <InputLabel
-            htmlFor="Placa"
-            classes={{
-              focused: classes.cssFocused,
-            }}
-          >
-        Placa          
+              <Input
+                id="Marca"
+                classes={{
+                  underline: classes.cssUnderline,
+                }}
+                onChange={this.handleChange('marca')}
+              />
+            </FormControl>
+            <FormControl >
+              <InputLabel
+                htmlFor="Placa"
+                classes={{
+                  focused: classes.cssFocused,
+                }}
+              >
+                Placa
         </InputLabel>
-          <Input
-            id="Placa"
-            classes={{
-              underline: classes.cssUnderline,
-            }}
-            onChange={this.handleChange('placa')}
-          />
-        </FormControl>
-        <FormControl >
-          <InputLabel
-            htmlFor="password"
-            classes={{
-              focused: classes.cssFocused,
-            }}
-          >
-        password          
+              <Input
+                id="Placa"
+                classes={{
+                  underline: classes.cssUnderline,
+                }}
+                onChange={this.handleChange('placa')}
+              />
+            </FormControl>
+            <FormControl >
+              <InputLabel
+                htmlFor="password"
+                classes={{
+                  focused: classes.cssFocused,
+                }}
+              >
+                Password
         </InputLabel>
-          <Input
-            id="password"
-            classes={{
-              underline: classes.cssUnderline,
-            }}
-            onChange={this.handleChange('password')}
-          />
-        </FormControl>
-        <FormControl >
-          <InputLabel
-            htmlFor="Modelo"
-            classes={{
-              focused: classes.cssFocused,
-            }}
-          >
-            Modelo
+              <Input
+                id="password"
+                classes={{
+                  underline: classes.cssUnderline,
+                }}
+                onChange={this.handleChange('password')}
+                type="password"
+
+              />
+            </FormControl>
+            <FormControl >
+              <InputLabel
+                htmlFor="Modelo"
+                classes={{
+                  focused: classes.cssFocused,
+                }}
+              >
+                Modelo
           </InputLabel>
-          <Input
-            id="Modelo"
-            classes={{
-              underline: classes.cssUnderline,
-            }}
-            onChange={this.handleChange('modelo')}
-          />
-        </FormControl>
-        <FormControl >
-          <InputLabel
-            htmlFor="Anio"
-            classes={{
-              focused: classes.cssFocused,
-            }}
-          >
-            Anio
+              <Input
+                id="Modelo"
+                classes={{
+                  underline: classes.cssUnderline,
+                }}
+                onChange={this.handleChange('modelo')}
+              />
+            </FormControl>
+            <FormControl >
+              <InputLabel
+                htmlFor="Anio"
+                classes={{
+                  focused: classes.cssFocused,
+                }}
+              >
+                Anio
           </InputLabel>
-          <Input
-            id="Anio"
-            classes={{
-              underline: classes.cssUnderline,
-            }}
-            onChange= {this.handleChange('anio')}
-          />
-        </FormControl>
-        <FormControl >
-        <InputLabel
-              htmlFor="Soat"
-              classes={{
-                focused: classes.cssFocused,
-              }}
+              <Input
+                id="Anio"
+                classes={{
+                  underline: classes.cssUnderline,
+                }}
+                onChange={this.handleChange('anio')}
+              />
+            </FormControl>
+            <FormControl >
+              <InputLabel
+                htmlFor="Soat"
+                classes={{
+                  focused: classes.cssFocused,
+                }}
+              >
+              </InputLabel>
+              <Input
+                fullWidth
+                id="soat"
+                type="date"
+                onChange={this.handleChange('soat')}
+                classes={{
+                  underline: classes.cssUnderline,
+                }}
+                className={classes.textField}
+              />
+            </FormControl>
+            <FormControl>
+              <TextField
+                select
+                label="Seleccione"
+                className={classes.textField}
+                value={this.state.tamanio}
+                onChange={this.handleChange('tamanio')}
+                SelectProps={{
+                  MenuProps: {
+                    className: classes.menu,
+                  },
+                }}
+                margin="dense"
+                helperText="Tamanio del Baul"
+              >
+                {currencies.map(option => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </FormControl>
+            <Fab
+              type="submit" variant="extended" color="primary"
+              className={classes.submit}
+              onClick={this.onClickAgregar}
             >
-            </InputLabel>
-            <Input
-              fullWidth
-              id="soat"
-              type="date"
-              onChange={this.handleChange('soat')}
-              classes={{
-                underline: classes.cssUnderline,
-              }}
-              className={classes.textField}
-            />
-        </FormControl>
-        <FormControl>
-        <TextField
-          select
-          label="Seleccione"
-          className={classes.textField}
-          value={this.state.tamanio}
-          onChange={this.handleChange('tamanio')}
-          SelectProps={{
-            MenuProps: {
-              className: classes.menu,
-            },
-          }}
-          margin="dense"
-          helperText = "Tamanio del Baul"
-        >
-          {currencies.map(option => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
-        </FormControl>
-        <Fab
-          type="submit" variant="extended" color="primary"
-          className={classes.submit}
-          onClick={this.onClickAgregar}
-        >         
-          Agregar
+              Agregar
         </Fab>
-        </Paper>
+          </Paper>
         </main>
       </div>
-      
+
     );
   }
 }
