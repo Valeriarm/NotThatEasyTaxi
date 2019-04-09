@@ -50,6 +50,7 @@ const styles = theme => ({
     width: 200,
   }
 });
+
 class FormUsuario extends React.Component {
   state={
     type:this.props.location.state.type,
@@ -91,12 +92,12 @@ class FormUsuario extends React.Component {
         console.log(persons)
         if(persons === 'Conductor creado exitosamente'){
           alert('Conductor creado exitosamente')
+          this.props.history.push({pathname:"/"})
         } else{
           alert(persons)
         }
       })
     }
-    this.props.history.push({pathname:"/"})
   }
   render(){
     const { classes } = this.props;
@@ -127,6 +128,26 @@ class FormUsuario extends React.Component {
             classes={{
               underline: classes.cssUnderline,
             }}
+          />
+        </FormControl>
+        <FormControl >
+          <InputLabel
+            htmlFor="Contrasenia"
+            classes={{
+              InputLabel: classes.cssLabel,
+              focused: classes.cssFocused,
+            }}
+          >
+            Contrasenia
+          </InputLabel>
+          <Input
+            id="Contrasenia"
+            onChange={this.onHandleChange('password')}
+            classes={{
+              underline: classes.cssUnderline,
+            }}
+            type="password"
+            helperText = "Minimo 8 caracteres"
           />
         </FormControl>
         <FormControl >

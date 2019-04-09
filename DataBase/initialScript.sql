@@ -304,3 +304,4 @@ INSERT INTO usuario VALUES ('123451234567890', '12345678', 'Valeria', 'Rivera','
 INSERT INTO taxi VALUES ('DEO840','12345678','Renault','Logan',2016,'Mediano','2020-10-01', false);
 INSERT INTO taxi VALUES ('CMP217','12345678','Hyundai','Acent',2006,'Pequenio','2020-10-01', false);
 SELECT * FROM usuario;
+SELECT * FROM conductor;

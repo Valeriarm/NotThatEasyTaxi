@@ -26,7 +26,7 @@ app.use(express.json());
  * Valida los usuario recibiendo telefono y contraseña
  */
 app.get(`/users/:phone/:psword`,[
-  check(`phone`).isNumeric().isLength({min:15, max:15}),
+  check(`phone`).isNumeric().isLength({min:10, max:10}),
   check(`psword`).isLength({min:8})
 ],(req, res) => {
   const errors = validationResult(req);
@@ -51,7 +51,7 @@ app.get(`/users/:phone/:psword`,[
  * Valida los Conductores recibiendo telefono y contraseña
  */
 app.get(`/drivers/:phone/:psword`, [
-  check(`phone`).isNumeric().isLength({min:15, max:15}),
+  check(`phone`).isNumeric().isLength({min:10, max:10}),
   check(`psword`).isLength({min:8})
 ],(req, res) => {
   const errors = validationResult(req);
@@ -76,7 +76,7 @@ app.get(`/drivers/:phone/:psword`, [
  * Valida los Taxis recibiendo placa y contraseña
  */
 app.get(`/taxi/:placa/:psword`, [
-  check(`placa`).isNumeric().isLength({min:15, max:15}),
+  check(`placa`).isNumeric().isLength({min:10, max:10}),
   check(`psword`).isLength({min:8})
 ],(req, res) => {
   const errors = validationResult(req);
@@ -102,7 +102,7 @@ app.get(`/taxi/:placa/:psword`, [
  * y placa del vehiculo
  */
 app.get(`/drivers/taxi/:phone/:placa`,[
-  check(`phone`).isNumeric().isLength({min:15, max:15}),
+  check(`phone`).isNumeric().isLength({min:10, max:10}),
   check(`placa`).isAlphanumeric().isLength({min:6, max:6})
 ], (req, res) => {
   const errors = validationResult(req);
@@ -152,7 +152,7 @@ app.get(`/drivers/taxi/request/:placa`,[
  * Obtiene los datos de un conductor para cargarlos en su perfil
  */
 app.get(`/drivers/:phone/`,[
-  check(`phone`).isNumeric().isLength({min:15, max:15}),
+  check(`phone`).isNumeric().isLength({min:10, max:10}),
 ],(req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -171,6 +171,29 @@ app.get(`/drivers/:phone/`,[
   })
 })
 
+/**
+ * Obtiene los datos de un usuario para cargarlos en su perfil
+ */
+app.get(`/users/:phone/`,[
+  check(`phone`).isNumeric().isLength({min:10, max:10}),
+],(req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log({errors: errors.array()})
+    return res.send(JSON.stringify("Credenciales invalidas"));
+  }
+  const phone = req.params.phone;
+  db.one(`SELECT * FROM usuario WHERE telefonousuario= $1`, [escape(phone)])
+  .then(function (data) {
+    console.log(data )
+    res.send(JSON.stringify(data))
+  })
+  .catch(function (error) {
+    console.log(`ERROR:`, error)
+    res.send(JSON.stringify("Credenciales invalidas"))
+  })
+})
+
 // POST REQUESTS
 
 /**
@@ -178,7 +201,7 @@ app.get(`/drivers/:phone/`,[
  * apellido, fecha de nacimiento, correo y numero de tarjeta
  */
 app.post(`/users/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:tarjeta`, [
-  check(`tel`).isNumeric().isLength({min:15, max:15}),
+  check(`tel`).isNumeric().isLength({min:10, max:10}),
   check(`psword`).isLength({min:8}),
   check(`nombre`).isAlpha(),
   check(`apellido`).isAlpha(),
@@ -229,7 +252,7 @@ app.post(`/users/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:tarjeta`, [
  * apellido, fecha de nacimiento, correo y numero de cuenta
  */
 app.post(`/drivers/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta`,[
-  check(`tel`).isNumeric().isLength({min:15, max:15}),
+  check(`tel`).isNumeric().isLength({min:10, max:10}),
   check(`psword`).isLength({min:8}),
   check(`nombre`).isAlpha(),
   check(`apellido`).isAlpha(),
@@ -252,7 +275,7 @@ app.post(`/drivers/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta`,[
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.log({errors: errors.array()})
-      return res.status(422).json({ errors: errors.array() });
+      return res.send(`Error en registro`);
     }
     const tel=req.params.tel;
     const psword=req.params.psword;
@@ -279,7 +302,7 @@ app.post(`/drivers/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta`,[
  * baul, soat y, ocupado
  */
 app.post('/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocupado', [
-  check('phone').isNumeric().isLength({min:15, max:15}),
+  check('phone').isNumeric().isLength({min:10, max:10}),
   check('placa').isAlphanumeric().isLength({min:6,max:6}).custom(value=>{
     value = value.split('');
     const letters = /^[A-Z]+$/;
@@ -311,7 +334,7 @@ app.post('/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocu
   const errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.log({errors: errors.array()})
-      return res.status(422).json({ errors: errors.array() });
+      return res.send(`Error en Registro`);
     }
   const phone = req.params.phone;
   const placa = req.params.placa;
@@ -340,7 +363,7 @@ app.post('/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocu
  */
 app.post(`/users/favorites/:phone/:lat/:lng`, 
   [
-    check(`phone`).isNumeric().isLength({min: 15, max: 15}),
+    check(`phone`).isNumeric().isLength({min: 10, max: 10}),
     check(`lat`).isNumeric(),
     check(`lng`).isNumeric()
   ], (req,res)=>{
@@ -370,7 +393,7 @@ app.post(`/users/favorites/:phone/:lat/:lng`,
  */
 app.post(`/users/service/:phone/:lat/:lng`, 
   [
-    check(`phone`).isNumeric().isLength({min: 15, max: 15}),
+    check(`phone`).isNumeric().isLength({min: 10, max: 10}),
     check(`lat`).isNumeric(),
     check(`lng`).isNumeric()
   ], (req,res)=>{
@@ -402,7 +425,7 @@ app.post(`/users/service/:phone/:lat/:lng`,
  * apellido, fecha de nacimiento, correo y numero de tarjeta
  */
 app.put(`/users/:tel/:psword/:nombre/:apellido/:mail/:tarjeta`, [
-  check(`tel`).isNumeric().isLength({min:15,max:15}),
+  check(`tel`).isNumeric().isLength({min:10,max:10}),
   check(`psword`).isLength({min:8}),
   check(`nombre`).isAlpha(),
   check(`apellido`).isAlpha(),
@@ -412,7 +435,7 @@ app.put(`/users/:tel/:psword/:nombre/:apellido/:mail/:tarjeta`, [
   const errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.log({errors: errors.array()})
-      return res.status(422).json({ errors: errors.array() });
+      return res.send(`Error en Registro`);
     }
   const tel = req.params.tel;
   const psword = req.params.psword;
@@ -437,7 +460,7 @@ app.put(`/users/:tel/:psword/:nombre/:apellido/:mail/:tarjeta`, [
  * apellido, fecha de nacimiento, correo y numero de cuenta
  */
 app.put(`/drivers/:phone/:psword/:nombre/:apellido/:mail/:cuenta`,[
-  check(`phone`).isNumeric().isLength({min:15, max:15}),
+  check(`phone`).isNumeric().isLength({min:10, max:10}),
   check(`psword`).isLength({min:8}),
   check(`nombre`).isAlpha(),
   check(`apellido`).isAlpha(),
@@ -447,7 +470,7 @@ app.put(`/drivers/:phone/:psword/:nombre/:apellido/:mail/:cuenta`,[
   const errors = validationResult(req);
     if(!errors.isEmpty()){
       console.log({errors: errors.array()})
-      return res.status(422).json({ errors: errors.array() });
+      return res.send(`Error al Modificar`);
     }
   const phone = req.params.phone;
   const psword = req.params.psword;
@@ -455,7 +478,7 @@ app.put(`/drivers/:phone/:psword/:nombre/:apellido/:mail/:cuenta`,[
   const apellido = req.params.apellido;
   const mail = req.params.mail;
   const cuenta = req.params.cuenta;
-  db.none(`UPDATE usuario SET contrasenia=$2, nombreConductor=$3, apellidoConductor=$4, email=$5, numCuenta=$6 WHERE phone=$1`,
+  db.none(`UPDATE conductor SET contrasenia=$2, nombreConductor=$3, apellidoConductor=$4, email=$5, numCuenta=$6 WHERE telefonoconductor=$1`,
     [escape(phone), escape(psword), escape(nombre), 
       escape(apellido), escape(mail), escape(cuenta)])
       .then((data)=>{
