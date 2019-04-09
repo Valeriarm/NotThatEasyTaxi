@@ -64,6 +64,7 @@ horainicio TIMESTAMP NOT NULL,
 horafin TIMESTAMP NOT NULL,
 usuario_pago BOOLEAN NOT NULL,
 conductor_pago BOOLEAN NOT NULL,
+terminado BOOLEAN NOT NULL,
 PRIMARY KEY (idservicio),
 FOREIGN KEY (usuario) REFERENCES usuario(telefonousuario) ON DELETE CASCADE ON UPDATE CASCADE,
 FOREIGN KEY (conductor) REFERENCES Conductor(telefonoconductor) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -74,7 +75,6 @@ CREATE TABLE solicitud(
 idsolicitud SERIAL NOT NULL,
 usuario VARCHAR(15) NOT NULL,
 posicionusuario GEOMETRY(POINT) NOT NULL,
-posicionfinal GEOMETRY(POINT) NOT NULL,
 taxi VARCHAR(6) NOT NULL,
 conductor VARCHAR(15) NOT NULL,
 activa BOOLEAN NOT NULL,
@@ -246,21 +246,22 @@ BEGIN
 	)THEN
 		INSERT INTO taxi VALUES (placa, contrasenia, marca, modelo, anio, baul, soat, FALSE);
 		INSERT INTO maneja VALUES (placa, phone, FALSE);
-		RETURN "Taxi creado con exito";
+		RETURN 'Taxi creado con exito';
 	END IF;
 END;
 $$
 LANGUAGE plpgsql;
 /*Buscar por solicitudes activas por placa*/
-CREATE OR REPLACE FUNCTION buscar_solicitudes_conductor(VARCHAR(6)) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION buscar_solicitudes_conductor(VARCHAR(6), VARCHAR(15)) RETURNS Text AS $$
 DECLARE
+	phone ALIAS FOT $2;
 	placa ALIAS FOR $1;
 BEGIN
 	IF EXISTS (
-		SELECT * FROM solicitud WHERE taxi=placa AND activa=TRUE
-	)THEN RETURN "Solicitud encontrado";
+		SELECT * FROM solicitud WHERE taxi=placa AND conductor=phone AND activa=TRUE
+	)THEN RETURN 'Solicitud encontrado';
 	END IF;
-	RETURN "Buscando Solicitudes";
+	RETURN 'Buscando Solicitudes';
 END;
 $$
 LANGUAGE plpgsql;
@@ -271,9 +272,9 @@ DECLARE
 BEGIN
 	IF EXISTS (
 		SELECT * FROM solicitud WHERE usuario=phone AND activa=TRUE
-	)THEN RETURN "Solicitud encontrado";
+	)THEN RETURN 'Solicitud encontrado';
 	END IF;
-	RETURN "Buscando Solicitudes";
+	RETURN 'Buscando Solicitudes';
 END;
 $$
 LANGUAGE plpgsql;
@@ -284,9 +285,9 @@ DECLARE
 BEGIN
 	IF EXISTS (
 		SELECT * FROM servicio WHERE taxi=phone
-	)THEN RETURN "Servicio encontrado";
+	)THEN RETURN 'Servicio encontrado';
 	END IF;
-	RETURN "Buscando Servicio";
+	RETURN 'Buscando Servicio';
 END;
 $$
 LANGUAGE plpgsql;
@@ -341,7 +342,6 @@ $$
 LANGUAGE plpgsql;
 DROP TRIGGER create_solicitud ON solicitud;
 CREATE TRIGGER create_solicitud BEFORE INSERT ON solicitud FOR EACH ROW EXECUTE PROCEDURE crear_solicitud();
-
 /*User users CRUD*/
 /*
 REVOKE ALL
@@ -368,12 +368,12 @@ GRANT ALL PRIVILEGES ON reporte IN SCHEMA public TO drivercrud;
 */
 /*Default insertions*/
 
-INSERT INTO conductor VALUES ('1234567890', '12345678', 'Mateo', 'Gregory','1999-07-02', 'magremenez@gmail.com', '123454312');
-INSERT INTO usuario VALUES ('1234567890', '12345678', 'Mateo', 'Gregory','1999-07-02', 'magremenez@gmail.com', '123454312');
-INSERT INTO conductor VALUES ('1234512345', '12345678', 'Valeria', 'Rivera','1998-11-19', 'valeriarm@gmail.com', '123454313');
-INSERT INTO usuario VALUES ('1234512345', '12345678', 'Valeria', 'Rivera','1998-11-19', 'valeriarm@gmail.com', '123454313');
-SELECT insert_taxi('1234567890','CMP217','12345678','Hyundai','Accent',2016,'Mediano','2020-10-01');
-SELECT insert_taxi('1234512345','DEO840','12345678','Renault','Logan',2016,'Mediano','2020-10-01');
+INSERT INTO conductor VALUES ('3166443198', '12345678', 'Mateo', 'Gregory','1999-07-02', 'magremenez@gmail.com', '123454312');
+INSERT INTO usuario VALUES ('3166443198', '12345678', 'Mateo', 'Gregory','1999-07-02', 'magremenez@gmail.com', '123454312');
+INSERT INTO conductor VALUES ('3012617187', '12345678', 'Valeria', 'Rivera','1998-11-19', 'valeriarm@gmail.com', '123454313');
+INSERT INTO usuario VALUES ('3012617187', '12345678', 'Valeria', 'Rivera','1998-11-19', 'valeriarm@gmail.com', '123454313');
+SELECT insert_taxi('3166443198','CMP217','12345678','Hyundai','Accent',2016,'Mediano','2020-10-01');
+SELECT insert_taxi('3012617187','DEO840','12345678','Renault','Logan',2016,'Mediano','2020-10-01');
 INSERT INTO registro VALUES (DEFAULT, 'CMP217', '2019-04-09T03:42:13.346Z', ST_GeomFromText('POINT(3.4394 -76.529)', 4326));
 INSERT INTO registro VALUES (DEFAULT, 'DEO840', '2019-04-09T03:43:45.346Z', ST_GeomFromText('POINT(3.4562 -76.327)', 4326));
 SELECT * FROM usuario;

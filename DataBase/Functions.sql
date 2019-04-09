@@ -127,7 +127,7 @@ $$
 LANGUAGE plpgsql;
 CREATE TRIGGER delete_usuario_deuda AFTER DELETE ON usuario FOR EACH ROW EXECUTE PROCEDURE cobrar_on_delete();
 /*Al crear un taxi se asocia con el usuario que lo registro en al tabla maneja*/
-CREATE OR REPLACE FUNCTION insert_taxi(VARCHAR(15),VARCHAR(6), TEXT, TEXT, TEXT, INTEGER, TEXT, DATE, BOOLEAN) RETURNS TEXT AS $$
+CREATE OR REPLACE FUNCTION insert_taxi(VARCHAR(15),VARCHAR(6), TEXT, TEXT, TEXT, INTEGER, TEXT, DATE) RETURNS TEXT AS $$
 DECLARE
 	phone ALIAS FOR $1;
 	placa ALIAS FOR $2;
@@ -143,21 +143,22 @@ BEGIN
 	)THEN
 		INSERT INTO taxi VALUES (placa, contrasenia, marca, modelo, anio, baul, soat, FALSE);
 		INSERT INTO maneja VALUES (placa, phone, FALSE);
-		RETURN "Taxi creado con exito";
+		RETURN 'Taxi creado con exito';
 	END IF;
 END;
 $$
 LANGUAGE plpgsql;
 /*Buscar por solicitudes activas por placa*/
-CREATE OR REPLACE FUNCTION buscar_solicitudes_conductor(VARCHAR(6)) RETURNS Text AS $$
+CREATE OR REPLACE FUNCTION buscar_solicitudes_conductor(VARCHAR(6), VARCHAR(15)) RETURNS Text AS $$
 DECLARE
+	phone ALIAS FOT $2;
 	placa ALIAS FOR $1;
 BEGIN
 	IF EXISTS (
-		SELECT * FROM solicitud WHERE taxi=placa AND activa=TRUE
-	)THEN RETURN "Solicitud encontrado";
+		SELECT * FROM solicitud WHERE taxi=placa AND conductor=phone AND activa=TRUE
+	)THEN RETURN 'Solicitud encontrado';
 	END IF;
-	RETURN "Buscando Solicitudes";
+	RETURN 'Buscando Solicitudes';
 END;
 $$
 LANGUAGE plpgsql;
@@ -168,9 +169,9 @@ DECLARE
 BEGIN
 	IF EXISTS (
 		SELECT * FROM solicitud WHERE usuario=phone AND activa=TRUE
-	)THEN RETURN "Solicitud encontrado";
+	)THEN RETURN 'Solicitud encontrado';
 	END IF;
-	RETURN "Buscando Solicitudes";
+	RETURN 'Buscando Solicitudes';
 END;
 $$
 LANGUAGE plpgsql;
@@ -181,9 +182,9 @@ DECLARE
 BEGIN
 	IF EXISTS (
 		SELECT * FROM servicio WHERE taxi=phone
-	)THEN RETURN "Servicio encontrado";
+	)THEN RETURN 'Servicio encontrado';
 	END IF;
-	RETURN "Buscando Servicio";
+	RETURN 'Buscando Servicio';
 END;
 $$
 LANGUAGE plpgsql;
@@ -238,3 +239,39 @@ $$
 LANGUAGE plpgsql;
 DROP TRIGGER create_solicitud ON solicitud;
 CREATE TRIGGER create_solicitud BEFORE INSERT ON solicitud FOR EACH ROW EXECUTE PROCEDURE crear_solicitud();
+/*Permite calificar al conductor*/
+CREATE OR REPLACE FUNCTION calificar_conductor (VARCHAR(15), FLOAT) RETURNS Text AS $$
+DECLARE
+	phone ALIAS FOR $1;
+	calificacion ALIAS FOR $2;
+	id_servicio INTEGER := (SELECT idservicio FROM servicio 
+								WHERE usuario=phone AND calificacionconductor IS NULL
+								GROUP BY idservicio ORDER BY MAX(horafin) LIMIT 1);
+BEGIN
+	IF NOT NULL (id_servicio) THEN
+	UPDATE servicio SET calificacionconductor=calificacion WHERE 
+		idservicio=id_servicio ;
+	RETURN 'Has calificado al servicio del conductor'
+	END IF;
+	RETURN 'No hay servicios a ser calificados'
+END;
+$$
+LANGUAGE plpgsql;
+/*Permite calificar al usuario*/
+CREATE OR REPLACE FUNCTION calificar_usuario (VARCHAR(15), FLOAT) RETURNS Text AS $$
+DECLARE
+	phone ALIAS FOR $1;
+	calificacion ALIAS FOR $2;
+	id_servicio INTEGER := (SELECT idservicio FROM servicio 
+								WHERE conductor=phone AND calificacionusuario IS NULL
+								GROUP BY idservicio ORDER BY MAX(horafin) LIMIT 1);
+BEGIN
+	IF NOT NULL (id_servicio) THEN
+	UPDATE servicio SET calificacionusuario=calificacion WHERE 
+		idservicio=id_servicio;
+	RETURN 'Has calificado al usuario en este servicio'
+	END IF;
+	RETURN 'No hay servicios a ser calificados'
+END;
+$$
+LANGUAGE plpgsql;
