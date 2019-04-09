@@ -162,6 +162,44 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+/*El conductor acepta la solicitud*/
+CREATE OR REPLACE FUNCTION aceptar_solicitud(VARCHAR(6), VARCHAR(15), TIMESTAMP) RETURNS Text AS $$
+DECLARE
+	tel_conductor ALIAS FOT $2;
+	placa ALIAS FOR $1;
+	hora_inicio ALIAS FOR $3;
+	id_solicitud := (SELECT idsolicitud FROM solicitud WHERE taxi=placa AND conductor=tel_conductor AND activa=TRUE);
+	tel_usuario := (SELECT usuario FROM solicitud WHERE idservicio=id_solicitud);
+	partida := (SELECT posicionusuario FROM solicitud WHERE idsolicitud=id_solicitud);
+	llegada := (SELECT posicionfinal FROM solicitud WHERE idsolicitud=id_solicitud);
+BEGIN
+	IF EXISTS (
+		SELECT idsolicitud FROM solicitud WHERE taxi=placa AND conductor=tel_conductor AND activa=TRUE
+	)THEN 
+	INSERT INTO servicio VALUES (DEFAULT, tel_usuario, tel_conductor, placa,
+		NULL, NULL, partida, llegada, hora_inicio, NULL, FALSE, FALSE, FALSE)
+	RETURN 'Servicio encontrado';
+	END IF;
+	RETURN 'Buscando Solicitudes';
+END;
+$$
+LANGUAGE plpgsql;
+/*El conductor termina el servicio*/
+CREATE OR REPLACE FUNCTION terminar_servicio(VARCHAR(15), TIMESTAMP) RETURNS Text AS $$
+DECLARE
+	tel_conductor ALIAS FOT $1;
+	hora_final ALIAS FOR $2;
+BEGIN
+	IF EXISTS (
+		SELECT idsolicitud FROM solicitud WHERE taxi=placa AND conductor=tel_conductor AND activa=TRUE
+	)THEN 
+	UPDATE INTO servicio SET horafin=hora_final WHERE conductor=tel_conductor AND terminado=FALSE
+	RETURN 'Servicio terminado';
+	END IF;
+	RETURN 'Buscando Solicitudes';
+END;
+$$
+LANGUAGE plpgsql;
 /*Buscar por solicitudes activas por telefono*/
 CREATE OR REPLACE FUNCTION buscar_solicitudes_usuario(VARCHAR(15)) RETURNS Text AS $$
 DECLARE

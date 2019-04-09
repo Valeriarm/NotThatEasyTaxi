@@ -61,7 +61,7 @@ calificacionconductor INTEGER,
 puntopartida GEOMETRY(POINT) NOT NULL,
 puntollegada GEOMETRY(POINT) NOT NULL,
 horainicio TIMESTAMP NOT NULL,
-horafin TIMESTAMP NOT NULL,
+horafin TIMESTAMP,
 usuario_pago BOOLEAN NOT NULL,
 conductor_pago BOOLEAN NOT NULL,
 terminado BOOLEAN NOT NULL,
@@ -75,6 +75,7 @@ CREATE TABLE solicitud(
 idsolicitud SERIAL NOT NULL,
 usuario VARCHAR(15) NOT NULL,
 posicionusuario GEOMETRY(POINT) NOT NULL,
+posicionfinal GEOMETRY(POINT) NOT NULL,
 taxi VARCHAR(6) NOT NULL,
 conductor VARCHAR(15) NOT NULL,
 activa BOOLEAN NOT NULL,
@@ -374,6 +375,6 @@ INSERT INTO conductor VALUES ('3012617187', '12345678', 'Valeria', 'Rivera','199
 INSERT INTO usuario VALUES ('3012617187', '12345678', 'Valeria', 'Rivera','1998-11-19', 'valeriarm@gmail.com', '123454313');
 SELECT insert_taxi('3166443198','CMP217','12345678','Hyundai','Accent',2016,'Mediano','2020-10-01');
 SELECT insert_taxi('3012617187','DEO840','12345678','Renault','Logan',2016,'Mediano','2020-10-01');
-INSERT INTO registro VALUES (DEFAULT, 'CMP217', '2019-04-09T03:42:13.346Z', ST_GeomFromText('POINT(3.4394 -76.529)', 4326));
-INSERT INTO registro VALUES (DEFAULT, 'DEO840', '2019-04-09T03:43:45.346Z', ST_GeomFromText('POINT(3.4562 -76.327)', 4326));
+INSERT INTO reporte VALUES (DEFAULT, 'CMP217', '2019-04-09T03:42:13.346Z', ST_GeomFromText('POINT(3.4394 -76.529)', 4326));
+INSERT INTO reporte VALUES (DEFAULT, 'DEO840', '2019-04-09T03:43:45.346Z', ST_GeomFromText('POINT(3.4562 -76.327)', 4326));
 SELECT * FROM usuario;
