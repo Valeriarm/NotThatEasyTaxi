@@ -26,7 +26,7 @@ app.use(express.json());
  * Valida los usuario recibiendo telefono y contraseña
  */
 app.get(`/users/:phone/:psword`,[
-  check(`phone`).isNumeric().isLength({min:15, max:15}),
+  check(`phone`).isNumeric().isLength({min:10, max:10}),
   check(`psword`).isLength({min:8})
 ],(req, res) => {
   const errors = validationResult(req);
@@ -51,7 +51,7 @@ app.get(`/users/:phone/:psword`,[
  * Valida los Conductores recibiendo telefono y contraseña
  */
 app.get(`/drivers/:phone/:psword`, [
-  check(`phone`).isNumeric().isLength({min:15, max:15}),
+  check(`phone`).isNumeric().isLength({min:10, max:10}),
   check(`psword`).isLength({min:8})
 ],(req, res) => {
   const errors = validationResult(req);
@@ -76,7 +76,7 @@ app.get(`/drivers/:phone/:psword`, [
  * Valida los Taxis recibiendo placa y contraseña
  */
 app.get(`/taxi/:placa/:psword`, [
-  check(`placa`).isNumeric().isLength({min:15, max:15}),
+  check(`placa`).isNumeric().isLength({min:10, max:10}),
   check(`psword`).isLength({min:8})
 ],(req, res) => {
   const errors = validationResult(req);
@@ -102,7 +102,7 @@ app.get(`/taxi/:placa/:psword`, [
  * y placa del vehiculo
  */
 app.get(`/drivers/taxi/:phone/:placa`,[
-  check(`phone`).isNumeric().isLength({min:15, max:15}),
+  check(`phone`).isNumeric().isLength({min:10, max:10}),
   check(`placa`).isAlphanumeric().isLength({min:6, max:6})
 ], (req, res) => {
   const errors = validationResult(req);
@@ -126,8 +126,9 @@ app.get(`/drivers/taxi/:phone/:placa`,[
 /**
  * Busca por solicitudes activas conductor
  */
-app.get(`/drivers/taxi/request/:placa`,[
-  check(`placa`).isAlphanumeric().isLength({min:6, max:6})
+app.get(`/drivers/taxi/request/:placa/:phone`,[
+  check(`placa`).isAlphanumeric().isLength({min:6, max:6}),
+  check(`phone`).isNumeric().isLength({min:10,max:10})
 ], (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -150,7 +151,7 @@ app.get(`/drivers/taxi/request/:placa`,[
  * Busca por solicitudes activas usuario
  */
 app.get(`/user/request/:phone`,[
-  check(`phone`).isNumeric().isLength({min:15, max:15})
+  check(`phone`).isNumeric().isLength({min:10, max:10})
 ], (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -170,9 +171,11 @@ app.get(`/user/request/:phone`,[
   })
 })
 /**
- * Busca por servicios activos
+ * Busca por servicios activos usuario
+ * El usuario constantemente estara usando esta consulta para ver si el servicio que ha solicitado
+ * ha sido aceptado
  */
-app.get(`/drivers/taxi/request/:phone`,[
+app.get(`/users/request/:phone`,[
   check(`placa`).isAlphanumeric().isLength({min:6, max:6})
 ], (req, res) => {
   const errors = validationResult(req);
@@ -192,13 +195,11 @@ app.get(`/drivers/taxi/request/:phone`,[
     res.send(JSON.stringify("Credenciales invalidas"))
   })
 })
-
-
 /**
  * Obtiene los datos de un conductor para cargarlos en su perfil
  */
 app.get(`/drivers/:phone/`,[
-  check(`phone`).isNumeric().isLength({min:15, max:15}),
+  check(`phone`).isNumeric().isLength({min:10, max:10}),
 ],(req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -224,7 +225,7 @@ app.get(`/drivers/:phone/`,[
  * apellido, fecha de nacimiento, correo y numero de tarjeta
  */
 app.post(`/users/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:tarjeta`, [
-  check(`tel`).isNumeric().isLength({min:15, max:15}),
+  check(`tel`).isNumeric().isLength({min:10, max:10}),
   check(`psword`).isLength({min:8}),
   check(`nombre`).isAlpha(),
   check(`apellido`).isAlpha(),
@@ -275,7 +276,7 @@ app.post(`/users/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:tarjeta`, [
  * apellido, fecha de nacimiento, correo y numero de cuenta
  */
 app.post(`/drivers/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta`,[
-  check(`tel`).isNumeric().isLength({min:15, max:15}),
+  check(`tel`).isNumeric().isLength({min:10, max:10}),
   check(`psword`).isLength({min:8}),
   check(`nombre`).isAlpha(),
   check(`apellido`).isAlpha(),
@@ -325,14 +326,14 @@ app.post(`/drivers/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta`,[
  * baul, soat y, ocupado
  */
 app.post('/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocupado', [
-  check('phone').isNumeric().isLength({min:15, max:15}),
+  check('phone').isNumeric().isLength({min:10, max:10}),
   check('placa').isAlphanumeric().isLength({min:6,max:6}).custom(value=>{
     value = value.split('');
     const letters = /^[A-Z]+$/;
     if(!value[0].match(letters) || !value[1].match(letters) || !value[2].match(letters)){
       return false;
     }
-    if(isNan(value[3]) || isNan(value[4]) || isNan(value[5])){
+    if(isNaN(value[3]) || isNaN(value[4]) || isNaN(value[5])){
       return false;
     }
   }),
@@ -386,7 +387,7 @@ app.post('/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocu
  */
 app.post(`/users/favorites/:phone/:lat/:lng`, 
   [
-    check(`phone`).isNumeric().isLength({min: 15, max: 15}),
+    check(`phone`).isNumeric().isLength({min: 10, max: 10}),
     check(`lat`).isNumeric(),
     check(`lng`).isNumeric()
   ], (req,res)=>{
@@ -412,10 +413,11 @@ app.post(`/users/favorites/:phone/:lat/:lng`,
 )
 /**
  * Crea una Solicitud recibiendo, telefono del usuario y coordenadas del usuario
+ * El encargado de crear una solicitud es el usuario
  */
-app.post(`/users/request/:phoneuser/:latIn/:lngIn/:latFin/:lngFin`, 
+app.post(`/users/request/:phoneuser/:latIn/:lngIn`, 
   [
-    check(`phone`).isNumeric().isLength({min: 15, max: 15}),
+    check(`phone`).isNumeric().isLength({min: 10, max: 10}),
     check(`latIn`).isNumeric(),
     check(`lngIn`).isNumeric(),
     check(`latFin`).isNumeric(),
@@ -429,11 +431,9 @@ app.post(`/users/request/:phoneuser/:latIn/:lngIn/:latFin/:lngFin`,
     const phone = req.params.phone;
     const latIn = req.params.lat;
     const lngIn = req.params.lng;
-    const latFin = req.params.lat;
-    const lngFin = req.params.lng;
     db.one()
-    db.none(`INSERT INTO solicitud VALUES ($1, ST_GeomFromText('POINT($2 $3)', 4326),ST_GeomFromText('POINT($4 $5)', 4326))`,
-    [escape(phone), escape(latIn), escape(lngIn), escape(latFin), escape(lngFin)])
+    db.none(`INSERT INTO solicitud VALUES ($1, ST_GeomFromText('POINT($2 $3)', 4326))`,
+    [escape(phone), escape(latIn), escape(lngIn)])
     .then((data)=>{
       console.log(`DATA: `, data)
       res.send(`Solicitud de servicio aceptada`)
@@ -448,10 +448,11 @@ app.post(`/users/request/:phoneuser/:latIn/:lngIn/:latFin/:lngFin`,
  * Crea un Servicio recibiendo, telefono del usuario, telefono del conductor,
  * placa del taxi, punto de partida, punto de llegada, hora de inicio, hora de
  * llegada, comprobante de pago usuario y comprobante de pago conductor
+ * El encargado de crear un servicio es el conductor
  */
 app.post(`/users/request/:phone/:lat/:lng`, 
   [
-    check(`phone`).isNumeric().isLength({min: 15, max: 15}),
+    check(`phone`).isNumeric().isLength({min: 10, max: 10}),
     check(`lat`).isNumeric(),
     check(`lng`).isNumeric()
   ], (req,res)=>{
@@ -513,7 +514,7 @@ app.post(`/users/taxi/report/:placa/:lat/:lng`,
  * apellido, fecha de nacimiento, correo y numero de tarjeta
  */
 app.put(`/users/:tel/:psword/:nombre/:apellido/:mail/:tarjeta`, [
-  check(`tel`).isNumeric().isLength({min:15,max:15}),
+  check(`tel`).isNumeric().isLength({min:10,max:10}),
   check(`psword`).isLength({min:8}),
   check(`nombre`).isAlpha(),
   check(`apellido`).isAlpha(),
@@ -548,7 +549,7 @@ app.put(`/users/:tel/:psword/:nombre/:apellido/:mail/:tarjeta`, [
  * apellido, fecha de nacimiento, correo y numero de cuenta
  */
 app.put(`/drivers/:phone/:psword/:nombre/:apellido/:mail/:cuenta`,[
-  check(`phone`).isNumeric().isLength({min:15, max:15}),
+  check(`phone`).isNumeric().isLength({min:10, max:10}),
   check(`psword`).isLength({min:8}),
   check(`nombre`).isAlpha(),
   check(`apellido`).isAlpha(),
@@ -590,7 +591,7 @@ app.put(`/taxi/:placa/:soat`, [
     if(!value[0].match(letters) || !value[1].match(letters) || !value[2].match(letters)){
       return false;
     }
-    if(isNan(value[3]) || isNan(value[4]) || isNan(value[5])){
+    if(isNaN(value[3]) || isNaN(value[4]) || isNaN(value[5])){
       return false;
     }
   }),
@@ -624,5 +625,52 @@ app.put(`/taxi/:placa/:soat`, [
       res.send(`Error creando el taxi, por favor intentelo de nuevo`)
     })
 })
+/**El Usuario modifica el servicio para ponerle la calificacion al conductor
+ */
+app.put(`/users/services/:phone/:calificacion`, [
+  check(`phone`).isNumeric().isLength({min:10,max:10}),
+  check(`calificacion`).isFloat(),
+],(req, res) => {
+  const errors = validationResult(req);
+    if(!errors.isEmpty()){
+      console.log({errors: errors.array()})
+      return res.status(422).json({ errors: errors.array()});
+    }
+  const placa = req.params.placa;
+  const soat = req.params.soat;
+  db.none(`UPDATE servicio SET soat=$2 WHERE placa=$1`,
+    [escape(placa), escape(soat)])
+    .then((data)=>{
+      console.log(`DATA: `, data)
+      res.send(`Taxi creado exitosamente`)
+    })
+    .catch((error)=>{
+      console.log(`ERROR`, error)
+      res.send(`Error creando el taxi, por favor intentelo de nuevo`)
+    })
+})
+/**El Conductor modifica el servicio para ponerle la calificacion al usuario */
+app.put(`/drivers/services/:phone/:calificacion`, [
+  check(`phone`).isNumeric().isLength({min:10,max:10}),
+  check(`calificacion`).isFloat(),
 
+],(req, res) => {
+  const errors = validationResult(req);
+    if(!errors.isEmpty()){
+      console.log({errors: errors.array()})
+      return res.status(422).json({ errors: errors.array()});
+    }
+  const placa = req.params.placa;
+  const soat = req.params.soat;
+  db.none(`UPDATE taxi SET soat=$2 WHERE placa=$1`,
+    [escape(placa), escape(soat)])
+    .then((data)=>{
+      console.log(`DATA: `, data)
+      res.send(`Taxi creado exitosamente`)
+    })
+    .catch((error)=>{
+      console.log(`ERROR`, error)
+      res.send(`Error creando el taxi, por favor intentelo de nuevo`)
+    })
+})
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
