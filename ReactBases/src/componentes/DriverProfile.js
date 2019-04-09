@@ -20,11 +20,11 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import { Paper, Fab } from '@material-ui/core';
-import SimpleCard from './uploadImage';
 import EditIcon from '@material-ui/icons/Edit';
 import ExitToApp from '@material-ui/icons/ExitToApp';
 import LocalTaxi from '@material-ui/icons/LocalTaxi';
 import Check from '@material-ui/icons/Check';
+import axios from 'axios';
 
 const drawerWidth = 240;
 
@@ -128,6 +128,7 @@ class PersistentDrawerLeft extends React.Component {
     apellido: this.props.location.state.apellido,
     numcuenta: this.props.location.state.numcuenta,
     email: this.props.location.state.email,
+    contrasenia: this.props.location.contrasenia,
     placa: true,
     lock: true,
   };
@@ -153,6 +154,22 @@ class PersistentDrawerLeft extends React.Component {
     e.preventDefault()
     this.props.history.push({pathname:"/Taxi/", state:{phone: this.state.phone}})
   }
+
+  onClickModify = (e) => {
+    e.preventDefault()
+    const phone = this.state.phone;
+    const contrasenia = this.state.contrasenia;
+    const nombre = this.state.nombre;
+    const apellido = this.state.apellido;
+    const email = this. state.email;
+    const numcuenta = this. state.numcuenta;
+
+    axios.put(`http://localhost:5000/drivers/${phone}/${contrasenia}/${nombre}/${apellido}/${email}/${numcuenta}`).then(res => {
+
+      this.props.history.push({pathname:"/ProfileDriver/", state:{phone:phone, nombre:nombre, apellido: apellido, email: email, numcuenta: numcuenta, contrasenia: contrasenia}})    })
+      this.setState({lock: !this.state.lock})
+      
+  };
 
   render() {
 
@@ -235,7 +252,7 @@ class PersistentDrawerLeft extends React.Component {
             </div>
             <div>
             <TextField
-            id="standard-error"
+            id="standard-error1"
             label="Nombre"
             className={classes.textField}
             margin="normal"
@@ -245,7 +262,7 @@ class PersistentDrawerLeft extends React.Component {
             defaultValue={this.state.nombre}
             />
             <TextField
-            id="standard-error"
+            id="standard-error2"
             label="Apellido"
             className={classes.textField}
             margin="normal"
@@ -255,7 +272,7 @@ class PersistentDrawerLeft extends React.Component {
             defaultValue={this.state.apellido}
             />
             <TextField
-            id="standard-error"
+            id="standard-error3"
             label="Telefono"
             className={classes.textField}
             margin="normal"
@@ -267,7 +284,7 @@ class PersistentDrawerLeft extends React.Component {
             </div>
             <div>
             <TextField
-            id="standard-error"
+            id="standard-error4"
             label="Cuenta"
             className={classes.textField}
             margin="normal"
@@ -277,7 +294,7 @@ class PersistentDrawerLeft extends React.Component {
             defaultValue={this.state.numcuenta}
             />
             <TextField
-            id="standard-error"
+            id="standard-error5"
             label="Email"
             className={classes.textField}
             defaultValue={this.state.email}
@@ -287,9 +304,22 @@ class PersistentDrawerLeft extends React.Component {
             }}
             
             />
+            <TextField
+            id="standard-error6"
+            label="Contrasenia"
+            className={classes.textField}
+            defaultValue={this.state.contrasenia}
+            margin="normal"
+            InputProps={{
+                readOnly: this.state.lock,
+            }}
+            type ="password"
+            helperText = "Minimo 8 caracteres"
+            
+            />
             </div>
             <div>
-            <Fab color="primary" aria-label="Edit" className={classes.fab} onClick= {() =>this.setState({lock: !lock})}>
+            <Fab color="primary" aria-label="Edit" className={classes.fab} onClick= {this.onClickModify}>
                 {this.state.lock ? <EditIcon/> : <Check/> }
             </Fab>
             </div>
