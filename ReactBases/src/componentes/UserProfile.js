@@ -128,6 +128,12 @@ const styles = theme => ({
 class PersistentDrawerLeft extends React.Component {
   state = {
     phone: this.props.location.state.phone,
+    nombre: this.props.location.state.nombre,
+    apellido: this.props.location.state.apellido,
+    tarjeta: this.props.location.state.tarjeta,
+    email: this.props.location.state.email,
+    contrasenia: this.props.location.contrasenia,
+    lock: true,
   };
 
   handleDrawerOpen = () => {
@@ -160,12 +166,12 @@ class PersistentDrawerLeft extends React.Component {
     const contrasenia = this.state.contrasenia;
     const nombre = this.state.nombre;
     const apellido = this.state.apellido;
-    const email = this. state.email;
-    const numcuenta = this. state.numcuenta;
+    const email = this.state.email;
+    const tarjeta = this.state.tarjeta;
 
-    axios.put(`http://localhost:5000/drivers/${phone}/${contrasenia}/${nombre}/${apellido}/${email}/${numcuenta}`).then(res => {
+    axios.put(`http://localhost:5000/users/${phone}/${contrasenia}/${nombre}/${apellido}/${email}/${tarjeta}`).then(res => {
 
-      this.props.history.push({pathname:"/ProfileDriver/", state:{phone:phone, nombre:nombre, apellido: apellido, email: email, numcuenta: numcuenta, contrasenia: contrasenia}})    })
+      this.props.history.push({pathname:"/ProfileUser/", state:{phone:phone, nombre:nombre, apellido: apellido, email: email, tarjeta: tarjeta, contrasenia: contrasenia}})    })
       this.setState({lock: !this.state.lock})
       
   };
@@ -249,8 +255,9 @@ class PersistentDrawerLeft extends React.Component {
                 className={classes.textField}
                 margin="normal"
                 InputProps={{
-                  readOnly: true,
+                  readOnly: this.state.lock,
                 }}
+                defaultValue={this.state.nombre}
               />
               <TextField
                 id="standard-error"
@@ -258,8 +265,9 @@ class PersistentDrawerLeft extends React.Component {
                 className={classes.textField}
                 margin="normal"
                 InputProps={{
-                  readOnly: true,
+                  readOnly:  this.state.lock,
                 }}
+                defaultValue={this.state.apellido}
               />
               <TextField
                 id="standard-error"
@@ -269,6 +277,7 @@ class PersistentDrawerLeft extends React.Component {
                 InputProps={{
                   readOnly: true,
                 }}
+                defaultValue={this.state.phone}
               />
             </div>
             <div>
@@ -278,8 +287,9 @@ class PersistentDrawerLeft extends React.Component {
                 className={classes.textField}
                 margin="normal"
                 InputProps={{
-                  readOnly: true,
+                  readOnly:  this.state.lock,
                 }}
+                defaultValue={this.state.tarjeta}
               />
               <TextField
                 id="standard-error"
@@ -289,15 +299,7 @@ class PersistentDrawerLeft extends React.Component {
                 InputProps={{
                   readOnly: true,
                 }}
-              />
-              <TextField
-                id="standard-error"
-                label="Fecha Nacimiento"
-                className={classes.textField}
-                margin="normal"
-                InputProps={{
-                  readOnly: true,
-                }}
+                defaultValue={this.state.email}
               />
             </div> 
               <Fab color="primary" aria-label="Edit" className={classes.textField} >

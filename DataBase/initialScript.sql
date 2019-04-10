@@ -286,10 +286,6 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
-
-
-
-
 /*Buscar por servicios activas*/
 CREATE OR REPLACE FUNCTION buscar_servicios(VARCHAR(15)) RETURNS Text AS $$
 DECLARE
@@ -322,7 +318,7 @@ BEGIN
 		SELECT * FROM solicitud WHERE idsolicitud=id_solicitud AND activa=true
 	)THEN 
 		INSERT INTO servicio VALUES (DEFAULT, tel_usuario, tel_conductor, placa_taxi,
-		NULL, NULL, origen, destino, horainicio, NULL, FALSE, FALSE, FALSE);
+		NULL, NULL, origen, destino, horainicio, NULL, false, false, false);
 		RETURN 'Servicio iniciado';
 	END IF;
 	RETURN 'No hay servicios activos';

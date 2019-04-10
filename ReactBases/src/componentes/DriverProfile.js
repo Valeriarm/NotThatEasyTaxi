@@ -166,8 +166,8 @@ class PersistentDrawerLeft extends React.Component {
     const contrasenia = this.state.contrasenia;
     const nombre = this.state.nombre;
     const apellido = this.state.apellido;
-    const email = this. state.email;
-    const numcuenta = this. state.numcuenta;
+    const email = this.state.email;
+    const numcuenta = this.state.numcuenta;
 
     axios.put(`http://localhost:5000/drivers/${phone}/${contrasenia}/${nombre}/${apellido}/${email}/${numcuenta}`).then(res => {
 

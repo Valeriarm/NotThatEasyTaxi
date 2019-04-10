@@ -196,20 +196,20 @@ class PersistentDrawerLeft extends React.Component {
       if (placa_taxi === placa) {
         this.setState({ placa: placa_taxi });
         alert(`Taxi seleccionado con exito`);
+        axios.post(`http://localhost:5000/users/taxi/report/${placa}/${lat}/${lng}`).then(res => {
+        const respuesta = res.data;
+        if (respuesta === `Solicitud de servicio creada`) {
+          alert(`Reportada la posicion`);
+          this.setState({interval:setInterval(this.findRequest,3000)});
+        } else if (respuesta === `Error, por favor intentelo de nuevo`) {
+          alert(`Error en la seleccion del taxi`)
+          return;
+        }
+      })
       } else if (placa_taxi === 'Credenciales invalidas') {
         alert(`El taxi no esta disponible`);
         return;
       } else {
-        alert(`Error en la seleccion del taxi`)
-        return;
-      }
-    })
-    axios.post(`http://localhost:5000/users/taxi/report/${placa}/${lat}/${lng}`).then(res => {
-      const respuesta = res.data;
-      if (respuesta === `Solicitud de servicio creada`) {
-        alert(`Reportada la posicion`);
-        this.setState({interval:setInterval(this.findRequest,3000)});
-      } else if (respuesta === `Error, por favor intentelo de nuevo`) {
         alert(`Error en la seleccion del taxi`)
         return;
       }
@@ -252,7 +252,7 @@ class PersistentDrawerLeft extends React.Component {
     const enServicio = this.state.iniciarServicio;
     if(enServicio === true){
       const phone=this.state.phone;
-      axios.post(`http://localhost:5000//drivers/end/services/${phone}`).then(res => {
+      axios.put(`http://localhost:5000/services/drivers/end/${phone}`).then(res => {
       const respuesta = res.data;
       if (respuesta === 'El servicio ha terminado'){
         alert(`Servicio terminado`);

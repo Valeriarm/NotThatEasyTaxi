@@ -16,6 +16,7 @@ import {
 } from '@material-ui/core';
 import axios from 'axios'
 import Search from '@material-ui/icons/Search';
+//import fondo from './images/fondo.png';
 
 
 
@@ -45,6 +46,17 @@ const styles = theme => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
+  background: {
+    objectFit: 'cover',
+    width: '100%',
+    height: '100%',
+    position: 'fixed',
+    zIndex: -1,
+    top: 0,
+    left: 0,
+    opacity: 0.75,
+  },
+
   menuButton: {
     marginLeft: 12,
     marginRight: 60,

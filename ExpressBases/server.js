@@ -210,16 +210,16 @@ app.get(`/user/request/:phone`, [
  * El usuario constantemente estara usando esta consulta para ver si el servicio que ha solicitado
  * ha sido aceptado
  */
-app.get(`/services/users/:idservicio`, [
-  check(`idservicio`).isNumeric()
+app.get(`/services/users/:phone`, [
+  check(`phone`).isNumeric().isLength({min:10, max:10})
 ], (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log({ errors: errors.array() })
     return res.send(JSON.stringify("Credenciales invalidas"));
   }
-  const placa = req.params.placa
-  db.one(`SELECT buscar_servicios($1)`, [escape(placa)])
+  const phone = req.params.phone
+  db.one(`SELECT buscar_servicios($1)`, [escape(phone)])
     .then(function (data) {
       console.log(`DATA:`, data.buscar_servicios)
       res.send(JSON.stringify(data.buscar_servicios))
@@ -243,8 +243,8 @@ app.get(`/services/users/finished/:idservicio`,[
   const idservicio = req.params.idservicio
   db.one(`SELECT buscar_servicios_terminados($1)`, [escape(idservicio)])
   .then(function (data) {
-    console.log(`DATA:`, data.buscar_servicios)
-    res.send(JSON.stringify(data.buscar_servicios))
+    console.log(`DATA: en terminando servicio`, data.buscar_servicios_terminados)
+    res.send(JSON.stringify(data.buscar_servicios_terminados))
   })
   .catch(function (error) {
     console.log(`ERROR:`, error)
@@ -273,6 +273,30 @@ app.get(`/drivers/:phone/`, [
       res.send(JSON.stringify("Credenciales invalidas"))
     })
 })
+
+/**
+ * Obtiene los datos de un usuario para cargarlos en su perfil
+ */
+app.get(`/users/:phone/`, [
+  check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
+], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log({ errors: errors.array() })
+    return res.send(JSON.stringify("Credenciales invalidas"));
+  }
+  const phone = req.params.phone;
+  db.one(`SELECT * FROM conductor WHERE telefonousuario= $1`, [escape(phone)])
+    .then(function (data) {
+      console.log(data)
+      res.send(JSON.stringify(data))
+    })
+    .catch(function (error) {
+      console.log(`ERROR:`, error)
+      res.send(JSON.stringify("Credenciales invalidas"))
+    })
+})
+
 
 /**
  * Obtiene los datos de un usuario para cargarlos en su perfil
@@ -770,7 +794,7 @@ app.put(`/drivers/services/:phone/:calificacion`, [
     })
 })
 /**Terminar un servicio */
-app.put(`/drivers/end/services/:phone`, [
+app.put(`/services/drivers/end/:phone`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
 ], (req, res) => {
   const errors = validationResult(req);
@@ -779,8 +803,8 @@ app.put(`/drivers/end/services/:phone`, [
     return res.status(422).json({ errors: errors.array() });
   }
   const phone = req.params.phone;
-  db.none(`UPDATE servicio SET terminado=true WHERE conductor=phone AND terminado=false`,
-    [escape(placa), escape(soat)])
+  db.none(`UPDATE servicio SET terminado=true WHERE conductor=$1 AND terminado=false`,
+    [escape(phone)])
     .then((data) => {
       console.log(`DATA: `, data)
       res.send(`El servicio ha terminado`)
