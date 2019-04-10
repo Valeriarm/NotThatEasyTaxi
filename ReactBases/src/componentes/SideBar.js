@@ -181,7 +181,7 @@ class PersistentDrawerLeft extends React.Component {
         this.setState({idservicio:response})
         alert(`Servicio encontrado`)
         clearInterval(this.state.interval)
-        this.checkForFinishedService()
+        this.finishedService()
       }
     })
   }

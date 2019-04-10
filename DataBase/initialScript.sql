@@ -273,7 +273,7 @@ DECLARE
 BEGIN
 	IF EXISTS (
 		SELECT * FROM solicitud WHERE usuario=phone AND activa=TRUE
-	)THEN RETURN 'Solicitud encontrado';
+	)THEN RETURN 'Solicitud encontrada';
 	END IF;
 	RETURN 'Buscando Solicitudes';
 END;
