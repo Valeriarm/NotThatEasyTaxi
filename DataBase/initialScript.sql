@@ -252,20 +252,27 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+
+
 /*Buscar por solicitudes activas por placa*/
 CREATE OR REPLACE FUNCTION buscar_solicitudes_conductor(VARCHAR(6), VARCHAR(15)) RETURNS Text AS $$
 DECLARE
 	phone ALIAS FOR $2;
 	placa ALIAS FOR $1;
+	id INTEGER := (
+		SELECT idsolicitud FROM solicitud WHERE conductor=phone AND activa=false
+	);
 BEGIN
 	IF EXISTS (
 		SELECT * FROM solicitud WHERE taxi=placa AND conductor=phone AND activa=TRUE
-	)THEN RETURN 'Solicitud encontrada';
+	)THEN RETURN id;
 	END IF;
 	RETURN 'Buscando Solicitudes';
 END;
 $$
 LANGUAGE plpgsql;
+
+
 /*Buscar por solicitudes activas por telefono*/
 CREATE OR REPLACE FUNCTION buscar_solicitudes_usuario(VARCHAR(15)) RETURNS Text AS $$
 DECLARE
@@ -279,6 +286,10 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+
+
+
+
 /*Buscar por servicios activas*/
 CREATE OR REPLACE FUNCTION buscar_servicios(VARCHAR(15)) RETURNS Text AS $$
 DECLARE
@@ -296,6 +307,8 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+
+
 /*Buscar por servicios terminados*/
 CREATE OR REPLACE FUNCTION buscar_servicios_terminados(INTEGER) RETURNS Text AS $$
 DECLARE
@@ -310,6 +323,8 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+
+
 /*Crea una solicitud recibiendo la ubicacion del usuario y luego encuentra el taxi mas cercano*/
 CREATE OR REPLACE FUNCTION crear_solicitud() RETURNS TRIGGER AS $$
 DECLARE
@@ -361,6 +376,36 @@ $$
 LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS create_solicitud ON solicitud;
 CREATE TRIGGER create_solicitud BEFORE INSERT ON solicitud FOR EACH ROW EXECUTE PROCEDURE crear_solicitud();
+
+/*Crear Servicio*/
+/*
+CREATE OR REPLACE FUNCTION crear_servicio(INTEGER) RETURNS TRIGGER AS $$
+DECLARE
+	idSolicitud ALIAS FOR $1;
+BEGIN
+	idUsuario VARCHAR (15):= (
+		SELECT usuario FROM solicitud WHERE idSolicitud=idsolicitud;
+	);
+	idConductor VARCHAR(15):=(
+		SELECT conductor FROM solicitud WHERE idSolicitud=idsolicitud;
+	);
+	placa VARCHAR(6):=(
+		SELECT taxi FROM solicitud WHERE idSolicitud=idsolicitud;
+	);
+	origen GEOMETRY(POINT):=(
+		SELECT posicionusuario FROM solicitud WHERE idSolicitud=idsolicitud;
+	);
+	destino VARCHAR(15):=(
+		SELECT posicionfinal FROM solicitud WHERE idSolicitud=idsolicitud;
+	);
+
+
+END;
+$$
+LANGUAJE plpgsql;
+*/
+
+
 /*User users CRUD*/
 /*
 REVOKE ALL

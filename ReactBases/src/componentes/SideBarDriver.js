@@ -134,6 +134,8 @@ class PersistentDrawerLeft extends React.Component {
     phone: this.props.location.state.phone,
     placa: true,
     posicionActual: { lat: true, lng: true },
+    idServicio: true,
+    iniciarServicio: false,
   };
 
   handleDrawerOpen = () => {
@@ -204,25 +206,29 @@ class PersistentDrawerLeft extends React.Component {
       }
     })
 
-    setInterval(function () {
-      axios.get(`http://localhost:5000/drivers/taxi/request/${phone}/${placa}`).then(res => {
-        const respuesta = res.data;
-        if (respuesta === 'Solicitud encontrada') {
-          alert(respuesta);
-        } else if (respuesta === 'Buscando Solicitudes') {
-          console.log('buscando...');
-        } else {
-          alert('Error en la busqueda de la solicitud');
-        }
-      })
-    }, 3000);
+    setInterval(this.findRequest,3000);
   }
 
   findRequest = () => {
     const phone = this.state.phone;
     const placa = this.state.placa;
 
+      axios.get(`http://localhost:5000/drivers/taxi/request/${phone}/${placa}`).then(res => {
+        const respuesta = res.data;
+        if (respuesta === 'Buscando Solicitudes') {
+          console.log('buscando...');
+        } else{
+          this.setState({idServicio: respuesta});
+          console.log(respuesta);
+        } 
+      })
+    }
+
+
+  createService = () => {
+
   }
+
 
   render() {
 
