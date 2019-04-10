@@ -134,6 +134,9 @@ class PersistentDrawerLeft extends React.Component {
     phone: this.props.location.state.phone,
     origen: {lat:true, lng:true},
     destino: {lat:true, lng:true},
+    interval: null,
+    interval2: null,
+    idservicio: null,
   };
 
   handleDrawerOpen = () => {
@@ -167,7 +170,43 @@ class PersistentDrawerLeft extends React.Component {
     this.setState({destino: destino, origen: origen})
   }
 
-  
+  checkForService = () => {
+    const phone = this.state.phone;
+    axios.get(`http://localhost:5000/services/users/${phone}`).then(res => {
+      const response = res.data;
+      if (response === `Buscando Servicio`){
+        console.log(`Buscando Servicio`)
+      }
+      else {
+        this.setState({idservicio:response})
+        alert(`Servicio encontrado`)
+        clearInterval(this.state.interval)
+        this.checkForFinishedService()
+      }
+    })
+  }
+
+  checkForFinishedService = () => {
+    const phone = this.state.phone;
+    axios.get(`http://localhost:5000/services/users/${phone}`).then(res => {
+      const response = res.data;
+      if (response === `Servicio en curso`){
+        console.log(`Servicio en curso`)
+      }
+      else {
+        alert(`EL servicio con id ${this.state.idservicio} ha terminado`)
+        clearInterval(this.state.interval2)
+      }
+    })
+  }
+
+  initCheck = () => {
+    this.setState({interval:setInterval(this.checkForService,3000)})
+  }
+
+  finishedService = () =>{
+    this.setState({interval2:setInterval(this.checkForFinishedService, 3000)})
+  }
 
   onClickAgregar = () => {
     const phone = this.state.phone;
@@ -196,8 +235,9 @@ class PersistentDrawerLeft extends React.Component {
         console.log(persons);
         if (persons===`En este momento no hay conductores disponibles, por favor intentelo de nuevo mas tarde`) {
           alert(`En este momento no hay conductores disponibles, por favor intentelo de nuevo mas tarde`);
-        }else if (persons != `Solicitud de servicio creada`) {
+        }else if (persons === `Solicitud de servicio creada`) {
           alert(`Su solicitud fue realizada con exito`);
+          this.initCheck()
         } else {
           alert(`Ocurrio un error`);
         }

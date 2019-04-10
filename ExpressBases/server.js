@@ -195,7 +195,6 @@ app.get(`/user/request/:phone`, [
     return res.send(JSON.stringify("Credenciales invalidas"));
   }
   const phone = req.params.phone
-  console.log(phone + "-" + placa)
   db.one(`SELECT buscar_solicitudes_usuario($1)`, [escape(phone)])
     .then(function (data) {
       console.log(`DATA:`, data.buscar_solicitudes)
@@ -211,6 +210,7 @@ app.get(`/user/request/:phone`, [
  * El usuario constantemente estara usando esta consulta para ver si el servicio que ha solicitado
  * ha sido aceptado
  */
+
 app.get(`/users/request/:phone`, [
   check(`phone`).isAlphanumeric().isLength({ min: 10, max: 10 })
 ], (req, res) => {
@@ -220,7 +220,6 @@ app.get(`/users/request/:phone`, [
     return res.send(JSON.stringify("Credenciales invalidas"));
   }
   const placa = req.params.placa
-  console.log(phone + "-" + placa)
   db.one(`SELECT buscar_servicios($1)`, [escape(placa)])
     .then(function (data) {
       console.log(`DATA:`, data.buscar_servicios)
@@ -230,6 +229,28 @@ app.get(`/users/request/:phone`, [
       console.log(`ERROR:`, error)
       res.send(JSON.stringify("Credenciales invalidas"))
     })
+})
+/**
+ * Busca por servicios terminados
+ */
+app.get(`/services//usersfinished/:idservicio`,[
+  check(`idservicio`).isNumeric()
+], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log({errors: errors.array()})
+    return res.send(JSON.stringify("Credenciales invalidas"));
+  }
+  const idservicio = req.params.idservicio
+  db.one(`SELECT buscar_servicios_terminados($1)`, [escape(idservicio)])
+  .then(function (data) {
+    console.log(`DATA:`, data.buscar_servicios)
+    res.send(JSON.stringify(data.buscar_servicios))
+  })
+  .catch(function (error) {
+    console.log(`ERROR:`, error)
+    res.send(JSON.stringify("Credenciales invalidas"))
+  })
 })
 /**
  * Obtiene los datos de un conductor para cargarlos en su perfil
@@ -493,12 +514,9 @@ app.post(`/users/request/:phoneuser/:latin/:lngin/:latfin/:lngfin`,
     const latIn = req.params.latin;
     const lngIn = req.params.lngin;
     const origen = `ST_GeomFromText('POINT(${latIn} ${lngIn})', 4326)`;
-    console.log(origen);
     const latFin = req.params.latfin;
     const lngFin = req.params.lngfin;
     const destino = `ST_GeomFromText('POINT(${latFin} ${lngFin})', 4326)`;
-    console.log(destino);
-    console.log(`INSERT INTO solicitud VALUES (DEFAULT,'${phone}',${origen},${destino})`)
     db.none(`INSERT INTO solicitud VALUES (DEFAULT,$1,${origen},${destino})`,
       [escape(phone)])
       .then((data) => {
