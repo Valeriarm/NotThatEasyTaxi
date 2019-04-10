@@ -210,9 +210,8 @@ app.get(`/user/request/:phone`, [
  * El usuario constantemente estara usando esta consulta para ver si el servicio que ha solicitado
  * ha sido aceptado
  */
-
-app.get(`/users/request/:phone`, [
-  check(`phone`).isAlphanumeric().isLength({ min: 10, max: 10 })
+app.get(`/services/users/:idservicio`, [
+  check(`idservicio`).isNumeric()
 ], (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -233,7 +232,7 @@ app.get(`/users/request/:phone`, [
 /**
  * Busca por servicios terminados
  */
-app.get(`/services//usersfinished/:idservicio`,[
+app.get(`/services/users/finished/:idservicio`,[
   check(`idservicio`).isNumeric()
 ], (req, res) => {
   const errors = validationResult(req);
