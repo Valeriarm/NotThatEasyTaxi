@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Map, TileLayer, Marker} from 'react-leaflet';
+import marker1 from './images/pin.png';
+import marker2 from './images/pin2.png';
 const mapCenter = [3.43722 , -76.5225];
 const zoomLevel = 12.4;
 
@@ -47,8 +49,8 @@ class CustomMap extends Component {
                         accessTocken= 'pk.eyJ1IjoidmFsZXJpYXJtIiwiYSI6ImNqdDU3Z285aTAzaWMzeW8zcWw2dzJ5c2gifQ.44erZi0QyJwNw__0LsjcQQ'
                     />
 
-                    <Marker id ="origen" position={this.state.origenMarker}/>
-                    <Marker id = "destino" position={this.state.destinoMarker}/>
+                    <Marker id ="origen" position={this.state.origenMarker} />
+                    <Marker id = "destino" position={this.state.destinoMarker} iconUrl={marker1}/>
                 </Map>
                
             </div>
