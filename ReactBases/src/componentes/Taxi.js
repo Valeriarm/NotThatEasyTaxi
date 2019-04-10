@@ -14,6 +14,7 @@ import {purple, deepPurple} from '@material-ui/core/colors';
 import {Fab, ListItemIcon, ListItemText ,
 Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar , 
 Toolbar, withStyles } from '@material-ui/core';
+import fondo from './images/fondo.png';
 
 
 
@@ -125,9 +126,9 @@ const styles = theme => ({
 
     submit: {
     marginTop: theme.spacing.unit * 17,
-    width: 180,
-    height: 160,
-    margin: 10,
+    width: 150,
+    height: 140,
+    margin: 15,
     
   },
   main: {
@@ -139,11 +140,24 @@ const styles = theme => ({
       marginLeft: 'auto',
       marginRight: 'auto',
     },
+    marginTop: theme.spacing.unit * 10,
   },
 
   fuente:{
     font: "Oxigen",
-}
+},
+
+background: {
+  objectFit: 'cover',
+  width: '100%',
+  height: '100%',
+  position: 'fixed',
+  zIndex: -1,
+  top: 0,
+  left: 0,
+  opacity: 0.75,
+},
+
 });
 
 
@@ -198,6 +212,7 @@ class PersistentDrawerLeft extends React.Component {
 
     return (
       <div className={classes.root}>
+      <img src={fondo} className={classes.background} />
         <CssBaseline />
         <AppBar
           position="fixed"
@@ -272,8 +287,8 @@ class PersistentDrawerLeft extends React.Component {
             <Fab
               onClick={e=>this.onClickAddTaxi(e)}
               type="button"
-              variant="extended"
-              color="primary"
+              variant="round"
+              color="secondary"
               className={classes.submit}
             >
             <LocalTaxi className={classes.icon}/>
@@ -282,8 +297,8 @@ class PersistentDrawerLeft extends React.Component {
             <Fab
               onClick={e=>this.onClickRegisterTaxi(e)}
               type="button"
-              variant="extended"
-              color="primary"
+              variant="round"
+              color="secondary"
               className={classes.submit}
             >
             <Add className={classes.icon}/>
@@ -292,8 +307,8 @@ class PersistentDrawerLeft extends React.Component {
             <Fab
               onClick={e=>this.onClickSearchTaxi(e)}
               type="button"
-              variant="extended"
-              color="primary"
+              variant="round"
+              color="secondary"
               className={classes.submit}
             >
             <Search className={classes.icon}/>

@@ -138,7 +138,7 @@ class SignIn extends React.Component {
             </FormControl>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="password">Contrasena</InputLabel>
-              <Input name="password" helperText="Minimo 8 caracteres" type="password" id="password" onChange={this.onHandleChange('password')} />
+              <Input name="password" id="password" onChange={this.onHandleChange('password')} type="password"/>
             </FormControl>
 
             <Button

@@ -5,14 +5,16 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ExitToApp from '@material-ui/icons/ExitToApp';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import HomeIcon from'@material-ui/icons/Home';
+import HomeIcon from '@material-ui/icons/Home';
 import Person from '@material-ui/icons/Person';
 import Check from '@material-ui/icons/Check';
 import LocalTaxi from '@material-ui/icons/LocalTaxi';
-import {purple, deepPurple} from '@material-ui/core/colors';
-import { ListItemIcon, ListItemText ,
-Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar , 
-Toolbar, withStyles, FormControl, InputLabel, Input, Fab} from '@material-ui/core';
+import { purple, deepPurple } from '@material-ui/core/colors';
+import {
+  ListItemIcon, ListItemText,
+  Divider, ListItem, Typography, IconButton, CssBaseline, Drawer, AppBar,
+  Toolbar, withStyles, FormControl, InputLabel, Input, Fab
+} from '@material-ui/core';
 import CustonMapDriver from './MapaDriver'
 import axios from 'axios';
 
@@ -82,15 +84,15 @@ const styles = theme => ({
   },
 
   logOutButton: {
-    marginLeft: theme.spacing.unit*50,
+    marginLeft: theme.spacing.unit * 50,
   },
   titleLabel: {
-    marginLeft: theme.spacing.unit*50,
+    marginLeft: theme.spacing.unit * 50,
   },
   form: {
     width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing.unit*2,
-    marginLeft: theme.spacing.unit*15,
+    marginTop: theme.spacing.unit * 2,
+    marginLeft: theme.spacing.unit * 15,
     display: 'block',
 
   },
@@ -101,7 +103,7 @@ const styles = theme => ({
     '&$cssFocused': {
       color: purple[500],
     },
-    marginTop: theme.spacing.unit*2,
+    marginTop: theme.spacing.unit * 2,
   },
   cssFocused: {},
   cssUnderline: {
@@ -111,18 +113,18 @@ const styles = theme => ({
   },
 
   servicio: {
-    marginTop: theme.spacing.unit*-4.4,
-    marginLeft: theme.spacing.unit*45,
+    marginTop: theme.spacing.unit * -4.4,
+    marginLeft: theme.spacing.unit * 45,
   },
   favoritos: {
-    marginTop: theme.spacing.unit*-5,
-    marginLeft: theme.spacing.unit*45,
+    marginTop: theme.spacing.unit * -5,
+    marginLeft: theme.spacing.unit * 45,
   },
 
-  menuFavoritos:{
-    marginTop: theme.spacing.unit*-2,
-    marginLeft: theme.spacing.unit*90,
-    marginRight: theme.spacing.unit*30,
+  menuFavoritos: {
+    marginTop: theme.spacing.unit * -2,
+    marginLeft: theme.spacing.unit * 90,
+    marginRight: theme.spacing.unit * 30,
   },
 });
 
@@ -130,10 +132,8 @@ const styles = theme => ({
 class PersistentDrawerLeft extends React.Component {
   state = {
     phone: this.props.location.state.phone,
-    origen: {lat:true, lng:true},
-    destino: {lat:true, lng:true},
     placa: true,
-    posicionActual: {lat: true, lng: true},
+    posicionActual: { lat: true, lng: true },
   };
 
   handleDrawerOpen = () => {
@@ -148,42 +148,73 @@ class PersistentDrawerLeft extends React.Component {
     e.preventDefault()
     const phone = this.state.phone;
     axios.get(`http://localhost:5000/drivers/${phone}/`).then(res => {
-        const driver = res.data;
-        const nombre = driver.nombreconductor;
-        const apellido = driver.apellidoconductor;
-        const email = driver.email;
-        const numcuenta = driver.numcuenta;
-        const contrasenia = driver.contrasenia;
-        console.log(driver)
-          this.props.history.push({pathname:"/ProfileDriver/", state:{phone:phone, nombre: nombre, apellido: apellido, email: email, numcuenta: numcuenta, contrasenia: contrasenia}})
-      })
+      const driver = res.data;
+      const nombre = driver.nombreconductor;
+      const apellido = driver.apellidoconductor;
+      const email = driver.email;
+      const numcuenta = driver.numcuenta;
+      const contrasenia = driver.contrasenia;
+      console.log(driver)
+      this.props.history.push({ pathname: "/ProfileDriver/", state: { phone: phone, nombre: nombre, apellido: apellido, email: email, numcuenta: numcuenta, contrasenia: contrasenia } })
+    })
   };
 
   onClickSideBar = (e) => {
     e.preventDefault()
-    this.props.history.push({pathname:"/SideBarDriver/", state:{phone: this.state.phone}})
+    this.props.history.push({ pathname: "/SideBarDriver/", state: { phone: this.state.phone } })
   };
 
   onClickTaxi = (e) => {
     e.preventDefault()
-    this.props.history.push({pathname:"/Taxi/", state:{phone: this.state.phone}})
+    this.props.history.push({ pathname: "/Taxi/", state: { phone: this.state.phone } })
   };
 
-  onChangePlaca = (e) =>{
-    this.setState({placa: e.target.value})
+  onChangePlaca = (e) => {
+    this.setState({ placa: e.target.value })
     console.log(e.target.value)
   }
-  onClickCustomMap = (origen, destino) => {
-    this.setState({posicionActual: origen})
+  onClickCustomMap = (origen) => {
+    this.setState({ posicionActual: origen })
+    console.log(this.state.posicionActual.lat);
   }
 
-  
+  selectTaxi = (e) => {
+    e.preventDefault();
+    const phone = this.state.phone;
+    const placa = this.state.placa;
+    const lat = this.state.posicionActual.lat;
+    const lng = this.state.posicionActual.lng;
+    axios.get(`http://localhost:5000/drivers/taxi/${phone}/${placa}`).then(res =>{
+      const placa_taxi = res.data;
+      if(placa_taxi===placa){
+        this.setState({placa:placa_taxi});
+        alert(`Taxi seleccionado con exito`);
+      }else if (placa_taxi==='Credenciales invalidas'){
+        alert(`El taxi no esta disponible`)
+      }else{
+        alert(`Error en la seleccion del taxi`)
+      }
+    })
+    axios.post(`http://localhost:5000/users/taxi/report/${placa}/${lat}/${lng}`).then(res =>{
+      const respuesta = res.data;
+      if(respuesta===`Solicitud de servicio creada`){
+        alert(`Reportada la posicion`);
+      }else if (respuesta===`Error, por favor intentelo de nuevo`){
+        alert(`Error en la seleccion del taxi`)
+      }
+    })
+  }
+
+  checkRequest = (e) => {
+    e.preventDefault();
+
+  }
 
   render() {
 
-    const { classes , theme } = this.props;
+    const { classes, theme } = this.props;
     const { open } = this.state;
-    const {posicionActual} = this.state;   
+    const { posicionActual } = this.state;
 
     return (
       <div className={classes.root}>
@@ -196,21 +227,21 @@ class PersistentDrawerLeft extends React.Component {
         >
           <Toolbar disableGutters={!open} >
             <IconButton
-              color = "inherit"
+              color="inherit"
               aria-label="Open drawer"
               onClick={this.handleDrawerOpen}
               className={classNames(classes.menuButton, open && classes.hide)}
             >
-              <MenuIcon/>
+              <MenuIcon />
             </IconButton>
             <Typography variant="h6" color="inherit" noWrap className={classes.titleLabel}>
               Not That Easy Taxi
             </Typography>
             <IconButton
-              color = "inherit"
+              color="inherit"
               className={classes.logOutButton}
             >
-              <ExitToApp/>
+              <ExitToApp />
             </IconButton>
           </Toolbar>
         </AppBar>
@@ -231,23 +262,23 @@ class PersistentDrawerLeft extends React.Component {
           </div>
           <Divider />
           <ListItem button onClick={this.onClickSideBar}>
-          <ListItemIcon>
-          <HomeIcon/>
-          </ListItemIcon>
-          <ListItemText primary="Inicio" />
-        </ListItem>
-        <ListItem button onClick={this.onClickProfileUser}>
-          <ListItemIcon>
-          <Person/>
-          </ListItemIcon>
-          <ListItemText primary="Perfil" />
-        </ListItem>
-        <ListItem button  onClick = {this.onClickTaxi}>
-          <ListItemIcon>
-          <LocalTaxi/>
-          </ListItemIcon>
-          <ListItemText primary="Taxi" />
-        </ListItem>
+            <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
+            <ListItemText primary="Inicio" />
+          </ListItem>
+          <ListItem button onClick={this.onClickProfileUser}>
+            <ListItemIcon>
+              <Person />
+            </ListItemIcon>
+            <ListItemText primary="Perfil" />
+          </ListItem>
+          <ListItem button onClick={this.onClickTaxi}>
+            <ListItemIcon>
+              <LocalTaxi />
+            </ListItemIcon>
+            <ListItemText primary="Taxi" />
+          </ListItem>
         </Drawer>
         <main
           className={classNames(classes.content, {
@@ -255,49 +286,49 @@ class PersistentDrawerLeft extends React.Component {
           })}
         >
           <div className={classes.drawerHeader} />
-          <CustonMapDriver getCoordinates={this.onClickCustomMap.bind(this)}/>
+          <CustonMapDriver getCoordinates={this.onClickCustomMap.bind(this)} />
           <div>
             <FormControl className={classes.form}>
               <InputLabel
-              htmlFor="Placa">
-              Placa
+                htmlFor="Placa">
+                Placa
               </InputLabel>
               <Input
-              id="Placa"
-              name="Placa"
-              classes={{
-                underline: classes.cssUnderline,
-              }}
-              onChange = {this.onChangePlaca}
+                id="Placa"
+                name="Placa"
+                classes={{
+                  underline: classes.cssUnderline,
+                }}
+                onChange={this.onChangePlaca}
               >
               </Input>
             </FormControl>
-            <FormControl className= {classes.form}>
+            <FormControl className={classes.form}>
               <InputLabel
-              htmlFor="Posicion Actual">
-              Posicion Actual
+                htmlFor="Posicion Actual">
+                Posicion Actual
               </InputLabel>
               <Input
-              id ="PosicionActual"
-              name="Posicion"
-              classes={{
-                underline: classes.cssUnderline,
-              }}
-              value={"" + posicionActual.lat + " " + posicionActual.lng}
+                id="PosicionActual"
+                name="Posicion"
+                classes={{
+                  underline: classes.cssUnderline,
+                }}
+                value={"" + posicionActual.lat + " " + posicionActual.lng}
               >
               </Input>
             </FormControl>
           </div>
           <div className={classes.favoritos}>
             <Fab
-              color="primary" aria-label="Pedir Servicio" size="small" >
-              <Check/>
-            </Fab>  
+              color="primary" aria-label="Pedir Cliente" size="small" onClick={this.selectTaxi}>
+              <Check />
+            </Fab>
           </div>
-                  
+
         </main>
       </div>
-      
+
     );
   }
 }
