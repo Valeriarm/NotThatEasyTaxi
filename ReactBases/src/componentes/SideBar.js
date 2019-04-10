@@ -167,6 +167,8 @@ class PersistentDrawerLeft extends React.Component {
     this.setState({destino: destino, origen: origen})
   }
 
+  
+
   onClickAgregar = () => {
     const phone = this.state.phone;
     const lat = this.state.destino.lat;
@@ -186,14 +188,24 @@ class PersistentDrawerLeft extends React.Component {
     const latFin = this.state.destino.lat;
     const lngFin = this.state.destino.lng;
     console.log(latIn);
-    console.log(latIn);
+    console.log(lngIn);
+    console.log(latFin);
+    console.log(lngFin);
     axios.post(`http://localhost:5000/users/request/${phone}/${latIn}/${lngIn}/${latFin}/${lngFin}`).then(res => {
         const persons = res.data;
         console.log(persons);
+        if (persons===`En este momento no hay conductores disponibles, por favor intentelo de nuevo mas tarde`) {
+          alert(`En este momento no hay conductores disponibles, por favor intentelo de nuevo mas tarde`);
+        }else if (persons != `Solicitud de servicio creada`) {
+          alert(`Su solicitud fue realizada con exito`);
+        } else {
+          alert(`Ocurrio un error`);
+        }
       })
   }
   /*Check for a request*/ 
-  checkForDriver = setInterval(()=>{
+  /*
+     checkForDriver = setInterval(()=>{
     const phone = this.state.phone;
     axios.get(`http://localhost:5000/users/request/${phone}`).then(res => {
         const persons = res.data;
@@ -201,6 +213,8 @@ class PersistentDrawerLeft extends React.Component {
       })
   }, 1000)
 
+  */
+ 
 
   handleItemClick = (e) => {console.log(e.target.innerHTML)}
 
