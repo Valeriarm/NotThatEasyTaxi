@@ -184,29 +184,43 @@ class PersistentDrawerLeft extends React.Component {
     const placa = this.state.placa;
     const lat = this.state.posicionActual.lat;
     const lng = this.state.posicionActual.lng;
-    axios.get(`http://localhost:5000/drivers/taxi/${phone}/${placa}`).then(res =>{
+    axios.get(`http://localhost:5000/drivers/taxi/${phone}/${placa}`).then(res => {
       const placa_taxi = res.data;
-      if(placa_taxi===placa){
-        this.setState({placa:placa_taxi});
+      if (placa_taxi === placa) {
+        this.setState({ placa: placa_taxi });
         alert(`Taxi seleccionado con exito`);
-      }else if (placa_taxi==='Credenciales invalidas'){
+      } else if (placa_taxi === 'Credenciales invalidas') {
         alert(`El taxi no esta disponible`)
-      }else{
+      } else {
         alert(`Error en la seleccion del taxi`)
       }
     })
-    axios.post(`http://localhost:5000/users/taxi/report/${placa}/${lat}/${lng}`).then(res =>{
+    axios.post(`http://localhost:5000/users/taxi/report/${placa}/${lat}/${lng}`).then(res => {
       const respuesta = res.data;
-      if(respuesta===`Solicitud de servicio creada`){
+      if (respuesta === `Solicitud de servicio creada`) {
         alert(`Reportada la posicion`);
-      }else if (respuesta===`Error, por favor intentelo de nuevo`){
+      } else if (respuesta === `Error, por favor intentelo de nuevo`) {
         alert(`Error en la seleccion del taxi`)
       }
     })
+
+    setInterval(function () {
+      axios.get(`http://localhost:5000/drivers/taxi/request/${phone}/${placa}`).then(res => {
+        const respuesta = res.data;
+        if (respuesta === 'Solicitud encontrada') {
+          alert(respuesta);
+        } else if (respuesta === 'Buscando Solicitudes') {
+          console.log('buscando...');
+        } else {
+          alert('Error en la busqueda de la solicitud');
+        }
+      })
+    }, 3000);
   }
 
-  checkRequest = (e) => {
-    e.preventDefault();
+  findRequest = () => {
+    const phone = this.state.phone;
+    const placa = this.state.placa;
 
   }
 
