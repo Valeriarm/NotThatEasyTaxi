@@ -13,6 +13,7 @@ import { InputLabel, FormControl, Input, Fab, ListItemIcon, ListItemText ,
 Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar , 
 Toolbar, withStyles , Paper, Avatar} from '@material-ui/core';
 import Add from '@material-ui/icons/Add';
+import fondo from './images/fondo.png';
 
 
 
@@ -252,6 +253,7 @@ class PersistentDrawerLeft extends React.Component {
           })}
         >
           <div className={classes.drawerHeader} />
+        <img src={fondo} className={classes.background} />
           <CssBaseline />
         <Paper className={classes.paper}>
           <Avatar className={classes.avatar}>

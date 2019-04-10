@@ -13,6 +13,7 @@ import { InputLabel, FormControl, Input, Fab, ListItemIcon, ListItemText ,
 Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar , 
 Toolbar, withStyles, Paper, Avatar} from '@material-ui/core';
 import Search from '@material-ui/icons/Search';
+import fondo from './images/fondo.png';
 
 
 
@@ -80,6 +81,17 @@ const styles = theme => ({
     alignItems: 'center',
     padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
   },
+  background: {
+    objectFit: 'cover',
+    width: '100%',
+    height: '100%',
+    position: 'fixed',
+    zIndex: -1,
+    top: 0,
+    left: 0,
+    opacity: 0.75,
+  },
+
 
   avatar: {
     margin: theme.spacing.unit*2,
@@ -239,6 +251,8 @@ class PersistentDrawerLeft extends React.Component {
           })}
         >
         <div className={classes.drawerHeader} />
+
+        <img src={fondo} className={classes.background} />
         <CssBaseline />
         <Paper className={classes.paper}>
           <Avatar className={classes.avatar}>
