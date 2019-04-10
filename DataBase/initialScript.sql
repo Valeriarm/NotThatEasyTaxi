@@ -260,11 +260,11 @@ DECLARE
 	phone ALIAS FOR $2;
 	placa ALIAS FOR $1;
 	id INTEGER := (
-		SELECT idsolicitud FROM solicitud WHERE conductor=phone AND activa=false
+		SELECT idsolicitud FROM solicitud WHERE conductor=phone AND activa=true
 	);
 BEGIN
 	IF EXISTS (
-		SELECT * FROM solicitud WHERE taxi=placa AND conductor=phone AND activa=TRUE
+		SELECT * FROM solicitud WHERE taxi=placa AND conductor=phone AND activa=true
 	)THEN RETURN id;
 	END IF;
 	RETURN 'Buscando Solicitudes';
@@ -307,8 +307,28 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
-
-
+/*Agregr servicio*/
+CREATE OR REPLACE FUNCTION insertar_servicio(INTEGER, TIMESTAMP) RETURNS Text AS $$
+DECLARE
+	id_solicitud ALIAS FOR $1;
+	horainicio ALIAS FOR $2;
+	tel_usuario VARCHAR(15) := (SELECT usuario FROM solicitud WHERE idsolicitud=id_solicitud AND activa=true);
+	origen GEOMETRY(POINT) := (SELECT posicionusuario FROM solicitud WHERE idsolicitud=id_solicitud AND activa=true);
+	destino GEOMETRY(POINT) := (SELECT posicionfinal FROM solicitud WHERE idsolicitud=id_solicitud AND activa=true);
+	placa_taxi VARCHAR(6) := (SELECT taxi FROM solicitud WHERE idsolicitud=id_solicitud AND activa=true);
+	tel_conductor VARCHAR(15) := (SELECT conductor FROM solicitud WHERE idsolicitud=id_solicitud AND activa=true);
+BEGIN
+	IF EXISTS (
+		SELECT * FROM solicitud WHERE idsolicitud=id_solicitud AND activa=true
+	)THEN 
+		INSERT INTO servicio VALUES (DEFAULT, tel_usuario, tel_conductor, placa_taxi,
+		NULL, NULL, origen, destino, horainicio, NULL, FALSE, FALSE, FALSE);
+		RETURN 'Servicio iniciado';
+	END IF;
+	RETURN 'No hay servicios activos';
+END;
+$$
+LANGUAGE plpgsql;
 /*Buscar por servicios terminados*/
 CREATE OR REPLACE FUNCTION buscar_servicios_terminados(INTEGER) RETURNS Text AS $$
 DECLARE
@@ -323,8 +343,6 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
-
-
 /*Crea una solicitud recibiendo la ubicacion del usuario y luego encuentra el taxi mas cercano*/
 CREATE OR REPLACE FUNCTION crear_solicitud() RETURNS TRIGGER AS $$
 DECLARE

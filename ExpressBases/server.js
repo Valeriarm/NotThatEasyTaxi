@@ -175,7 +175,7 @@ app.get(`/drivers/taxi/request/:phone/:placa`, [
   const phone = req.params.phone
   db.one(`SELECT buscar_solicitudes_conductor($1, $2)`, [escape(placa), escape(phone)])
     .then(function (data) {
-      console.log(`DATA:`, data.buscar_solicitudes_conductor)
+      console.log(`DATA: El id de la solicitud es:`, data.buscar_solicitudes_conductor)
       res.send(JSON.stringify(data.buscar_solicitudes_conductor))
     })
     .catch(function (error) {
@@ -534,44 +534,20 @@ app.post(`/users/request/:phoneuser/:latin/:lngin/:latfin/:lngfin`,
  * comprobante de pago conductor
  * El encargado de crear un servicio es el conductor
  */
-app.post(`/users/services/:phoneuser/:phonedriver/:latin/:lngin/:latfin/:lngfin/:placa/:horainicio`,
+app.post(`/users/add/services/:idsolicitud`,
   [
-    check(`phoneuser`).isNumeric().isLength({ min: 10, max: 10 }),
-    check(`phonedriver`).isNumeric().isLength({ min: 10, max: 10 }),
-    check(`latin`).isNumeric(),
-    check(`lngin`).isNumeric(),
-    check(`latfin`).isNumeric(),
-    check(`lngfin`).isNumeric(),
-    check('placa').isAlphanumeric().isLength({ min: 6, max: 6 }).custom(value => {
-      console.log(value)
-      value = value.split('');
-      const letters = /^[A-Z]+$/;
-      if (!value[0].match(letters) || !value[1].match(letters) || !value[2].match(letters)) {
-        console.log("problema en letras")
-        return false;
-      } else if (isNaN(value[3]) || isNaN(value[4]) || isNaN(value[5])) {
-        console.log("problema en numeros")
-        return false;
-      } else { return true }})
+    check(`idsolicitud`).isNumeric(),
   ], (req, res) => {
     const errors = validationResult(req);
     console.log(req.params)
     if (!errors.isEmpty()) {
       console.log(`Error`, errors.array())
-      return res.send(`Error en Crear solicitud`);
+      return res.send(`Error en Crear servicio`);
     }
-    const phone = req.params.phoneuser;
-    const phoneD = req.params.phonedriver
-    const latIn = req.params.latin;
-    const lngIn = req.params.lngin;
-    const origen = `ST_GeomFromText('POINT(${latIn} ${lngIn})', 4326)`;
-    const latFin = req.params.latfin;
-    const lngFin = req.params.lngfin;
-    const destino = `ST_GeomFromText('POINT(${latFin} ${lngFin})', 4326)`;
-    const placa =req.params.placa
-    const horaInicio = req.params.horainicio
-    db.none(`INSERT INTO servicio VALUES (DEFAULT,$1,$2,$3,NULL,NULL,${origen},${destino},$4, NULL, FALSE, FALSE, FALSE)`,
-      [escape(phone), escape(phoneD), escape(placa), escape(horaInicio)])
+    const idSolicitud = req.params.idsolicitud;
+    const horaInicio = new Date();
+    db.none(`SELECT insertar_servicio(INTEGER, TIMESTAMP)`,
+      [idSolicitud, horaInicio])
       .then((data) => {
         console.log(`DATA: `, data)
         res.send(`Servicio creado`)
