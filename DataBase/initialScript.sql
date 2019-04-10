@@ -283,12 +283,30 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION buscar_servicios(VARCHAR(15)) RETURNS Text AS $$
 DECLARE
 	phone ALIAS FOR $1;
+	id_servicio INTEGER := (
+		SELECT idservicio FROM servicio WHERE usuario=phone AND terminado=false
+	);
 BEGIN
 	IF EXISTS (
-		SELECT * FROM servicio WHERE taxi=phone
-	)THEN RETURN 'Servicio encontrado';
+		SELECT * FROM servicio WHERE usuario=phone AND terminado=false
+	)THEN 
+		RETURN id_servicio;
 	END IF;
 	RETURN 'Buscando Servicio';
+END;
+$$
+LANGUAGE plpgsql;
+/*Buscar por servicios terminados*/
+CREATE OR REPLACE FUNCTION buscar_servicios_terminados(INTEGER) RETURNS Text AS $$
+DECLARE
+	id_servicio ALIAS FOR $1;
+BEGIN
+	IF EXISTS (
+		SELECT * FROM servicio WHERE idservicio=id_servicio AND terminado=true
+	)THEN 
+		RETURN id_servicio;
+	END IF;
+	RETURN 'Servicio en curso';
 END;
 $$
 LANGUAGE plpgsql;
@@ -380,4 +398,5 @@ INSERT INTO reporte VALUES (DEFAULT, 'DEO840', '2019-04-09T03:43:45.346Z', ST_Ge
 SELECT * FROM usuario;
 SELECT * FROM conductor;
 SELECT * FROM maneja;
-SELECT *FROM reporte;
+SELECT * FROM reporte;
+SELECT * FROM solicitud;
