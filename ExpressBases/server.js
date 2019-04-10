@@ -76,7 +76,18 @@ app.get(`/drivers/:phone/:psword`, [
  * Valida los Taxis recibiendo placa y contraseña
  */
 app.get(`/taxi/:placa/:psword`, [
-  check(`placa`).isNumeric().isLength({min:10, max:10}),
+  check('placa').isAlphanumeric().isLength({min:6,max:6}).custom(value=>{
+    console.log(value)
+    value = value.split('');
+    const letters = /^[A-Z]+$/;
+    if(!value[0].match(letters) || !value[1].match(letters) || !value[2].match(letters)){
+      console.log("problema en letras")
+      return false;
+    } else if(isNaN(value[3]) || isNaN(value[4]) || isNaN(value[5])){
+      console.log("problema en numeros")
+      return false;
+    } else {return true}
+  }),
   check(`psword`).isLength({min:8})
 ],(req, res) => {
   const errors = validationResult(req);
@@ -103,12 +114,23 @@ app.get(`/taxi/:placa/:psword`, [
  */
 app.get(`/drivers/taxi/:phone/:placa`,[
   check(`phone`).isNumeric().isLength({min:10, max:10}),
-  check(`placa`).isAlphanumeric().isLength({min:6, max:6})
+  check('placa').isAlphanumeric().isLength({min:6,max:6}).custom(value=>{
+    console.log(value)
+    value = value.split('');
+    const letters = /^[A-Z]+$/;
+    if(!value[0].match(letters) || !value[1].match(letters) || !value[2].match(letters)){
+      console.log("problema en letras")
+      return false;
+    } else if(isNaN(value[3]) || isNaN(value[4]) || isNaN(value[5])){
+      console.log("problema en numeros")
+      return false;
+    } else {return true}
+  }),
 ], (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log({errors: errors.array()})
-    return res.send(JSON.stringify("Credenciales invalidas"));
+    return res.send(`Credenciales invalidas`);
   }
   const phone = req.params.phone;
   const placa = req.params.placa
@@ -116,18 +138,30 @@ app.get(`/drivers/taxi/:phone/:placa`,[
   db.one(`SELECT manejar_taxi($1 ,$2)`, [escape(phone), escape(placa)])
   .then(function (data) {
     console.log(`DATA:`, data.manejar_taxi)
-    res.send(JSON.stringify(data.manejar_taxi))
+    res.send(data.manejar_taxi)
   })
   .catch(function (error) {
     console.log(`ERROR:`, error)
-    res.send(JSON.stringify("Credenciales invalidas"))
+    res.send(`Credenciales invalidas`);
   })
 })
+
 /**
  * Busca por solicitudes activas conductor
  */
 app.get(`/drivers/taxi/request/:placa/:phone`,[
-  check(`placa`).isAlphanumeric().isLength({min:6, max:6}),
+  check('placa').isAlphanumeric().isLength({min:6,max:6}).custom(value=>{
+    console.log(value)
+    value = value.split('');
+    const letters = /^[A-Z]+$/;
+    if(!value[0].match(letters) || !value[1].match(letters) || !value[2].match(letters)){
+      console.log("problema en letras")
+      return false;
+    } else if(isNaN(value[3]) || isNaN(value[4]) || isNaN(value[5])){
+      console.log("problema en numeros")
+      return false;
+    } else {return true}
+  }),
   check(`phone`).isNumeric().isLength({min:10,max:10})
 ], (req, res) => {
   const errors = validationResult(req);
@@ -176,7 +210,7 @@ app.get(`/user/request/:phone`,[
  * ha sido aceptado
  */
 app.get(`/users/request/:phone`,[
-  check(`placa`).isAlphanumeric().isLength({min:6, max:6})
+  check(`phone`).isAlphanumeric().isLength({min:10, max:10})
 ], (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -412,8 +446,8 @@ app.post('/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocu
 app.post(`/users/favorites/:phone/:lat/:lng`, 
   [
     check(`phone`).isNumeric().isLength({min: 10, max: 10}),
-    check(`lat`).isNumeric(),
-    check(`lng`).isNumeric()
+    check(`lat`).isFloat(),
+    check(`lng`).isFloat()
   ], (req,res)=>{
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -439,32 +473,39 @@ app.post(`/users/favorites/:phone/:lat/:lng`,
  * Crea una Solicitud recibiendo, telefono del usuario y coordenadas del usuario
  * El encargado de crear una solicitud es el usuario
  */
-app.post(`/users/request/:phoneuser/:latIn/:lngIn/:latFin/:lngFin`, 
+app.post(`/users/request/:phoneuser/:latin/:lngin/:latfin/:lngfin`, 
   [
-    check(`phone`).isNumeric().isLength({min: 10, max: 10}),
-    check(`latIn`).isNumeric(),
-    check(`lngIn`).isNumeric(),
-    check(`latFin`).isNumeric(),
-    check(`lngFin`).isNumeric(),
+    check(`phoneuser`).isNumeric().isLength({min: 10, max: 10}),
+    check(`latin`).isFloat(),
+    check(`lngin`).isFloat(),
+    check(`latfin`).isFloat(),
+    check(`lngfin`).isFloat(),
   ], (req,res)=>{
     const errors = validationResult(req);
+    console.log(req.params)
     if (!errors.isEmpty()) {
-      console.log({errors: errors.array()})
-      return res.status(422).json({ errors: errors.array() });
+      console.log(`Error`, errors.array())
+      return res.send(`Error en Crear solicitud`);
     }
-    const phone = req.params.phone;
-    const latIn = req.params.lat;
-    const lngIn = req.params.lng;
-    db.one()
-    db.none(`INSERT INTO solicitud VALUES ($1, ST_GeomFromText('POINT($2 $3)', 4326), ST_GeomFromText('POINT($2 $3)', 4326))`,
-    [escape(phone), escape(latIn), escape(lngIn)])
+    const phone = req.params.phoneuser;
+    const latIn = req.params.latin;
+    const lngIn = req.params.lngin;
+    const origen = `ST_GeomFromText('POINT(${latIn} ${lngIn})', 4326)`;
+    console.log(origen);
+    const latFin = req.params.latfin;
+    const lngFin = req.params.lngfin;
+    const destino = `ST_GeomFromText('POINT(${latFin} ${lngFin})', 4326)`;
+    console.log(destino);
+    console.log(`INSERT INTO solicitud VALUES (DEFAULT,'${phone}',${origen},${destino})`)
+    db.none(`INSERT INTO solicitud VALUES (DEFAULT,$1,${origen},${destino})`,
+    [escape(phone)])
     .then((data)=>{
       console.log(`DATA: `, data)
       res.send(`Solicitud de servicio creada`)
     })
     .catch((error)=>{
       console.log(`ERROR`, error)
-      res.send(`Error, por favor intentelo de nuevo`)
+      res.send(`En este momento no hay conductores disponibles, por favor intentelo de nuevo mas tarde`)
     })
   }
 )
@@ -474,7 +515,7 @@ app.post(`/users/request/:phoneuser/:latIn/:lngIn/:latFin/:lngFin`,
  * comprobante de pago conductor
  * El encargado de crear un servicio es el conductor
  */
-app.post(`/users/request/:phoneuser/:phonedriver/:lat/:lng`, 
+app.post(`/users/services/:phoneuser/:phonedriver/:lat/:lng`, 
   [
     check(`phone`).isNumeric().isLength({min: 10, max: 10}),
     check(`lat`).isNumeric(),
@@ -506,9 +547,20 @@ app.post(`/users/request/:phoneuser/:phonedriver/:lat/:lng`,
  */
 app.post(`/users/taxi/report/:placa/:lat/:lng`,
   [
-    check(`placa`).isNumeric().isLength({min: 6, max: 6}),
-    check(`lat`).isNumeric(),
-    check(`lng`).isNumeric()
+  check('placa').isAlphanumeric().isLength({min:6,max:6}).custom(value=>{
+    console.log(value)
+    value = value.split('');
+    const letters = /^[A-Z]+$/;
+    if(!value[0].match(letters) || !value[1].match(letters) || !value[2].match(letters)){
+      console.log("problema en letras")
+      return false;
+    } else if(isNaN(value[3]) || isNaN(value[4]) || isNaN(value[5])){
+      console.log("problema en numeros")
+      return false;
+    } else {return true}
+  }),
+  check(`lat`).isFloat(),
+  check(`lng`).isFloat()
   ], (req,res)=>{
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -518,8 +570,9 @@ app.post(`/users/taxi/report/:placa/:lat/:lng`,
     const placa = req.params.placa;
     const lat = req.params.lat;
     const lng = req.params.lng;
+    const coordenada = `ST_GeomFromText('POINT(${lat} ${lng})', 4326)`;
     const hora = new Date();
-    db.none(`INSERT INTO reporte VALUES (Default, $1, $2, ST_GeomFromText('POINT($3 $4)', 4326))`,
+    db.none(`INSERT INTO reporte VALUES (Default, $1, $2, ${coordenada})`,
     [escape(placa), hora ,escape(lat), escape(lng)])
     .then((data)=>{
       console.log(`DATA: `, data)
@@ -610,14 +663,16 @@ app.put(`/drivers/:phone/:psword/:nombre/:apellido/:mail/:cuenta`,[
  */
 app.put(`/taxi/:placa/:soat`, [
   check('placa').isAlphanumeric().isLength({min:6,max:6}).custom(value=>{
+    console.log(value)
     value = value.split('');
     const letters = /^[A-Z]+$/;
     if(!value[0].match(letters) || !value[1].match(letters) || !value[2].match(letters)){
+      console.log("problema en letras")
       return false;
-    }
-    if(isNaN(value[3]) || isNaN(value[4]) || isNaN(value[5])){
+    } else if(isNaN(value[3]) || isNaN(value[4]) || isNaN(value[5])){
+      console.log("problema en numeros")
       return false;
-    }
+    } else {return true}
   }),
   check(`soat`).custom(value =>{
     value=value.split("-");

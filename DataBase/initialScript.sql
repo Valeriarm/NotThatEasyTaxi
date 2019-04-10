@@ -86,7 +86,7 @@ FOREIGN KEY (taxi) REFERENCES taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE
 
 CREATE TABLE maneja(
 taxi VARCHAR(6) NOT NULL,
-conductor VARCHAR(30) NOT NULL,
+conductor VARCHAR(15) NOT NULL,
 chosen BOOLEAN NOT NULL,
 PRIMARY KEY (taxi, conductor),
 FOREIGN KEY (taxi) REFERENCES taxi(placa) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -143,27 +143,27 @@ BEGIN
 	IF NOT EXISTS (SELECT * FROM maneja WHERE taxi=placataxi)
 	THEN RETURN 'El taxi que desea manejar no esta registrado';
 	END IF;
-	IF NOT EXISTS (SELECT * FROM maneja WHERE telefonoconductor=phone AND taxi=placataxi)
+	IF NOT EXISTS (SELECT * FROM maneja WHERE conductor=phone AND taxi=placataxi)
 	THEN RETURN 'El taxi que desea manejar no esta asociado con su cuenta';
 	END IF;
-	IF NOT EXISTS (SELECT * FROM maneja WHERE chosen AND taxi=placataxi 
-		AND telefonoconductor!=phone)
+	IF EXISTS (SELECT * FROM maneja WHERE chosen=true AND taxi=placataxi 
+		AND conductor!=phone)
 	THEN RETURN 'El taxi que desea manejar se encuentra seleccionado por otro usuario';
 	END IF;
 	IF NOT EXISTS (
 		WITH taxis_chosen_by_user AS 
-			(SELECT count(*) AS num_taxis FROM maneja WHERE telefonoConductor=phone AND chosen)
+			(SELECT count(*) AS num_taxis FROM maneja WHERE conductor=phone AND chosen=true)
 			SELECT * FROM taxis_chosen_by_user WHERE num_taxis > 1
 			)THEN 
-			UPDATE manejar SET chosen = FALSE WHERE taxi!=placataxi
-				AND telefonoconductor=phone;
-			UPDATE manejar SET chosen = TRUE WHERE taxi=placataxi
-				AND telefonoConductor=phone;
-		RETURN placa;
+			UPDATE maneja SET chosen = false WHERE taxi!=placataxi
+				AND conductor=phone;
+			UPDATE maneja SET chosen = true WHERE taxi=placataxi
+				AND conductor=phone;
+		RETURN placataxi;
 	END IF;
-UPDATE manejar SET chosen = TRUE WHERE taxi=placataxi
-	AND telefonoConductor=phone;
-RETURN placa;
+UPDATE maneja SET chosen = true WHERE taxi=placataxi
+	AND conductor=phone;
+RETURN placataxi;
 END;
 $$
 LANGUAGE plpgsql;
@@ -315,7 +315,7 @@ DECLARE
 							 GROUP BY taxi ORDER BY distance LIMIT 1),
 			taxi_chosen AS (SELECT taxi FROM taxi_mas_cercano WHERE distance < 20),
 			driver_chosen AS (SELECT conductor FROM maneja NATURAL JOIN taxi_chosen
-							  WHERE chosen = TRUE)
+							  WHERE chosen = true)
 			SELECT conductor FROM driver_chosen);
 BEGIN
 	IF NOT EXISTS (WITH reporte_taxi AS (SELECT taxi,horaactual, coordenada FROM reporte),
@@ -327,7 +327,7 @@ BEGIN
 							 GROUP BY taxi ORDER BY distance LIMIT 1),
 			taxi_chosen AS (SELECT taxi FROM taxi_mas_cercano WHERE distance < 20),
 			driver_chosen AS (SELECT conductor FROM maneja 
-							  WHERE chosen = TRUE)
+							  WHERE chosen = true)
 			SELECT * FROM driver_chosen,taxi_chosen
 	)THEN RAISE EXCEPTION 'No hay conductores cerca de usted'
 	USING HINT = 'Por favor intentelo mas tarde o cambie de posicion';
@@ -375,7 +375,9 @@ INSERT INTO conductor VALUES ('3012617187', '12345678', 'Valeria', 'Rivera','199
 INSERT INTO usuario VALUES ('3012617187', '12345678', 'Valeria', 'Rivera','1998-11-19', 'valeriarm@gmail.com', '123454313');
 SELECT insert_taxi('3166443198','CMP217','12345678','Hyundai','Accent',2016,'Mediano','2020-10-01');
 SELECT insert_taxi('3012617187','DEO840','12345678','Renault','Logan',2016,'Mediano','2020-10-01');
-INSERT INTO reporte VALUES (DEFAULT, 'CMP217', '2019-04-09T03:42:13.346Z', ST_GeomFromText('POINT(3.4394 -76.529)', 4326));
-INSERT INTO reporte VALUES (DEFAULT, 'DEO840', '2019-04-09T03:43:45.346Z', ST_GeomFromText('POINT(3.4562 -76.327)', 4326));
+/*INSERT INTO reporte VALUES (DEFAULT, 'CMP217', '2019-04-09T03:42:13.346Z', ST_GeomFromText('POINT(3.4394 -76.529)', 4326));
+INSERT INTO reporte VALUES (DEFAULT, 'DEO840', '2019-04-09T03:43:45.346Z', ST_GeomFromText('POINT(3.4562 -76.327)', 4326));*/
 SELECT * FROM usuario;
 SELECT * FROM conductor;
+SELECT * FROM maneja;
+SELECT *FROM reporte;
