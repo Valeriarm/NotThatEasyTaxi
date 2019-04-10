@@ -504,7 +504,6 @@ app.post(`/users/request/:phoneuser/:latin/:lngin/:latfin/:lngfin`,
     check(`lngfin`).isFloat(),
   ], (req, res) => {
     const errors = validationResult(req);
-    console.log(req.params)
     if (!errors.isEmpty()) {
       console.log(`Error`, errors.array())
       return res.send(`Error en Crear solicitud`);
@@ -519,7 +518,7 @@ app.post(`/users/request/:phoneuser/:latin/:lngin/:latfin/:lngfin`,
     db.none(`INSERT INTO solicitud VALUES (DEFAULT,$1,${origen},${destino})`,
       [escape(phone)])
       .then((data) => {
-        console.log(`DATA: `, data)
+        console.log(`DATA: del servicio `, data)
         res.send(`Solicitud de servicio creada`)
       })
       .catch((error) => {
@@ -544,12 +543,13 @@ app.post(`/users/add/services/:idsolicitud`,
       console.log(`Error`, errors.array())
       return res.send(`Error en Crear servicio`);
     }
-    const idSolicitud = req.params.idsolicitud;
+    const idSolicitud = parseInt(req.params.idsolicitud);
     const horaInicio = new Date();
-    db.none(`SELECT insertar_servicio(INTEGER, TIMESTAMP)`,
+    console.log(idSolicitud)
+    db.one(`SELECT insertar_servicio($1, $2)`,
       [idSolicitud, horaInicio])
       .then((data) => {
-        console.log(`DATA: `, data)
+        console.log(`DATA: estoy creando el servicio`, data)
         res.send(`Servicio creado`)
       })
       .catch((error) => {
@@ -767,6 +767,27 @@ app.put(`/drivers/services/:phone/:calificacion`, [
     .catch((error) => {
       console.log(`ERROR`, error)
       res.send(`Error creando el taxi, por favor intentelo de nuevo`)
+    })
+})
+/**Terminar un servicio */
+app.put(`/drivers/end/services/:phone`, [
+  check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
+], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log({ errors: errors.array() })
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const phone = req.params.phone;
+  db.none(`UPDATE servicio SET terminado=true WHERE conductor=phone AND terminado=false`,
+    [escape(placa), escape(soat)])
+    .then((data) => {
+      console.log(`DATA: `, data)
+      res.send(`El servicio ha terminado`)
+    })
+    .catch((error) => {
+      console.log(`ERROR`, error)
+      res.send(`no se pudo terminar el servicio`)
     })
 })
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

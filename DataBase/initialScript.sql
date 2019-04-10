@@ -463,3 +463,4 @@ SELECT * FROM conductor;
 SELECT * FROM maneja;
 SELECT * FROM reporte;
 SELECT * FROM solicitud;
+SELECT * FROM servicio;

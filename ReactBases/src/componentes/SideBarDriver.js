@@ -238,7 +238,8 @@ class PersistentDrawerLeft extends React.Component {
     const idSolicitud=this.state.idrequest;
     axios.post(`http://localhost:5000/users/add/services/${idSolicitud}`).then(res => {
       const respuesta = res.data;
-      if (respuesta === 'Servicio iniciado'){
+      console.log(respuesta)
+      if (respuesta === 'Servicio creado'){
         this.setState({iniciarServicio:true});
         alert(`Servicio creado`);
       } else {
@@ -248,16 +249,16 @@ class PersistentDrawerLeft extends React.Component {
   }
 
   terminarServicio = () => {
-    const enServicio = this.state.terminarServicio;
+    const enServicio = this.state.iniciarServicio;
     if(enServicio === true){
-      const idSolicitud=this.state.idSolicitud;
-      axios.post(`http://localhost:5000/users/add/services/${idSolicitud}`).then(res => {
+      const phone=this.state.phone;
+      axios.post(`http://localhost:5000//drivers/end/services/${phone}`).then(res => {
       const respuesta = res.data;
-      if (respuesta === 'Servicio iniciado'){
-        alert(`Servicio creado`);
+      if (respuesta === 'El servicio ha terminado'){
+        alert(`Servicio terminado`);
         this.setState({iniciarServicio:false});
       } else {
-        alert(`Error creando el servicio`)
+        alert(`Error terminando el servicio`)
       }
     })
     }else{
