@@ -470,7 +470,7 @@ app.post(`/users/favorites/:phone/:lat/:lng`,
   [
     check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
     check(`lat`).isFloat(),
-    check(`lng`).isFloat()
+    check(`lng`).isFloat(),
   ], (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -535,29 +535,51 @@ app.post(`/users/request/:phoneuser/:latin/:lngin/:latfin/:lngfin`,
  * comprobante de pago conductor
  * El encargado de crear un servicio es el conductor
  */
-app.post(`/users/services/:phoneuser/:phonedriver/:lat/:lng`,
+app.post(`/users/services/:phoneuser/:phonedriver/:latin/:lngin/:latfin/:lngfin/:placa/:horainicio`,
   [
-    check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
-    check(`lat`).isNumeric(),
-    check(`lng`).isNumeric()
+    check(`phoneuser`).isNumeric().isLength({ min: 10, max: 10 }),
+    check(`phonedriver`).isNumeric().isLength({ min: 10, max: 10 }),
+    check(`latin`).isNumeric(),
+    check(`lngin`).isNumeric(),
+    check(`latfin`).isNumeric(),
+    check(`lngfin`).isNumeric(),
+    check('placa').isAlphanumeric().isLength({ min: 6, max: 6 }).custom(value => {
+      console.log(value)
+      value = value.split('');
+      const letters = /^[A-Z]+$/;
+      if (!value[0].match(letters) || !value[1].match(letters) || !value[2].match(letters)) {
+        console.log("problema en letras")
+        return false;
+      } else if (isNaN(value[3]) || isNaN(value[4]) || isNaN(value[5])) {
+        console.log("problema en numeros")
+        return false;
+      } else { return true }})
   ], (req, res) => {
     const errors = validationResult(req);
+    console.log(req.params)
     if (!errors.isEmpty()) {
-      console.log({ errors: errors.array() })
-      return res.status(422).json({ errors: errors.array() });
+      console.log(`Error`, errors.array())
+      return res.send(`Error en Crear solicitud`);
     }
-    const phone = req.params.phone;
-    const lat = req.params.lat;
-    const lng = req.params.lng;
-    db.none(`INSERT INTO solicitud VALUES ($1, ST_GeomFromText('POINT($2 $3)', 4326))`,
-      [escape(phone), escape(lat), escape(lng)])
+    const phone = req.params.phoneuser;
+    const phoneD = req.params.phonedriver
+    const latIn = req.params.latin;
+    const lngIn = req.params.lngin;
+    const origen = `ST_GeomFromText('POINT(${latIn} ${lngIn})', 4326)`;
+    const latFin = req.params.latfin;
+    const lngFin = req.params.lngfin;
+    const destino = `ST_GeomFromText('POINT(${latFin} ${lngFin})', 4326)`;
+    const placa =req.params.placa
+    const horaInicio = req.params.horainicio
+    db.none(`INSERT INTO servicio VALUES (DEFAULT,$1,$2,$3,NULL,NULL,${origen},${destino},$4, NULL, FALSE, FALSE, FALSE)`,
+      [escape(phone), escape(phoneD), escape(placa), escape(horaInicio)])
       .then((data) => {
         console.log(`DATA: `, data)
-        res.send(`Solicitud de servicio aceptada`)
+        res.send(`Servicio creado`)
       })
       .catch((error) => {
         console.log(`ERROR`, error)
-        res.send(`Error, por favor intentelo de nuevo`)
+        res.send(`Error en creacion del servicio`)
       })
   }
 )
