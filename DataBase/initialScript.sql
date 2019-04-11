@@ -22,9 +22,10 @@ PRIMARY KEY (telefonousuario)
 );
 
 CREATE TABLE origenesfav(
-origen GEOMETRY(POINT) NOT NULL,
+nombre TEXT NOT NULL,
 telefonousuario VARCHAR(15) NOT NULL,
-PRIMARY KEY (origen, telefonousuario),
+origen GEOMETRY(POINT) NOT NULL,
+PRIMARY KEY (origen, telefonousuario, nombre),
 FOREIGN KEY (telefonousuario) REFERENCES Usuario(telefonousuario) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -314,6 +315,11 @@ DECLARE
 	placa_taxi VARCHAR(6) := (SELECT taxi FROM solicitud WHERE idsolicitud=id_solicitud AND activa=true);
 	tel_conductor VARCHAR(15) := (SELECT conductor FROM solicitud WHERE idsolicitud=id_solicitud AND activa=true);
 BEGIN
+	IF EXISTS (
+		SELECT * FROM servicio WHERE usuario = tel_usuario OR conductor = tel_conductor AND terminado=false
+	)THEN
+		RETURN 'No puede inicar un servicio si tiene otro activo';
+	END IF;
 	IF EXISTS (
 		SELECT * FROM solicitud WHERE idsolicitud=id_solicitud AND activa=true
 	)THEN 
