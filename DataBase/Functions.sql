@@ -39,27 +39,27 @@ BEGIN
 	IF NOT EXISTS (SELECT * FROM maneja WHERE taxi=placataxi)
 	THEN RETURN 'El taxi que desea manejar no esta registrado';
 	END IF;
-	IF NOT EXISTS (SELECT * FROM maneja WHERE telefonoconductor=phone AND taxi=placataxi)
+	IF NOT EXISTS (SELECT * FROM maneja WHERE conductor=phone AND taxi=placataxi)
 	THEN RETURN 'El taxi que desea manejar no esta asociado con su cuenta';
 	END IF;
-	IF NOT EXISTS (SELECT * FROM maneja WHERE chosen AND taxi=placataxi 
-		AND telefonoconductor!=phone)
+	IF EXISTS (SELECT * FROM maneja WHERE chosen=true AND taxi=placataxi 
+		AND conductor!=phone)
 	THEN RETURN 'El taxi que desea manejar se encuentra seleccionado por otro usuario';
 	END IF;
 	IF NOT EXISTS (
 		WITH taxis_chosen_by_user AS 
-			(SELECT count(*) AS num_taxis FROM maneja WHERE telefonoConductor=phone AND chosen)
+			(SELECT count(*) AS num_taxis FROM maneja WHERE conductor=phone AND chosen=true)
 			SELECT * FROM taxis_chosen_by_user WHERE num_taxis > 1
 			)THEN 
-			UPDATE manejar SET chosen = FALSE WHERE taxi!=placataxi
-				AND telefonoconductor=phone;
-			UPDATE manejar SET chosen = TRUE WHERE taxi=placataxi
-				AND telefonoConductor=phone;
-		RETURN placa;
+			UPDATE maneja SET chosen = false WHERE taxi!=placataxi
+				AND conductor=phone;
+			UPDATE maneja SET chosen = true WHERE taxi=placataxi
+				AND conductor=phone;
+		RETURN placataxi;
 	END IF;
-UPDATE manejar SET chosen = TRUE WHERE taxi=placataxi
-	AND telefonoConductor=phone;
-RETURN placa;
+UPDATE maneja SET chosen = true WHERE taxi=placataxi
+	AND conductor=phone;
+RETURN placataxi;
 END;
 $$
 LANGUAGE plpgsql;
@@ -148,58 +148,27 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+
+
 /*Buscar por solicitudes activas por placa*/
 CREATE OR REPLACE FUNCTION buscar_solicitudes_conductor(VARCHAR(6), VARCHAR(15)) RETURNS Text AS $$
 DECLARE
-	phone ALIAS FOT $2;
+	phone ALIAS FOR $2;
 	placa ALIAS FOR $1;
+	id INTEGER := (
+		SELECT idsolicitud FROM solicitud WHERE conductor=phone AND activa=true
+	);
 BEGIN
 	IF EXISTS (
-		SELECT * FROM solicitud WHERE taxi=placa AND conductor=phone AND activa=TRUE
-	)THEN RETURN 'Solicitud encontrado';
+		SELECT * FROM solicitud WHERE taxi=placa AND conductor=phone AND activa=true
+	)THEN RETURN id;
 	END IF;
 	RETURN 'Buscando Solicitudes';
 END;
 $$
 LANGUAGE plpgsql;
-/*El conductor acepta la solicitud*/
-CREATE OR REPLACE FUNCTION aceptar_solicitud(VARCHAR(6), VARCHAR(15), TIMESTAMP) RETURNS Text AS $$
-DECLARE
-	tel_conductor ALIAS FOT $2;
-	placa ALIAS FOR $1;
-	hora_inicio ALIAS FOR $3;
-	id_solicitud := (SELECT idsolicitud FROM solicitud WHERE taxi=placa AND conductor=tel_conductor AND activa=TRUE);
-	tel_usuario := (SELECT usuario FROM solicitud WHERE idservicio=id_solicitud);
-	partida := (SELECT posicionusuario FROM solicitud WHERE idsolicitud=id_solicitud);
-	llegada := (SELECT posicionfinal FROM solicitud WHERE idsolicitud=id_solicitud);
-BEGIN
-	IF EXISTS (
-		SELECT idsolicitud FROM solicitud WHERE taxi=placa AND conductor=tel_conductor AND activa=TRUE
-	)THEN 
-	INSERT INTO servicio VALUES (DEFAULT, tel_usuario, tel_conductor, placa,
-		NULL, NULL, partida, llegada, hora_inicio, NULL, FALSE, FALSE, FALSE)
-	RETURN 'Servicio encontrado';
-	END IF;
-	RETURN 'Buscando Solicitudes';
-END;
-$$
-LANGUAGE plpgsql;
-/*El conductor termina el servicio*/
-CREATE OR REPLACE FUNCTION terminar_servicio(VARCHAR(15), TIMESTAMP) RETURNS Text AS $$
-DECLARE
-	tel_conductor ALIAS FOT $1;
-	hora_final ALIAS FOR $2;
-BEGIN
-	IF EXISTS (
-		SELECT idsolicitud FROM solicitud WHERE taxi=placa AND conductor=tel_conductor AND activa=TRUE
-	)THEN 
-	UPDATE INTO servicio SET horafin=hora_final WHERE conductor=tel_conductor AND terminado=FALSE
-	RETURN 'Servicio terminado';
-	END IF;
-	RETURN 'Buscando Solicitudes';
-END;
-$$
-LANGUAGE plpgsql;
+
+
 /*Buscar por solicitudes activas por telefono*/
 CREATE OR REPLACE FUNCTION buscar_solicitudes_usuario(VARCHAR(15)) RETURNS Text AS $$
 DECLARE
@@ -207,7 +176,7 @@ DECLARE
 BEGIN
 	IF EXISTS (
 		SELECT * FROM solicitud WHERE usuario=phone AND activa=TRUE
-	)THEN RETURN 'Solicitud encontrado';
+	)THEN RETURN 'Solicitud encontrada';
 	END IF;
 	RETURN 'Buscando Solicitudes';
 END;
@@ -217,12 +186,57 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION buscar_servicios(VARCHAR(15)) RETURNS Text AS $$
 DECLARE
 	phone ALIAS FOR $1;
+	id_servicio INTEGER := (
+		SELECT idservicio FROM servicio WHERE usuario=phone AND terminado=false
+	);
 BEGIN
 	IF EXISTS (
-		SELECT * FROM servicio WHERE taxi=phone
-	)THEN RETURN 'Servicio encontrado';
+		SELECT * FROM servicio WHERE usuario=phone AND terminado=false
+	)THEN 
+		RETURN id_servicio;
 	END IF;
 	RETURN 'Buscando Servicio';
+END;
+$$
+LANGUAGE plpgsql;
+/*Agregr servicio*/
+CREATE OR REPLACE FUNCTION insertar_servicio(INTEGER, TIMESTAMP) RETURNS Text AS $$
+DECLARE
+	id_solicitud ALIAS FOR $1;
+	horainicio ALIAS FOR $2;
+	tel_usuario VARCHAR(15) := (SELECT usuario FROM solicitud WHERE idsolicitud=id_solicitud AND activa=true);
+	origen GEOMETRY(POINT) := (SELECT posicionusuario FROM solicitud WHERE idsolicitud=id_solicitud AND activa=true);
+	destino GEOMETRY(POINT) := (SELECT posicionfinal FROM solicitud WHERE idsolicitud=id_solicitud AND activa=true);
+	placa_taxi VARCHAR(6) := (SELECT taxi FROM solicitud WHERE idsolicitud=id_solicitud AND activa=true);
+	tel_conductor VARCHAR(15) := (SELECT conductor FROM solicitud WHERE idsolicitud=id_solicitud AND activa=true);
+BEGIN
+	IF EXISTS (
+		SELECT * FROM servicio WHERE usuario = tel_usuario OR conductor = tel_conductor AND terminado=false
+	)THEN
+		RETURN 'No puede inicar un servicio si tiene otro activo';
+	END IF;
+	IF EXISTS (
+		SELECT * FROM solicitud WHERE idsolicitud=id_solicitud AND activa=true
+	)THEN 
+		INSERT INTO servicio VALUES (DEFAULT, tel_usuario, tel_conductor, placa_taxi,
+		NULL, NULL, origen, destino, horainicio, NULL, false, false, false);
+		RETURN 'Servicio iniciado';
+	END IF;
+	RETURN 'No hay servicios activos';
+END;
+$$
+LANGUAGE plpgsql;
+/*Buscar por servicios terminados*/
+CREATE OR REPLACE FUNCTION buscar_servicios_terminados(INTEGER) RETURNS Text AS $$
+DECLARE
+	id_servicio ALIAS FOR $1;
+BEGIN
+	IF EXISTS (
+		SELECT * FROM servicio WHERE idservicio=id_servicio AND terminado=true
+	)THEN 
+		RETURN id_servicio;
+	END IF;
+	RETURN 'Servicio en curso';
 END;
 $$
 LANGUAGE plpgsql;
@@ -249,7 +263,7 @@ DECLARE
 							 GROUP BY taxi ORDER BY distance LIMIT 1),
 			taxi_chosen AS (SELECT taxi FROM taxi_mas_cercano WHERE distance < 20),
 			driver_chosen AS (SELECT conductor FROM maneja NATURAL JOIN taxi_chosen
-							  WHERE chosen = TRUE)
+							  WHERE chosen = true)
 			SELECT conductor FROM driver_chosen);
 BEGIN
 	IF NOT EXISTS (WITH reporte_taxi AS (SELECT taxi,horaactual, coordenada FROM reporte),
@@ -261,7 +275,7 @@ BEGIN
 							 GROUP BY taxi ORDER BY distance LIMIT 1),
 			taxi_chosen AS (SELECT taxi FROM taxi_mas_cercano WHERE distance < 20),
 			driver_chosen AS (SELECT conductor FROM maneja 
-							  WHERE chosen = TRUE)
+							  WHERE chosen = true)
 			SELECT * FROM driver_chosen,taxi_chosen
 	)THEN RAISE EXCEPTION 'No hay conductores cerca de usted'
 	USING HINT = 'Por favor intentelo mas tarde o cambie de posicion';
@@ -275,41 +289,5 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
-DROP TRIGGER create_solicitud ON solicitud;
+DROP TRIGGER IF EXISTS create_solicitud ON solicitud;
 CREATE TRIGGER create_solicitud BEFORE INSERT ON solicitud FOR EACH ROW EXECUTE PROCEDURE crear_solicitud();
-/*Permite calificar al conductor*/
-CREATE OR REPLACE FUNCTION calificar_conductor (VARCHAR(15), FLOAT) RETURNS Text AS $$
-DECLARE
-	phone ALIAS FOR $1;
-	calificacion ALIAS FOR $2;
-	id_servicio INTEGER := (SELECT idservicio FROM servicio 
-								WHERE usuario=phone AND calificacionconductor IS NULL
-								GROUP BY idservicio ORDER BY MAX(horafin) LIMIT 1);
-BEGIN
-	IF NOT NULL (id_servicio) THEN
-	UPDATE servicio SET calificacionconductor=calificacion WHERE 
-		idservicio=id_servicio ;
-	RETURN 'Has calificado al servicio del conductor'
-	END IF;
-	RETURN 'No hay servicios a ser calificados'
-END;
-$$
-LANGUAGE plpgsql;
-/*Permite calificar al usuario*/
-CREATE OR REPLACE FUNCTION calificar_usuario (VARCHAR(15), FLOAT) RETURNS Text AS $$
-DECLARE
-	phone ALIAS FOR $1;
-	calificacion ALIAS FOR $2;
-	id_servicio INTEGER := (SELECT idservicio FROM servicio 
-								WHERE conductor=phone AND calificacionusuario IS NULL
-								GROUP BY idservicio ORDER BY MAX(horafin) LIMIT 1);
-BEGIN
-	IF NOT NULL (id_servicio) THEN
-	UPDATE servicio SET calificacionusuario=calificacion WHERE 
-		idservicio=id_servicio;
-	RETURN 'Has calificado al usuario en este servicio'
-	END IF;
-	RETURN 'No hay servicios a ser calificados'
-END;
-$$
-LANGUAGE plpgsql;

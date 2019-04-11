@@ -22,9 +22,10 @@ PRIMARY KEY (telefonousuario)
 );
 
 CREATE TABLE origenesfav(
-origen GEOMETRY(POINT) NOT NULL,
+nombre TEXT NOT NULL,
 telefonousuario VARCHAR(15) NOT NULL,
-PRIMARY KEY (origen, telefonousuario),
+origen GEOMETRY(POINT) NOT NULL,
+PRIMARY KEY (origen, telefonousuario, nombre),
 FOREIGN KEY (telefonousuario) REFERENCES Usuario(telefonousuario) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
