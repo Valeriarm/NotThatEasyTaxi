@@ -12,7 +12,7 @@ telefono del usuario, contrasenia del usuario, nombre del usuario, apellido del 
 
 ##### Path
 
-<http://localhost:5000/user/:phone/:psword/:nombre/:apellido/:fechanac/:mail/:tarjeta>
+<http://localhost:5000/user/${phone}/${password}/${nombre}/${apellido}/${fecha}/${email}/${numtarjeta}>
 
 ### Consultar Usuario
 
@@ -60,7 +60,7 @@ telefono del usuario, contrasenia del usuario
 
 ##### Path
 
-<http://localhost:5000/user/:phone/:psword>
+<http://localhost:5000/user/${phone}/${password}>
 
 ### Pagar Servicios
 
@@ -86,7 +86,7 @@ telefono del conductor, contrasenia, nombre del conductor, apellido del conducto
 
 ##### Path
 
-<http://localhost:5000/driver/:phone/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta>
+<http://localhost:5000/driver/${phone}/${password}/${nombre}/${apellido}/${fecha}/${email}/${numcuenta}>
 
 ### Consultar Conductor
 
@@ -134,7 +134,7 @@ telefono del conductor, contraseña del conductor
 
 ##### Path
 
-<http://localhost:5000/driver/:phone/:psword>
+<http://localhost:5000/driver/${phone}/${password}>
 
 ### Manejar Taxi
 
@@ -172,7 +172,7 @@ telefono del conductor
 
   ##### Path 
   
-  <http://localhost:5000/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocupado>
+  <http://localhost:5000/taxi/${phone}/${placa}/${password}/${marca}/${modelo}/${anio}/${baul}/${soat}/${ocupado}>
 
 ### Consultar Taxi
 

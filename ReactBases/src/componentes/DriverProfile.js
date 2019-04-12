@@ -173,7 +173,7 @@ class PersistentDrawerLeft extends React.Component {
     const email = this.state.email;
     const numcuenta = this.state.numcuenta;
 
-    axios.put(`http://localhost:5000/drivers/${phone}/${contrasenia}/${nombre}/${apellido}/${email}/${numcuenta}`).then(res => {
+    axios.patch(`http://localhost:5000/driver/${phone}/${contrasenia}/${nombre}/${apellido}/${email}/${numcuenta}`).then(res => {
 
       this.props.history.push({pathname:"/ProfileDriver/", state:{phone:phone, nombre:nombre, apellido: apellido, email: email, numcuenta: numcuenta, contrasenia: contrasenia}})    })
       this.setState({lock: !this.state.lock})

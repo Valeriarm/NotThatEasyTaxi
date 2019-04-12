@@ -6,17 +6,17 @@ var createDriver = (req, res, validationResult, db) => {
     console.log({ errors: errors.array() })
     return res.send(`Error en registro`);
   }
-  const tel = req.params.tel;
+  const phone = req.params.phone;
   const psword = req.params.psword;
-  const nombre = req.params.nombre;
-  const apellido = req.params.apellido;
-  const fechanac = req.params.fechanac;
+  const name = req.params.name;
+  const lastname = req.params.lastname;
+  const birthday = req.params.birthday;
   const mail = req.params.mail;
-  const cuenta = req.params.cuenta;
+  const bankacc = req.params.bankacc;
   db.none(`INSERT INTO conductor VALUES($1,$2,$3,$4,$5,$6,$7)`,
-    [escape(tel), escape(psword), escape(nombre),
-    escape(apellido), escape(fechanac), escape(mail),
-    escape(cuenta)])
+    [escape(phone), escape(psword), escape(name),
+    escape(lastname), escape(birthday), escape(mail),
+    escape(bankacc)])
     .then((data) => {
       console.log(`DATA: `, data)
       res.send(`Conductor creado exitosamente`)
@@ -56,20 +56,20 @@ var updateDriver = (req, res, validationResult, db) => {
   }
   const phone = req.params.phone;
   const psword = req.params.psword;
-  const nombre = req.params.nombre;
-  const apellido = req.params.apellido;
+  const name = req.params.name;
+  const lastname = req.params.lastname;
   const mail = req.params.mail;
-  const cuenta = req.params.cuenta;
-  db.none(`UPDATE conductor SET contrasenia=$2, nombreConductor=$3, apellidoConductor=$4, email=$5, numCuenta=$6 WHERE telefonoconductor=$1`,
-    [escape(phone), escape(psword), escape(nombre),
-    escape(apellido), escape(mail), escape(cuenta)])
+  const bankacc = req.params.bankacc;
+  db.none(`UPDATE conductor SET contrasenia=$2, nombreConductor=$3, lastnameConductor=$4, email=$5, numbankacc=$6 WHERE telefonoconductor=$1`,
+    [escape(phone), escape(psword), escape(name),
+    escape(lastname), escape(mail), escape(bankacc)])
     .then((data) => {
       console.log(`DATA: `, data)
       res.send(`Conductor actualizado exitosamente`)
     })
     .catch((error) => {
       console.log(`ERROR`, error)
-      res.send(`Error actualizando el conductor, por favor intentelo de nuevo`)
+      res.send(`Error actualizando el conductor, por favor intenphoneo de nuevo`)
     })
 };
 
@@ -80,16 +80,16 @@ var deleteDriver = (req, res, validationResult, db) => {
     console.log({ errors: errors.array() })
     return res.send(`Error en Registro`);
   }
-  const tel = req.params.tel;
+  const phone = req.params.phone;
   db.none(`DELETE conductor WHERE telefonoUsuario=$1`,
-    [escape(tel)])
+    [escape(phone)])
     .then((data) => {
       console.log(`DATA: `, data)
       res.send(`Conductor eliminado exitosamente`)
     })
     .catch((error) => {
       console.log(`ERROR`, error)
-      res.send(`Error eliminando el conductor, por favor intentelo de nuevo`)
+      res.send(`Error eliminando el conductor, por favor intenphoneo de nuevo`)
     })
 };
 

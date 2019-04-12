@@ -22,7 +22,7 @@ var createFavorites = (req, res, validationResult, db) => {
     })
 };
 
-//Crea una Ubicacion Favorita recibiendo, telefono del usuario y coordenadas
+//Obtiene las ubicaciones favoritas de un usuario
 var readFavorites = (req, res, validationResult, db) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -50,6 +50,7 @@ var deleteFavorites = (req, res, validationResult, db) => {
     return res.status(422).json({ errors: errors.array() });
   }
   const phone = req.params.phone;
+  const name = req.params.name;
   db.any(`DELETE FROM origenesfav WHERE telefonousuario=$1 AND nombre=$2`,
     [escape(phone), escape(name)])
     .then((data) => {

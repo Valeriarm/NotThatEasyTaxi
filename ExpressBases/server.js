@@ -11,7 +11,7 @@ const crudReport = require('./src/crudReport.js')
 const validations = require('./src/customValidators.js');
 
 const connectionAdminOptions = {
-  host: 'localhost', port: 5432, database: 'ProyectoBases',
+  host: 'localhost', port: 5433, database: 'proyectobases',
   user: 'postgres', password: 'postgres', poolSize: 20, poolIdleTimeout: 10000
 };
 const db = pgp(connectionAdminOptions);
@@ -166,7 +166,7 @@ app.patch(`/driver/:phone`, [
 
 //Crea un Taxi recibiendo, placa, marca, modelo, anio
 //baul, soat y, ocupado
-app.post('/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocupado', [
+app.post('/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat', [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`placa`).custom(value => validations.validatePlaque(value)),
   check(`contrasenia`).isLength({ min: 8 }),
@@ -174,9 +174,7 @@ app.post('/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocu
   check(`modelo`).isAlphanumeric(),
   check(`anio`).isNumeric().isLength({ min: 4 }),
   check(`baul`).isAlpha(),
-  check(`soat`).isLength({ min: 10 }),
   check(`soat`).custom(value => validations.validateFecha(value)),
-  check(`ocupado`).isBoolean(),
 ], (req, res) => crudTaxi.createTaxi(req, res, validationResult, db))
 
 //Obtiene los datos de un taxi para cargarlos en su perfil recibiendo
@@ -248,8 +246,8 @@ app.get(`/request/drivers/taxi/:phone/:placa`, [
 //placa del taxi, hora de inicio, hora de llegada, comprobante de pago usuario y 
 //comprobante de pago conductor
 //El encargado de crear un servicio es el conductor
-app.post(`/service/user/add/:idsolicitud`, [
-  check(`idsolicitud`).isNumeric(),
+app.post(`/service/user/add/:idrequest`, [
+  check(`idrequest`).isNumeric(),
 ], (req, res) => crudService.createService(req, res, validationResult, db))
 
 //Busca por servicios activos usuario
@@ -260,21 +258,21 @@ app.get(`/service/user/:phone`, [
 ], (req, res) => crudService.readServiceUser(req, res, validationResult, db))
 
 //Busca por servicios terminados
-app.get(`/service/finished/:idservicio`, [
-  check(`idservicio`).isNumeric()
+app.get(`/service/finished/:idservice`, [
+  check(`idservice`).isNumeric()
 ], (req, res) => crudService.readServiceFinished(req, res, validationResult, db))
 
 //El Usuario modifica el servicio para ponerle la calificacion al conductor
-app.patch(`/service/user/:phone/:calificacion`, [
+app.patch(`/service/user/:phone/:score`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
-  check(`calificacion`).isFloat().custom(value => validations.validateScore(value)),
-], (req, res ) => crudService.updateServiceUsercore(req, res, validationResult, db))
+  check(`score`).isFloat().custom(value => validations.validateScore(value)),
+], (req, res) => crudService.updateServiceUsercore(req, res, validationResult, db))
 
 //El Conductor modifica el servicio para ponerle la calificacion al usuario
-app.patch(`/service/drivers/:phone/:calificacion`, [
+app.patch(`/service/drivers/:phone/:score`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
-  check(`calificacion`).isFloat().custom(value => validations.validateScore(value)),
-])
+  check(`score`).isFloat().custom(value => validations.validateScore(value)),
+], (req, res) => crudService.updateServiceDriverScore(req, res, validationResult, db))
 
 //Terminar un servicio
 app.put(`/service/drivers/end/:phone`, [

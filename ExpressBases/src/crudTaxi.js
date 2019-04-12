@@ -77,14 +77,14 @@ var deleteTaxi = (req, res, validationResult, db) => {
 		}
 	const placa = req.params.placa;
 	db.none(`DELETE taxi WHERE placa=$1`,
-    [escape(tel)])
+    [escape(placa)])
     .then((data) => {
       console.log(`DATA: `, data)
-      res.send(`Conductor eliminado exitosamente`)
+      res.send(`Taxi eliminado exitosamente`)
     })
     .catch((error) => {
       console.log(`ERROR`, error)
-      res.send(`Error eliminando el conductor, por favor intentelo de nuevo`)
+      res.send(`Error eliminando el taxi, por favor intentelo de nuevo`)
     })
 };
 

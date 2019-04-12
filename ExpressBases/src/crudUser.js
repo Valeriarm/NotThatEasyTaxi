@@ -1,22 +1,22 @@
-//Crea un usuario recibiendo, numero de telefono, contraseña, nombre
+//Crea un usuario recibiendo, numero de telefono, contraseña, name
 //apellido, fecha de nacimiento, correo y numero de tarjeta
 var createUser = (req, res, validationResult, db)=>{
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log({ errors: errors.array() })
-    return res.status(422).json({ errors: errors.array() });
+    return res.send(JSON.stringify(`Credenciales invalidas`));
   }
-  const tel = req.params.tel;
+  const phone = req.params.phone;
   const psword = req.params.psword;
-  const nombre = req.params.nombre;
-  const apellido = req.params.apellido;
-  const fechanac = req.params.fechanac;
+  const name = req.params.name;
+  const lastname = req.params.lastname;
+  const birthday = req.params.birthday;
   const mail = req.params.mail;
-  const tarjeta = req.params.tarjeta;
+  const credcard = req.params.credcard;
   db.none(`INSERT INTO usuario VALUES($1,$2,$3,$4,$5,$6,$7)`,
-    [escape(tel), escape(psword), escape(nombre),
-    escape(apellido), escape(fechanac), escape(mail),
-    escape(tarjeta)])
+    [escape(phone), escape(psword), escape(name),
+    escape(lastname), escape(birthday), escape(mail),
+    escape(credcard)])
     .then((data) => {
       console.log(`DATA: `, data)
       res.send(JSON.stringify(`Usuario creado exitosamente`))
@@ -47,7 +47,7 @@ var readUser = (req, res, validationResult, db) => {
     })
   };
 
-//Actualiza un usuario recibiendo, numero de telefono, contraseña, nombre
+//Actualiza un usuario recibiendo, numero de telefono, contraseña, name
 //apellido, fecha de nacimiento, correo y numero de tarjeta
 var updateUser = (req, res, validationResult, db) => {
   const errors = validationResult(req);
@@ -55,22 +55,22 @@ var updateUser = (req, res, validationResult, db) => {
     console.log({ errors: errors.array() })
     return res.send(`Error en Registro`);
   }
-  const tel = req.params.tel;
+  const phone = req.params.phone;
   const psword = req.params.psword;
-  const nombre = req.params.nombre;
-  const apellido = req.params.apellido;
+  const name = req.params.name;
+  const lastname = req.params.lastname;
   const mail = req.params.mail;
-  const tarjeta = req.params.tarjeta;
-  db.none(`UPDATE usuario SET contrasenia=$2, nombreUsuario=$3, apellidoUsuario=$4, email=$5, numTarjeta=$6 WHERE telefonoUsuario=$1`,
-    [escape(tel), escape(psword), escape(nombre),
-    escape(apellido), escape(mail), escape(tarjeta)])
+  const credcard = req.params.credcard;
+  db.none(`UPDATE usuario SET contrasenia=$2, nameUsuario=$3, lastnameUsuario=$4, email=$5, numcredcard=$6 WHERE telefonoUsuario=$1`,
+    [escape(phone), escape(psword), escape(name),
+    escape(lastname), escape(mail), escape(credcard)])
     .then((data) => {
       console.log(`DATA: `, data)
       res.send(`Usuario actualizado exitosamente`)
     })
     .catch((error) => {
       console.log(`ERROR`, error)
-      res.send(`Error actualizando el usuario, por favor intentelo de nuevo`)
+      res.send(`Error actualizando el usuario, por favor intenphoneo de nuevo`)
     })
 };
 
@@ -81,16 +81,16 @@ var deleteUser = (req, res, validationResult, db) => {
     console.log({ errors: errors.array() })
     return res.send(`Error en Registro`);
   }
-  const tel = req.params.tel;
+  const phone = req.params.phone;
   db.none(`DELETE usuario WHERE telefonoUsuario=$1`,
-    [escape(tel)])
+    [escape(phone)])
     .then((data) => {
       console.log(`DATA: `, data)
       res.send(`Usuario actualizado exitosamente`)
     })
     .catch((error) => {
       console.log(`ERROR`, error)
-      res.send(`Error actualizando el usuario, por favor intentelo de nuevo`)
+      res.send(`Error actualizando el usuario, por favor intenphoneo de nuevo`)
     })
 };
 

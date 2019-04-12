@@ -89,7 +89,7 @@ class FormUsuario extends React.Component {
     const numtarjeta = this.state.numtarjeta;
     const numcuenta = this.state.numcuenta;
     if (this.state.type === 'User') {
-      axios.post(`http://localhost:5000/users/${phone}/${password}/${nombre}/${apellido}/${fecha}/${email}/${numtarjeta}`).then(res => {
+      axios.post(`http://localhost:5000/user/${phone}/${password}/${nombre}/${apellido}/${fecha}/${email}/${numtarjeta}`).then(res => {
         const persons = res.data;
         console.log(persons)
         if (persons === 'Usuario creado exitosamente') {
@@ -99,7 +99,7 @@ class FormUsuario extends React.Component {
         }
       })
     } else if (this.state.type === 'Driver') {
-      axios.post(`http://localhost:5000/drivers/${phone}/${password}/${nombre}/${apellido}/${fecha}/${email}/${numcuenta}`).then(res => {
+      axios.post(`http://localhost:5000/driver/${phone}/${password}/${nombre}/${apellido}/${fecha}/${email}/${numcuenta}`).then(res => {
         const persons = res.data;
         console.log(persons)
         if (persons === 'Conductor creado exitosamente') {
