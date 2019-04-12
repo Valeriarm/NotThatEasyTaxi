@@ -54,13 +54,13 @@ app.post(`/user/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:tarjeta`, [
   check(`fechanac`).custom(value => validations.validateFecha(value)),
   check(`mail`).isEmail(),
   check(`tarjeta`).isNumeric(),
-],(req,res)=>crudUser.createUser(req, res, validationResult, db))
+], (req, res) => crudUser.createUser(req, res, validationResult, db))
 
 //Obtiene los datos de un usuario para cargarlos en su perfil recibiendo
 //el telefono
 app.get(`/user/:phone/`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
-],(req, res)=>crudUser.readUser(req, res, validationResult, db))
+], (req, res) => crudUser.readUser(req, res, validationResult, db))
 
 //Actualiza un usuario recibiendo, numero de telefono, contraseña, nombre
 //apellido, fecha de nacimiento, correo y numero de tarjeta
@@ -82,7 +82,7 @@ app.delete(`/user/:tel`, [
 app.get(`/user/:phone/:psword`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`psword`).isLength({ min: 8 })
-],(req,res) => crudUser.validateUser(req, res, validationResult, db))
+], (req, res) => crudUser.validateUser(req, res, validationResult, db))
 
 
 
@@ -105,7 +105,7 @@ app.post(`/driver/:tel/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta`, [
   check(`fechanac`).custom(value => validations.validateFecha(value)),
   check(`mail`).isEmail(),
   check(`cuenta`).isNumeric(),
-], (req,res) => crudDriver.createDriver(req, res, validationResult, db))
+], (req, res) => crudDriver.createDriver(req, res, validationResult, db))
 
 //Obtiene los datos de un conductor para cargarlos en su perfil recibiendo
 //el telefono
@@ -165,7 +165,7 @@ app.post('/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocu
   check(`soat`).isLength({ min: 10 }),
   check(`soat`).custom(value => validations.validateFecha(value)),
   check(`ocupado`).isBoolean(),
-], (req, res) => crudTaxi.createTaxi(req,res, validationResult, db))
+], (req, res) => crudTaxi.createTaxi(req, res, validationResult, db))
 
 //Obtiene los datos de un taxi para cargarlos en su perfil recibiendo
 //la placa
@@ -178,7 +178,7 @@ app.get(`/taxi/:phone/`, [
 app.patch(`/taxi/:placa/:soat`, [
   check(`placa`).custom(value => validations.validatePlaque(value)),
   check(`soat`).custom(value => validations.validateFecha(value)),
-], )
+])
 
 //Elimina un Taxi recibiendo su placa
 app.delete(`/taxi/:placa`, [
@@ -244,7 +244,7 @@ app.post(`/services/users/add/:idsolicitud`, [
 //El usuario constantemente estara usando esta consulta para ver si el servicio que ha solicitado
 //ha sido aceptado
 app.get(`/services/users/:phone`, [
-  check(`phone`).isNumeric().isLength({min:10, max:10})
+  check(`phone`).isNumeric().isLength({ min: 10, max: 10 })
 ], (req, res) => crudService.readServiceUser(req, res, validationResult, db))
 
 //Busca por servicios terminados
@@ -256,13 +256,13 @@ app.get(`/services/finished/:idservicio`, [
 app.put(`/services/users/:phone/:calificacion`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`calificacion`).isFloat().custom(value => validations.validateScore(value)),
-], (req, res ) => crudService.updateServiceUserScore(req, res, validationResult, db))
+], (req, res) => crudService.updateServiceUserScore(req, res, validationResult, db))
 
 //El Conductor modifica el servicio para ponerle la calificacion al usuario
 app.put(`/drivers/services/:phone/:calificacion`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`calificacion`).isFloat().custom(value => validations.validateScore(value)),
-], )
+])
 
 //Terminar un servicio
 app.put(`/services/drivers/end/:phone`, [

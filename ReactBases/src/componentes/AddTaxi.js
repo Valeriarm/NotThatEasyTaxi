@@ -1,3 +1,5 @@
+
+import NavigationIcon from '@material-ui/icons/Navigation';
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -206,7 +208,10 @@ class PersistentDrawerLeft extends React.Component {
     e.preventDefault()
     this.props.history.push({ pathname: "/SideBarDriver/", state: { phone: this.state.phone } })
   };
-
+  onClickTrips = (e) => {
+    e.preventDefault()
+    this.props.history.push({ pathname: "/TripsDriver/", state: { phone: this.state.phone } })
+  }
   onClickTaxi = (e) => {
     e.preventDefault()
     this.props.history.push({ pathname: "/Taxi/", state: { phone: this.state.phone } })
@@ -308,6 +313,12 @@ class PersistentDrawerLeft extends React.Component {
               <LocalTaxi />
             </ListItemIcon>
             <ListItemText primary="Taxi" />
+          </ListItem>
+          <ListItem button onClick={this.onClickTrips}>
+            <ListItemIcon>
+              <NavigationIcon />
+            </ListItemIcon>
+            <ListItemText primary="Viajes" />
           </ListItem>
         </Drawer>
         <main
