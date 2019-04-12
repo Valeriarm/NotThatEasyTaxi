@@ -1,0 +1,92 @@
+Aqui estan los paths que tiene la API
+
+Usuario
+  Crear Usuario
+  Post
+    Path: http://localhost:5000/user/:phone/:psword/:nombre/:apellido/:fechanac/:mail/:tarjeta
+
+  Consultar Usuario
+  Get
+    Path: http://localhost:5000/user/:phone/
+
+  Actualizar Usuario
+  Patch
+    Path: http://localhost:5000/user/:phone/:psword/:nombre/:apellido/:mail/:tarjeta
+
+  Borrar Usuario
+  DELETE
+    Path: http://localhost:5000/user/:phone 
+
+  Validar Usuario
+  Get
+    Path: http://localhost:5000/user/:phone/:psword
+
+Conductor
+  Crear Conductor
+  Post
+    Path: http://localhost:5000/driver/:phone/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta
+
+  Consultar Conductor
+  Get
+    Path: http://localhost:5000/driver/:phone/
+
+  Actualizar Conductor
+  Patch
+    Path: http://localhost:5000/driver/:phone/:psword/:nombre/:apellido/:mail/:cuenta
+
+  Borrar Conductor
+  Delete
+    Path: http://localhost:5000/driver/:phone/
+
+  Validar Conductor
+  Get
+    Path: http://localhost:5000/driver/:phone/:psword
+
+  Manejar Taxi
+    Get
+      Path: http://localhost:5000/driver/taxi/:phone/:placa
+
+Taxi
+  Crear Taxi
+    Post
+      Path: http://localhost:5000/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocupado
+
+  Consultar Taxi
+    Get
+      Path: http://localhost:5000/taxi/:placa
+
+  Actualizar Taxi
+    Patch
+      Path: http://localhost:5000/taxi/:placa/:soat
+
+  Eliminar Taxi
+    Delete
+      Path: http://localhost:5000/taxi/:placa
+
+  Validar Taxi
+  Get
+    Path: http://localhost:5000/taxi/:placa/:psword
+
+Solicitud
+    Post
+      Path: http://localhost:5000/request/users/:phoneuser/:latin/:lngin/:latfin/:lngfin
+
+  Consultar Solicitud Activa del usuario
+    Get
+      Path: http://localhost:5000/request/user/:phone
+
+  Consultar Solicitud Activa del conductor
+    Get
+      Path: http://localhost:5000/request/drivers/taxi/:phone/:placa
+
+  Actualizar Taxi
+    Patch
+      Path: http://localhost:5000/taxi/:placa/:soat
+
+  Eliminar Taxi
+    Delete
+      Path: http://localhost:5000/taxi/:placa
+
+  Validar Taxi
+  Get
+    Path: http://localhost:5000/taxi/:placa/:psword

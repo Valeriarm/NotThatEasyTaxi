@@ -135,6 +135,26 @@ var validateManejar = (req, res, validationResultm, db) => {
     })
 };
 
+//Valida los conductores recibiendo telefono y contraseña
+var redeemDriver =(req, res, validationResult, db) => {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		console.log({ errors: errors.array() })
+		return res.send(JSON.stringify("Credenciales invalidas"));
+	}
+	const phone = req.params.phone;
+	db.one(`SELECT redimir_kilometros($1)`, [escape(phone)])
+		.then(function (data) {
+		console.log(`DATA:`, data.validar_conductor)
+		res.send(JSON.stringify(data.validar_conductor))
+		})
+		.catch(function (error) {
+		console.log(`ERROR:`, error)
+		res.send(JSON.stringify("Credenciales invalidas"))
+		})
+};
+
+
 module.exports = {
   createDriver,
   readDriver,
@@ -142,4 +162,5 @@ module.exports = {
   deleteDriver,
   validateDriver,
   validateManejar,
+  redeemDriver,
 };
