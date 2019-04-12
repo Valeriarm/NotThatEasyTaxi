@@ -14,6 +14,7 @@ Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar ,
 Toolbar, withStyles , Paper, Avatar} from '@material-ui/core';
 import Add from '@material-ui/icons/Add';
 import fondo from './images/fondo.png';
+import NavigationIcon from '@material-ui/icons/Navigation';
 
 
 
@@ -172,7 +173,10 @@ class PersistentDrawerLeft extends React.Component {
     e.preventDefault()
     this.props.history.push({pathname:"/SideBarDriver/", state:{phone: this.state.phone}})
   };
-
+  onClickTrips = (e) => {
+    e.preventDefault()
+    this.props.history.push({ pathname: "/TripsDriver/", state: { phone: this.state.phone } })
+  }
   onClickTaxi = (e) => {
     e.preventDefault()
     this.props.history.push({pathname:"/Taxi/", state:{phone: this.state.phone}})
@@ -246,6 +250,12 @@ class PersistentDrawerLeft extends React.Component {
           </ListItemIcon>
           <ListItemText primary="Taxi" />
         </ListItem>
+        <ListItem button onClick={this.onClickTrips}>
+            <ListItemIcon>
+              <NavigationIcon />
+            </ListItemIcon>
+            <ListItemText primary="Viajes" />
+          </ListItem>
         </Drawer>
         <main
           className={classNames(classes.content, {
