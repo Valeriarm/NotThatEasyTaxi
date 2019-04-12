@@ -65,6 +65,46 @@ var readServiceFinished = (req, res, validationResult, db) => {
     })
 };
 
+//Obtiene todos los servicios pedidos por el usuario
+var readServicesUser = (req, res, validationResult, db) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log({ errors: errors.array() })
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const phone = req.params.phone;
+  db.any(`SELECT * FROM servicio WHERE usuario=$1 AND terminado=false`,
+    [escape(phone)])
+    .then((data) => {
+      console.log(`DATA: `, data)
+      res.send(data)
+    })
+    .catch((error) => {
+      console.log(`ERROR`, error)
+      res.send(`no se pudo realizar la consulta`)
+    })
+}
+
+//Obtiene todos los servicios pedidos por el usuario
+var readServicesDriver = (req, res, validationResult, db) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log({ errors: errors.array() })
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const phone = req.params.phone;
+  db.any(`SELECT * FROM servicio WHERE conductor=$1 AND terminado=false`,
+    [escape(phone)])
+    .then((data) => {
+      console.log(`DATA: `, data)
+      res.send(data)
+    })
+    .catch((error) => {
+      console.log(`ERROR`, error)
+      res.send(`no se pudo realizar la consulta`)
+    })
+}
+
 //El Usuario modifica el servicio para ponerle la calificacion al conductor
 var updateServiceUserScore = (req, res, validationResult, db) => {
   const errors = validationResult(req);
@@ -107,7 +147,7 @@ var updateServiceDriverScore = (req, res, validationResult, db) => {
     })
 };
 
-var updateServiceFinsh = (req, res, validationResult, db) => {
+var updateServiceFinshed = (req, res, validationResult, db) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log({ errors: errors.array() })
@@ -126,10 +166,14 @@ var updateServiceFinsh = (req, res, validationResult, db) => {
     })
 };
 
+
 module.exports = {
   createService,
   readServiceUser,
   readServiceFinished,
+  readServicesUser,
+  readServicesDriver,
   updateServiceUserScore,
-  updateServiceFinsh,
+  updateServiceDriverScore,
+  updateServiceFinshed,
 }

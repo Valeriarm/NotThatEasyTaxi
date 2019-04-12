@@ -20,5 +20,5 @@ services:
       - ./DataBase/creacionTablasProyectoV2.sql:/docker-entrypoint.initdb.d/script.sql
     environment:
       POSTGRES_DB: ProyectoBases
-      POSTGRES_USER: Marthox
-      POSTGRES_PASSWORD: Marthox2299
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
