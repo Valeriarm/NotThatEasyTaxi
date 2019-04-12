@@ -26,7 +26,8 @@ var createUser = (req, res, validationResult, db)=>{
       console.log(`ERROR`, error)
       res.send(error.detail)
     })
-}
+};
+
 //Obtiene los datos de un usuario para cargarlos en su perfil
 var readUser = (req, res, validationResult, db) => {
   const errors = validationResult(req);
@@ -44,7 +45,8 @@ var readUser = (req, res, validationResult, db) => {
       console.log(`ERROR:`, error)
       res.send(JSON.stringify("Credenciales invalidas"))
     })
-  }
+  };
+
 //Actualiza un usuario recibiendo, numero de telefono, contraseña, nombre
 //apellido, fecha de nacimiento, correo y numero de tarjeta
 var updateUser = (req, res, validationResult, db) => {
@@ -70,7 +72,8 @@ var updateUser = (req, res, validationResult, db) => {
       console.log(`ERROR`, error)
       res.send(`Error actualizando el usuario, por favor intentelo de nuevo`)
     })
-}
+};
+
 //Elimina un usuario recibiendo su numero de telefono
 var deleteUser = (req, res, validationResult, db) => {
   const errors = validationResult(req);
@@ -89,7 +92,8 @@ var deleteUser = (req, res, validationResult, db) => {
       console.log(`ERROR`, error)
       res.send(`Error actualizando el usuario, por favor intentelo de nuevo`)
     })
-}
+};
+
 //Valida los usuario recibiendo telefono y contraseña
 var validateUser = (req, res, validationResult, db) => {
   const errors = validationResult(req);
@@ -111,10 +115,32 @@ var validateUser = (req, res, validationResult, db) => {
     })
   };
 
+//Valida los usuario recibiendo su telefono
+var payUser = (req, res, validationResult, db) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log({ errors: errors.array() })
+    return res.send(JSON.stringify("Credenciales invalidas"));
+  }
+  const phone = req.params.phone;
+  console.log(phone + "-" + psword)
+  db.one(`SELECT pagar_kilometros($1)`, [escape(phone)])
+    .then(function (data) {
+      console.log(`DATA:`, data.validar_usuario)
+      res.send(JSON.stringify(data.validar_usuario))
+    })
+    .catch(function (error) {
+      console.log(`ERROR:`, error)
+      res.send(JSON.stringify("Credenciales invalidas"))
+    })
+  };
+
+
 module.exports = {
   createUser,
   readUser,
   updateUser,
   deleteUser,
   validateUser,
+  payUser,
 }
