@@ -8,6 +8,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import HomeIcon from '@material-ui/icons/Home';
 import Person from '@material-ui/icons/Person';
 import Check from '@material-ui/icons/Check';
+import Money from '@material-ui/icons/AttachMoney';
 import LocalTaxi from '@material-ui/icons/LocalTaxi';
 import { purple, deepPurple } from '@material-ui/core/colors';
 import {
@@ -120,7 +121,10 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * -5,
     marginLeft: theme.spacing.unit * 45,
   },
-
+  cobrar: {
+    marginTop: theme.spacing.unit * -12,
+    marginLeft: theme.spacing.unit * 45,
+  },
   menuFavoritos: {
     marginTop: theme.spacing.unit * -2,
     marginLeft: theme.spacing.unit * 90,
@@ -134,8 +138,9 @@ class PersistentDrawerLeft extends React.Component {
     phone: this.props.location.state.phone,
     placa: true,
     posicionActual: { lat: true, lng: true },
-    idServicio: true,
+    idrequest: true,
     iniciarServicio: false,
+    interval:null,
   };
 
   handleDrawerOpen = () => {
@@ -191,22 +196,24 @@ class PersistentDrawerLeft extends React.Component {
       if (placa_taxi === placa) {
         this.setState({ placa: placa_taxi });
         alert(`Taxi seleccionado con exito`);
+        axios.post(`http://localhost:5000/users/taxi/report/${placa}/${lat}/${lng}`).then(res => {
+        const respuesta = res.data;
+        if (respuesta === `Solicitud de servicio creada`) {
+          alert(`Reportada la posicion`);
+          this.setState({interval:setInterval(this.findRequest,3000)});
+        } else if (respuesta === `Error, por favor intentelo de nuevo`) {
+          alert(`Error en la seleccion del taxi`)
+          return;
+        }
+      })
       } else if (placa_taxi === 'Credenciales invalidas') {
-        alert(`El taxi no esta disponible`)
+        alert(`El taxi no esta disponible`);
+        return;
       } else {
         alert(`Error en la seleccion del taxi`)
+        return;
       }
     })
-    axios.post(`http://localhost:5000/users/taxi/report/${placa}/${lat}/${lng}`).then(res => {
-      const respuesta = res.data;
-      if (respuesta === `Solicitud de servicio creada`) {
-        alert(`Reportada la posicion`);
-      } else if (respuesta === `Error, por favor intentelo de nuevo`) {
-        alert(`Error en la seleccion del taxi`)
-      }
-    })
-
-    setInterval(this.findRequest,3000);
   }
 
   findRequest = () => {
@@ -218,17 +225,46 @@ class PersistentDrawerLeft extends React.Component {
         if (respuesta === 'Buscando Solicitudes') {
           console.log('buscando...');
         } else{
-          this.setState({idServicio: respuesta});
+          this.setState({idrequest: respuesta});
           console.log(respuesta);
+          clearInterval(this.state.interval);
+          this.createService();
         } 
       })
     }
 
-
   createService = () => {
-
+    console.log(this.state.idrequest);
+    const idSolicitud=this.state.idrequest;
+    axios.post(`http://localhost:5000/users/add/services/${idSolicitud}`).then(res => {
+      const respuesta = res.data;
+      console.log(respuesta)
+      if (respuesta === 'Servicio creado'){
+        this.setState({iniciarServicio:true});
+        alert(`Servicio creado`);
+      } else {
+        alert(`Error creando el servicio`)
+      }
+    })
   }
 
+  terminarServicio = () => {
+    const enServicio = this.state.iniciarServicio;
+    if(enServicio === true){
+      const phone=this.state.phone;
+      axios.put(`http://localhost:5000/services/drivers/end/${phone}`).then(res => {
+      const respuesta = res.data;
+      if (respuesta === 'El servicio ha terminado'){
+        alert(`Servicio terminado`);
+        this.setState({iniciarServicio:false});
+      } else {
+        alert(`Error terminando el servicio`)
+      }
+    })
+    }else{
+      alert(`No se encuentra en servicio`)
+    }
+  }
 
   render() {
 
@@ -345,7 +381,12 @@ class PersistentDrawerLeft extends React.Component {
               <Check />
             </Fab>
           </div>
-
+          <div className={classes.cobrar}>
+            <Fab
+              color="primary" aria-label="Pedir Cliente" size="small" onClick={this.terminarServicio}>
+              <Money />
+            </Fab>
+          </div>
         </main>
       </div>
 

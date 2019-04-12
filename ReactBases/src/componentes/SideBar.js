@@ -14,6 +14,7 @@ import {purple, deepPurple} from '@material-ui/core/colors';
 import { InputLabel, FormControl, Input, Fab, ListItemIcon, ListItemText ,
 Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar , 
 Toolbar, withStyles } from '@material-ui/core';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import axios from 'axios';
 
 
@@ -134,6 +135,7 @@ class PersistentDrawerLeft extends React.Component {
     phone: this.props.location.state.phone,
     origen: {lat:true, lng:true},
     destino: {lat:true, lng:true},
+    searching:false,
     interval: null,
     interval2: null,
     idservicio: null,
@@ -145,12 +147,6 @@ class PersistentDrawerLeft extends React.Component {
 
   handleDrawerClose = () => {
     this.setState({ open: false });
-  };
-
-  onClickProfileUser = (e) => {
-    e.preventDefault()
-    
-      this.props.history.push({pathname:"/ProfileUser/", state:{phone: this.state.phone}})
   };
 
   onClickSideBar = (e) => {
@@ -181,25 +177,26 @@ class PersistentDrawerLeft extends React.Component {
         this.setState({idservicio:response})
         alert(`Servicio encontrado`)
         clearInterval(this.state.interval)
-        this.checkForFinishedService()
+        this.finishedService()
       }
     })
   }
 
   checkForFinishedService = () => {
-    const phone = this.state.phone;
-    axios.get(`http://localhost:5000/services/users/${phone}`).then(res => {
+    const idservicio = this.state.idservicio;
+    axios.get(`http://localhost:5000/services/users/finished/${idservicio}`).then(res => {
       const response = res.data;
+      console.log(response)
       if (response === `Servicio en curso`){
         console.log(`Servicio en curso`)
       }
       else {
         alert(`EL servicio con id ${this.state.idservicio} ha terminado`)
+        this.setState({searching:false})
         clearInterval(this.state.interval2)
       }
     })
   }
-
   initCheck = () => {
     this.setState({interval:setInterval(this.checkForService,3000)})
   }
@@ -237,12 +234,28 @@ class PersistentDrawerLeft extends React.Component {
           alert(`En este momento no hay conductores disponibles, por favor intentelo de nuevo mas tarde`);
         }else if (persons === `Solicitud de servicio creada`) {
           alert(`Su solicitud fue realizada con exito`);
+          this.setState({searching:true})
           this.initCheck()
         } else {
           alert(`Ocurrio un error`);
         }
       })
   }
+
+  onClickProfileUser = (e) => {
+    e.preventDefault()
+    const phone = this.state.phone;
+    axios.get(`http://localhost:5000/users/${phone}/`).then(res => {
+      const user = res.data;
+      const nombre = user.nombreusuario;
+      const apellido = user.apellidousuario;
+      const email = user.email;
+      const tarjeta = user.numtarjeta;
+      const contrasenia = user.contrasenia;
+      console.log(user)
+      this.props.history.push({ pathname: "/ProfileUser/", state: { phone: phone, nombre: nombre, apellido: apellido, email: email, tarjeta: tarjeta, contrasenia: contrasenia } })
+    })
+  };
   /*Check for a request*/ 
   /*
      checkForDriver = setInterval(()=>{
@@ -320,7 +333,7 @@ class PersistentDrawerLeft extends React.Component {
           <Person/>
           </ListItemIcon>
           <ListItemText primary="Perfil" />
-        </ListItem>
+        </ListItem>   
         </Drawer>
         <main
           className={classNames(classes.content, {
@@ -329,6 +342,7 @@ class PersistentDrawerLeft extends React.Component {
         >
           <div className={classes.drawerHeader} />
           <CustomMap getCoordinates={this.onClickCustomMap.bind(this)}/>
+          {this.state.searching ? <LinearProgress/>:<p/>}
           <form>
           <FormControl className={classes.form}>
             <InputLabel
