@@ -78,7 +78,7 @@ class SignIn extends React.Component {
     }
     e.preventDefault()
     if (this.state.type === 'User') {
-      axios.get(`http://localhost:5000/users/${phone}/${password}`).then(res => {
+      axios.get(`http://localhost:5000/user/${phone}/${password}`).then(res => {
         const validation = res.data;
         console.log(validation)
         if (validation === 'Telefono incorrecto') {
@@ -92,7 +92,7 @@ class SignIn extends React.Component {
         }
       })
     } else if (this.state.type === 'Driver') {
-      axios.get(`http://localhost:5000/drivers/${phone}/${password}`).then(res => {
+      axios.get(`http://localhost:5000/driver/${phone}/${password}`).then(res => {
         const validation = res.data;
         console.log(validation)
         if (validation === 'Telefono incorrecto') {

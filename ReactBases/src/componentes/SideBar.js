@@ -16,6 +16,7 @@ Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar ,
 Toolbar, withStyles } from '@material-ui/core';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import axios from 'axios';
+import NavigationIcon from '@material-ui/icons/Navigation';
 
 
 
@@ -245,7 +246,7 @@ class PersistentDrawerLeft extends React.Component {
   onClickProfileUser = (e) => {
     e.preventDefault()
     const phone = this.state.phone;
-    axios.get(`http://localhost:5000/users/${phone}/`).then(res => {
+    axios.get(`http://localhost:5000/user/${phone}/`).then(res => {
       const user = res.data;
       const nombre = user.nombreusuario;
       const apellido = user.apellidousuario;
@@ -256,6 +257,16 @@ class PersistentDrawerLeft extends React.Component {
       this.props.history.push({ pathname: "/ProfileUser/", state: { phone: phone, nombre: nombre, apellido: apellido, email: email, tarjeta: tarjeta, contrasenia: contrasenia } })
     })
   };
+
+  onClickTripUser = (e) => {
+    e.preventDefault()
+    const phone = this.state.phone;
+    axios.get(`http://localhost:5000/user/${phone}/`).then(res => {
+      const user = res.data;
+      console.log(user)
+      this.props.history.push({ pathname: "/TripsUser/", state: { phone: phone}})})
+  };
+
   /*Check for a request*/ 
   /*
      checkForDriver = setInterval(()=>{
@@ -333,7 +344,13 @@ class PersistentDrawerLeft extends React.Component {
           <Person/>
           </ListItemIcon>
           <ListItemText primary="Perfil" />
-        </ListItem>   
+        </ListItem>
+        <ListItem button onClick={this.onClickTripUser}>
+          <ListItemIcon>
+          <NavigationIcon/>
+          </ListItemIcon>
+          <ListItemText primary="Viajes" />
+        </ListItem>           
         </Drawer>
         <main
           className={classNames(classes.content, {
