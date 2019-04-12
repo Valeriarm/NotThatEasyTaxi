@@ -1,3 +1,6 @@
+CREATE DATABASE proyectobases;
+GRANT ALL PRIVILEGES ON DATABASE proyectobases TO postgres;
+\c proyectobases;
 DROP TABLE IF EXISTS usuario CASCADE;
 DROP TABLE IF EXISTS origenesFav CASCADE;
 DROP TABLE IF EXISTS telefono CASCADE;

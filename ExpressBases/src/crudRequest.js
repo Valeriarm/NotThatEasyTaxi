@@ -51,8 +51,8 @@ var readRequestUser =  (req, res, validationResult, db) => {
     console.log({ errors: errors.array() })
     return res.send(JSON.stringify("Credenciales invalidas"));
   }
-  const placa = req.params.placa
   const phone = req.params.phone
+  const placa = req.params.placa
   db.one(`SELECT buscar_solicitudes_conductor($1, $2)`, [escape(placa), escape(phone)])
     .then(function (data) {
       console.log(`DATA: El id de la solicitud es:`, data.buscar_solicitudes_conductor)

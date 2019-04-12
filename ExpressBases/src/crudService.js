@@ -9,11 +9,11 @@ var createService = (req, res, validationResult, db) => {
     console.log(`Error`, errors.array())
     return res.send(`Error en Crear servicio`);
   }
-  const idSolicitud = parseInt(req.params.idsolicitud);
-  const horaInicio = new Date();
-  console.log(idSolicitud)
+  const idrequest = parseInt(req.params.idrequest);
+  const inithour = new Date();
+  console.log(idrequest)
   db.one(`SELECT insertar_servicio($1, $2)`,
-    [idSolicitud, horaInicio])
+    [idrequest, inithour])
     .then((data) => {
       console.log(`DATA: estoy creando el servicio`, data)
       res.send(`Servicio creado`)
@@ -52,9 +52,9 @@ var readServiceFinished = (req, res, validationResult, db) => {
     console.log({errors: errors.array()})
     return res.send(JSON.stringify("Credenciales invalidas"));
   }
-  const idservicio = req.params.idservicio
+  const idservice = req.params.idservice
   db.one(`SELECT buscar_servicios_terminados($1)`, 
-    [escape(idservicio)])
+    [escape(idservice)])
     .then(function (data) {
       console.log(`DATA: en terminando servicio`, data.buscar_servicios_terminados)
       res.send(JSON.stringify(data.buscar_servicios_terminados))
