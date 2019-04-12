@@ -26,6 +26,7 @@ import LocalTaxi from '@material-ui/icons/LocalTaxi';
 import Check from '@material-ui/icons/Check';
 import axios from 'axios';
 import driver from './images/taxi-driver.png'
+import NavigationIcon from '@material-ui/icons/Navigation';
 
 const drawerWidth = 240;
 
@@ -154,7 +155,10 @@ class PersistentDrawerLeft extends React.Component {
     e.preventDefault()
     this.props.history.push({pathname:"/SideBarDriver/", state:{phone: this.state.phone}})
   }
-
+  onClickTrips = (e) => {
+    e.preventDefault()
+    this.props.history.push({ pathname: "/TripsDriver/", state: { phone: this.state.phone } })
+  }
   onClickTaxi = (e) => {
     e.preventDefault()
     this.props.history.push({pathname:"/Taxi/", state:{phone: this.state.phone}})
@@ -244,6 +248,12 @@ class PersistentDrawerLeft extends React.Component {
           </ListItemIcon>
           <ListItemText primary="Taxi" />
         </ListItem>
+        <ListItem button onClick={this.onClickTrips}>
+            <ListItemIcon>
+              <NavigationIcon />
+            </ListItemIcon>
+            <ListItemText primary="Viajes" />
+          </ListItem>
         </Drawer>
         <main
           className={classNames(classes.content, {

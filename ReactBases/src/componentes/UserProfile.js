@@ -25,6 +25,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import ExitToApp from '@material-ui/icons/ExitToApp';
 import perfilUsuario from './images/businessman.png';
 import axios from 'axios';
+import NavigationIcon from '@material-ui/icons/Navigation';
 
 
 const drawerWidth = 240;
@@ -175,7 +176,14 @@ class PersistentDrawerLeft extends React.Component {
       this.setState({lock: !this.state.lock})
       
   };
-
+  onClickTripUser = (e) => {
+    e.preventDefault()
+    const phone = this.state.phone;
+    axios.get(`http://localhost:5000/user/${phone}/`).then(res => {
+      const user = res.data;
+      console.log(user)
+      this.props.history.push({ pathname: "/TripsUser/", state: { phone: phone}})})
+  };
   render() {
 
     const { classes, theme } = this.props;
@@ -237,6 +245,12 @@ class PersistentDrawerLeft extends React.Component {
             </ListItemIcon>
             <ListItemText primary="Perfil" />
           </ListItem>
+          <ListItem button onClick={this.onClickTripUser}>
+          <ListItemIcon>
+          <NavigationIcon/>
+          </ListItemIcon>
+          <ListItemText primary="Viajes" />
+        </ListItem> 
         </Drawer>
         <main
           className={classNames(classes.content, {

@@ -18,6 +18,7 @@ import {
 } from '@material-ui/core';
 import CustonMapDriver from './MapaDriver'
 import axios from 'axios';
+import NavigationIcon from '@material-ui/icons/Navigation';
 
 
 
@@ -154,7 +155,7 @@ class PersistentDrawerLeft extends React.Component {
   onClickProfileUser = (e) => {
     e.preventDefault()
     const phone = this.state.phone;
-    axios.get(`http://localhost:5000/drivers/${phone}/`).then(res => {
+    axios.get(`http://localhost:5000/driver/${phone}/`).then(res => {
       const driver = res.data;
       const nombre = driver.nombreconductor;
       const apellido = driver.apellidoconductor;
@@ -176,6 +177,11 @@ class PersistentDrawerLeft extends React.Component {
     this.props.history.push({ pathname: "/Taxi/", state: { phone: this.state.phone } })
   };
 
+  onClickTrips = (e) => {
+    e.preventDefault()
+    this.props.history.push({ pathname: "/TripsDriver/", state: { phone: this.state.phone } })
+  }
+
   onChangePlaca = (e) => {
     this.setState({ placa: e.target.value })
     console.log(e.target.value)
@@ -191,7 +197,7 @@ class PersistentDrawerLeft extends React.Component {
     const placa = this.state.placa;
     const lat = this.state.posicionActual.lat;
     const lng = this.state.posicionActual.lng;
-    axios.get(`http://localhost:5000/drivers/taxi/${phone}/${placa}`).then(res => {
+    axios.get(`http://localhost:5000/driver/taxi/${phone}/${placa}`).then(res => {
       const placa_taxi = res.data;
       if (placa_taxi === placa) {
         this.setState({ placa: placa_taxi });
@@ -334,6 +340,12 @@ class PersistentDrawerLeft extends React.Component {
               <LocalTaxi />
             </ListItemIcon>
             <ListItemText primary="Taxi" />
+          </ListItem>
+          <ListItem button onClick={this.onClickTrips}>
+            <ListItemIcon>
+              <NavigationIcon />
+            </ListItemIcon>
+            <ListItemText primary="Viajes" />
           </ListItem>
         </Drawer>
         <main
