@@ -22,7 +22,7 @@ telefono del usuario, contrasenia del usuario, nombre del usuario, apellido del 
 
 telefono del usuario
 
-##### Path 
+##### Path
 
 <http://localhost:5000/user/:phone/>
 
@@ -34,7 +34,7 @@ telefono del usuario
 
 telefono del usuario, contrasenia del usuario, nombre del usuario, apellido del usuario, correo del usuario, numero de tarjeta del usuario
 
-##### Path 
+##### Path
 
 <http://localhost:5000/user/:phone/:psword/:nombre/:apellido/:mail/:tarjeta>
 
@@ -45,7 +45,8 @@ telefono del usuario, contrasenia del usuario, nombre del usuario, apellido del 
 ##### Params
 
 telefono del usuario
-##### Path 
+
+##### Path
 
 <http://localhost:5000/user/:phone>
 
@@ -56,7 +57,8 @@ telefono del usuario
 ##### Params
 
 telefono del usuario, contrasenia del usuario
-##### Path 
+
+##### Path
 
 <http://localhost:5000/user/:phone/:psword>
 
@@ -67,7 +69,8 @@ telefono del usuario, contrasenia del usuario
 ##### Params
 
 telefono del usuario
-##### Path 
+
+##### Path
 
 <http://localhost:5000/user/:phone/>
 
@@ -80,7 +83,8 @@ telefono del usuario
 ##### Params
 
 telefono del conductor, contrasenia, nombre del conductor, apellido del conductor, fecha de nacimiento del conductor, correo del conductor, cuenta bancaria del conductor
-##### Path 
+
+##### Path
 
 <http://localhost:5000/driver/:phone/:psword/:nombre/:apellido/:fechanac/:mail/:cuenta>
 
@@ -91,7 +95,8 @@ telefono del conductor, contrasenia, nombre del conductor, apellido del conducto
 ##### Params
 
 telefono del conductor
-##### Path 
+
+##### Path
 
 <http://localhost:5000/driver/:phone/>
 
@@ -102,6 +107,7 @@ telefono del conductor
 ##### Params
 
 telefono del conductor, contrasenia del conductor, nombre del conductor, apellido del conductor, correo del conductor, cuenta bancaria del conductor
+
 ##### Path 
 
 <http://localhost:5000/driver/:phone/:psword/:nombre/:apellido/:mail/:cuenta>
@@ -113,6 +119,7 @@ telefono del conductor, contrasenia del conductor, nombre del conductor, apellid
 ##### Params
 
 telefono del conductor
+
 ##### Path 
 
 <http://localhost:5000/driver/:phone/>
@@ -124,7 +131,8 @@ telefono del conductor
 ##### Params
 
 telefono del conductor, contraseña del conductor
-##### Path 
+
+##### Path
 
 <http://localhost:5000/driver/:phone/:psword>
 
@@ -133,6 +141,7 @@ telefono del conductor, contraseña del conductor
 ##### Params
 
 telefono del conductor, placa del taxi
+
   #### Get
 
   ##### Path 
@@ -144,6 +153,7 @@ telefono del conductor, placa del taxi
 ##### Params
 
 telefono del conductor
+
   #### Patch
 
   ##### Path 
@@ -156,7 +166,8 @@ telefono del conductor
 
 ##### Params
 
-telefono del conductor, placa del taxi, contraseña del taxi, marca del taxi, modelo del taxi, anio del taxi, tamaño del baul del taxi, fecha de expiracion del soat
+    telefono del conductor, placa del taxi, contraseña del taxi, marca del taxi, modelo del taxi, anio del taxi, tamaño del baul del taxi, fecha de expiracion del soat
+
   #### Post
 
   ##### Path 
@@ -168,7 +179,9 @@ telefono del conductor, placa del taxi, contraseña del taxi, marca del taxi, mo
   #### Get
 
   ##### Params 
+
     placa del taxi
+
   ##### Path 
   
   <http://localhost:5000/taxi/:placa>
@@ -178,7 +191,9 @@ telefono del conductor, placa del taxi, contraseña del taxi, marca del taxi, mo
   #### Patch
 
   ##### Params 
+
     placa del taxi, fecha de expiracion del soat
+
   ##### Path 
   
   <http://localhost:5000/taxi/:placa/:soat>
@@ -187,9 +202,11 @@ telefono del conductor, placa del taxi, contraseña del taxi, marca del taxi, mo
 
   #### Delete
 
-  ##### Params 
+  ##### Params
+
     placa del taxi
-  ##### Path 
+
+  ##### Path
   
   <http://localhost:5000/taxi/:placa>
 
@@ -199,7 +216,8 @@ telefono del conductor, placa del taxi, contraseña del taxi, marca del taxi, mo
 
 ##### Params
 
-placa del taxi, contraseña asociada al taxi
+    placa del taxi, contraseña asociada al taxi
+
 ##### Path 
 
 <http://localhost:5000/taxi/:placa/:psword>
@@ -210,31 +228,37 @@ placa del taxi, contraseña asociada al taxi
 
   #### Post
 
-  ##### Params 
+  ##### Params
+
     telefono del usuario, latitud inicial, longitud inicial, latitud final, longitud final
-  ##### Path 
+
+  ##### Path
   
-  <http://localhost:5000/request/users/:phoneuser/:latin/:lngin/:latfin/:lngfin>
+    <http://localhost:5000/request/users/:phoneuser/:latin/:lngin/:latfin/:lngfin>
 
 ### Consultar Solicitud Activa del usuario
 
   #### Get
 
-  ##### Params 
+  ##### Params
+
     telefono del usuario
-  ##### Path 
+
+  ##### Path
   
-  <http://localhost:5000/request/user/:phone>
+    <http://localhost:5000/request/user/:phone>
 
 ### Consultar Solicitud Activa del conductor
 
   #### Get
 
-  ##### Params 
+  ##### Params
+
     telefono del conductor, placa del taxi
-  ##### Path 
+
+  ##### Path
   
-  <http://localhost:5000/request/drivers/taxi/:phone/:placa>
+    <http://localhost:5000/request/drivers/taxi/:phone/:placa>
 
 ## Servicio
 
@@ -242,49 +266,59 @@ placa del taxi, contraseña asociada al taxi
 
   #### Post
 
-  ##### Params 
+  ##### Params
+
     id de la solicitud
-  ##### Path 
+
+  ##### Path
   
-  <http://localhost:5000/service/user/add/:idsolicitud>
+    <http://localhost:5000/service/user/add/:idsolicitud>
   
 ### Consultar Servicio activo usuario
 
   #### Get
 
-  ##### Params 
+  ##### Params
+
     telefono del usuario
-  ##### Path 
+
+  ##### Path
   
-  <http://localhost:5000/service/user/:phone>
+    <http://localhost:5000/service/user/:phone>
   
 ### Consulta si un servicio termino
 
   #### Get
 
-  ##### Params 
+  ##### Params
+
     id del servicio
-  ##### Path 
+
+  ##### Path
   
-  <http://localhost:5000/service/finished/:idservicio>
+    <http://localhost:5000/service/finished/:idservicio>
 
 ### Calificar al conductor
 
   #### Patch
 
-  ##### Params 
+  ##### Params
+
     telefono del usuario
-  ##### Path 
+
+  ##### Path
   
-  <http://localhost:5000/service/user/:phone/:calificacion>
+    <http://localhost:5000/service/user/:phone/:calificacion>
 
 ### Calificar al usuario
 
   #### Patch
 
-  ##### Params 
+  ##### Params
+
     telefono del conductor
-  ##### Path 
+
+  ##### Path
   
   <http://localhost:5000/service/drivers/:phone/:calificacion>
 
@@ -292,9 +326,11 @@ placa del taxi, contraseña asociada al taxi
 
   #### Patch
 
-  ##### Params 
+  ##### Params
+
     telefono del conductor
-  ##### Path 
+
+  ##### Path
   
   <http://localhost:5000/service/drivers/end/:phone>
 
@@ -302,9 +338,11 @@ placa del taxi, contraseña asociada al taxi
 
   #### Get
 
-  ##### Params 
+  ##### Params
+
     telefono del usuario
-  ##### Path 
+
+  ##### Path
   
   <http://localhost:5000/services/user/all/:phone>
 
@@ -312,9 +350,11 @@ placa del taxi, contraseña asociada al taxi
 
   #### Get
 
-  ##### Params 
+  ##### Params
+
     telefono del conductor
-  ##### Path 
+
+  ##### Path
   
   <http://localhost:5000/services/driver/all/:phone>
 
@@ -324,9 +364,11 @@ placa del taxi, contraseña asociada al taxi
 
   #### Post
 
-  ##### Params 
+  ##### Params
+
     telefono del usuario, nombre del favorito, latitud, longitud
-  ##### Path 
+
+  ##### Path
   
   <http://localhost:5000/favorites/user/:phone/:name/:lat/:lng>
   
@@ -334,9 +376,11 @@ placa del taxi, contraseña asociada al taxi
 
   #### Get
 
-  ##### Params 
+  ##### Params
+
     telefono del usuario
-  ##### Path 
+
+  ##### Path
   
   <http://localhost:5000/favorites/user/:phone>
 
@@ -344,9 +388,10 @@ placa del taxi, contraseña asociada al taxi
 
   #### Delete
 
-  ##### Params 
+  ##### Params
+
     telefono del usuario, nombre del favorito
-  ##### Path 
+  ##### Path
   
   <http://localhost:5000/favorites/user/:phone/:name>
 
@@ -356,8 +401,10 @@ placa del taxi, contraseña asociada al taxi
 
   #### Post
 
-  ##### Params 
+  ##### Params
+
     placa del taxi, latitud, longitud
-  ##### Path 
+
+  ##### Path
   
   <http://localhost:5000/report/user/taxi/:placa/:lat/:lng>
