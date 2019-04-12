@@ -43,8 +43,8 @@ app.use(express.json());
 
 
 
-//Crea un usuario recibiendo, phone, password, name
-//lastname, birthday, mail y creditcard
+//Crea un usuario recibiendo, telefono, contrasenia, nombre
+//apellido, fecha de nacimiento, correo y tarjeta de credito 
 app.post(`/user/:phone/:psword/:name/:lastname/:birthday/:mail/:credcard`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`psword`).isLength({ min: 8 }),
@@ -62,8 +62,8 @@ app.get(`/user/:phone/`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
 ], (req, res) => crudUser.readUser(req, res, validationResult, db))
 
-//Actualiza un usuario recibiendo, phone, password, name
-//lastname, birthday, mail y creditcard
+//Actualiza un usuario recibiendo, telefono, contrasenia, nombre
+//apellido, correo y tarjeta de credito 
 app.patch(`/user/:phone/:psword/:name/:lastname/:mail/:credcard`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`psword`).isLength({ min: 8 }),
@@ -73,12 +73,12 @@ app.patch(`/user/:phone/:psword/:name/:lastname/:mail/:credcard`, [
   check(`credcard`).isNumeric(),
 ], (req, res) => crudUser.updateUser(req, res, validationResult, db))
 
-//Borra un usuario recibiendo su phone
+//Borra un usuario recibiendo su telefono
 app.delete(`/user/:phone`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
 ], (req, res) => crudUser.deleteUser(req, res, validationResult, db))
 
-//Valida los usuario recibiendo telefono y password
+//Valida los usuario recibiendo telefono y contrasenia
 app.get(`/user/:phone/:psword`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`psword`).isLength({ min: 8 })
@@ -100,8 +100,8 @@ app.patch(`/user/:phone/`, [
 
 
 
-//Crea un Conductor recibiendo, phone, password, name
-//lastname, birthday, mail y numero de bankacc
+//Crea un Conductor recibiendo, telefono, contrasenia, nombre
+//apellido, birthday, mail y numero de cuenta
 app.post(`/driver/:phone/:psword/:name/:lastname/:birthday/:mail/:bankacc`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`psword`).isLength({ min: 8 }),
@@ -119,8 +119,8 @@ app.get(`/driver/:phone/`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
 ], (req, res) => crudDriver.readDriver(req, res, validationResult, db))
 
-//Actualiza un Conductor recibiendo, phone, password, name
-//lastname, birthday, mail y numero de bankacc
+//Actualiza un Conductor recibiendo, telefono, contrasenia, nombre
+//apellido, mail y numero de cuenta
 app.patch(`/driver/:phone/:psword/:name/:lastname/:mail/:bankacc`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`psword`).isLength({ min: 8 }),
@@ -130,12 +130,12 @@ app.patch(`/driver/:phone/:psword/:name/:lastname/:mail/:bankacc`, [
   check(`bankacc`).isNumeric(),
 ], (req, res) => crudDriver.updateDriver(req, res, validationResult, db))
 
-//Borra un conductor recibiendo su phone
+//Borra un conductor recibiendo su telefono
 app.delete(`/driver/:phone`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
 ], (req, res) => crudDriver.deleteDriver(req, res, validationResult, db))
 
-//Valida los Conductores recibiendo telefono y password
+//Valida los Conductores recibiendo telefono y contrasenia
 app.get(`/driver/:phone/:psword`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`psword`).isLength({ min: 8 })
@@ -148,7 +148,7 @@ app.get(`/driver/taxi/:phone/:placa`, [
   check(`placa`).custom(value => validations.validatePlaque(value)),
 ], (req, res) => crudDriver.validateManejar(req, res, validationResult, db))
 
-//Redime los kilometros de un conductor recibiendo su phone
+//Redime los kilometros de un conductor recibiendo su telefono
 app.patch(`/driver/:phone`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
 ], (req, res) => crudDriver.redeemDriver(req, res, validationResult, db))
@@ -265,13 +265,13 @@ app.get(`/service/finished/:idservicio`, [
 ], (req, res) => crudService.readServiceFinished(req, res, validationResult, db))
 
 //El Usuario modifica el servicio para ponerle la calificacion al conductor
-app.put(`/service/user/:phone/:calificacion`, [
+app.patch(`/service/user/:phone/:calificacion`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`calificacion`).isFloat().custom(value => validations.validateScore(value)),
 ], (req, res ) => crudService.updateServiceUsercore(req, res, validationResult, db))
 
 //El Conductor modifica el servicio para ponerle la calificacion al usuario
-app.put(`/service/drivers/:phone/:calificacion`, [
+app.patch(`/service/drivers/:phone/:calificacion`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`calificacion`).isFloat().custom(value => validations.validateScore(value)),
 ])
@@ -287,7 +287,7 @@ app.get(`/services/user/all/:phone`,[
 ], (req, res) => crudService.readServicesUser(req, res, validationResult, db))
 
 //Obtiene todos los servicios que ha tenido un conductor
-app.get(`/services/user/all/:phone`,[
+app.get(`/services/driver/all/:phone`,[
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
 ], (req, res) => crudService.readServicesDriver(req, res, validationResult, db))
 
@@ -324,7 +324,7 @@ app.delete(`/favorites/user/:phone/:name`, [
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-///////////////////////////// CRUD FAVORITES /////////////////////////////
+///////////////////////////// CRUD REPORTS ///////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
