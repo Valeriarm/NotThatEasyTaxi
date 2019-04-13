@@ -105,8 +105,19 @@ GRANT ALL PRIVILEGES ON DATABASE proyectobases TO postgres;
 \i [insert path to .../database]/initialscript.sql
 ```
 :warning: Make sure postgres is running in the port 5433 to change the port execute the following command line :warning:
-```psql
-PGPORT=5433, export PGPORT;
+* Find the path of the postgresql.conf
+```
+locate postgresql.conf
+```
+* For default instalation settings on ubuntu
+```bash
+sudo nano /etc/postgresql/11/main/postgresql.conf
+```
+* Change port to port=5433
+
+* Then restart the postgresql service with the following command
+```
+service postgresql restart
 ```
 
 ### Mounting API
