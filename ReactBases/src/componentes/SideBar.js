@@ -169,7 +169,7 @@ class PersistentDrawerLeft extends React.Component {
 
   checkForService = () => {
     const phone = this.state.phone;
-    axios.get(`http://localhost:5000/services/users/${phone}`).then(res => {
+    axios.get(`http://localhost:5000/service/user/${phone}`).then(res => {
       const response = res.data;
       if (response === `Buscando Servicio`){
         console.log(`Buscando Servicio`)
@@ -185,7 +185,7 @@ class PersistentDrawerLeft extends React.Component {
 
   checkForFinishedService = () => {
     const idservicio = this.state.idservicio;
-    axios.get(`http://localhost:5000/services/users/finished/${idservicio}`).then(res => {
+    axios.get(`http://localhost:5000/service/finished/${idservicio}`).then(res => {
       const response = res.data;
       console.log(response)
       if (response === `Servicio en curso`){
@@ -212,7 +212,7 @@ class PersistentDrawerLeft extends React.Component {
     const lng = this.state.destino.lng;
     console.log(lat);
     console.log(lat);
-    axios.post(`http://localhost:5000/users/favorites/${phone}/${lat}/${lng}`).then(res => {
+    axios.post(`http://localhost:5000/favorites/user/${phone}/${lat}/${lng}`).then(res => {
         const persons = res.data;
         console.log(persons);
       })
@@ -228,7 +228,7 @@ class PersistentDrawerLeft extends React.Component {
     console.log(lngIn);
     console.log(latFin);
     console.log(lngFin);
-    axios.post(`http://localhost:5000/users/request/${phone}/${latIn}/${lngIn}/${latFin}/${lngFin}`).then(res => {
+    axios.post(`http://localhost:5000/request/user/${phone}/${latIn}/${lngIn}/${latFin}/${lngFin}`).then(res => {
         const persons = res.data;
         console.log(persons);
         if (persons===`En este momento no hay conductores disponibles, por favor intentelo de nuevo mas tarde`) {
@@ -261,7 +261,7 @@ class PersistentDrawerLeft extends React.Component {
   onClickTripUser = (e) => {
     e.preventDefault()
     const phone = this.state.phone;
-    axios.get(`http://localhost:5000/user/${phone}/`).then(res => {
+    axios.get(`http://localhost:5000/services/user/all/${phone}/`).then(res => {
       const user = res.data;
       console.log(user)
       this.props.history.push({ pathname: "/TripsUser/", state: { phone: phone}})})

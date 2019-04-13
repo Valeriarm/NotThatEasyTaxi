@@ -170,7 +170,7 @@ class PersistentDrawerLeft extends React.Component {
     const email = this.state.email;
     const tarjeta = this.state.tarjeta;
 
-    axios.put(`http://localhost:5000/users/${phone}/${contrasenia}/${nombre}/${apellido}/${email}/${tarjeta}`).then(res => {
+    axios.patch(`http://localhost:5000/user/${phone}/${contrasenia}/${nombre}/${apellido}/${email}/${tarjeta}`).then(res => {
 
       this.props.history.push({pathname:"/ProfileUser/", state:{phone:phone, nombre:nombre, apellido: apellido, email: email, tarjeta: tarjeta, contrasenia: contrasenia}})    })
       this.setState({lock: !this.state.lock})
@@ -179,7 +179,7 @@ class PersistentDrawerLeft extends React.Component {
   onClickTripUser = (e) => {
     e.preventDefault()
     const phone = this.state.phone;
-    axios.get(`http://localhost:5000/user/${phone}/`).then(res => {
+    axios.get(`http://localhost:5000/services/user/all/${phone}/`).then(res => {
       const user = res.data;
       console.log(user)
       this.props.history.push({ pathname: "/TripsUser/", state: { phone: phone}})})

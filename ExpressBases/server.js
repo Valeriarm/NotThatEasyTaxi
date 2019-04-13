@@ -275,7 +275,7 @@ app.patch(`/service/drivers/:phone/:score`, [
 ], (req, res) => crudService.updateServiceDriverScore(req, res, validationResult, db))
 
 //Terminar un servicio
-app.put(`/service/drivers/end/:phone`, [
+app.patch(`/service/drivers/end/:phone`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
 ], (req, res) => crudService.updateServiceFinsh(req, res, validationResult, db))
 

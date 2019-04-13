@@ -152,7 +152,7 @@ class PersistentDrawerLeft extends React.Component {
     this.setState({ open: false });
   };
 
-  onClickProfileUser = (e) => {
+  onClickProfileDriver = (e) => {
     e.preventDefault()
     const phone = this.state.phone;
     axios.get(`http://localhost:5000/driver/${phone}/`).then(res => {
@@ -202,7 +202,7 @@ class PersistentDrawerLeft extends React.Component {
       if (placa_taxi === placa) {
         this.setState({ placa: placa_taxi });
         alert(`Taxi seleccionado con exito`);
-        axios.post(`http://localhost:5000/users/taxi/report/${placa}/${lat}/${lng}`).then(res => {
+        axios.post(`http://localhost:5000/report/user/taxi/${placa}/${lat}/${lng}`).then(res => {
         const respuesta = res.data;
         if (respuesta === `Solicitud de servicio creada`) {
           alert(`Reportada la posicion`);
@@ -226,7 +226,7 @@ class PersistentDrawerLeft extends React.Component {
     const phone = this.state.phone;
     const placa = this.state.placa;
 
-      axios.get(`http://localhost:5000/drivers/taxi/request/${phone}/${placa}`).then(res => {
+      axios.get(`http://localhost:5000/request/drivers/taxi/${phone}/${placa}`).then(res => {
         const respuesta = res.data;
         if (respuesta === 'Buscando Solicitudes') {
           console.log('buscando...');
@@ -242,7 +242,7 @@ class PersistentDrawerLeft extends React.Component {
   createService = () => {
     console.log(this.state.idrequest);
     const idSolicitud=this.state.idrequest;
-    axios.post(`http://localhost:5000/users/add/services/${idSolicitud}`).then(res => {
+    axios.post(`http://localhost:5000/service/user/add/${idSolicitud}`).then(res => {
       const respuesta = res.data;
       console.log(respuesta)
       if (respuesta === 'Servicio creado'){
@@ -258,7 +258,7 @@ class PersistentDrawerLeft extends React.Component {
     const enServicio = this.state.iniciarServicio;
     if(enServicio === true){
       const phone=this.state.phone;
-      axios.put(`http://localhost:5000/services/drivers/end/${phone}`).then(res => {
+      axios.patch(`http://localhost:5000/service/drivers/end/${phone}`).then(res => {
       const respuesta = res.data;
       if (respuesta === 'El servicio ha terminado'){
         alert(`Servicio terminado`);
@@ -329,7 +329,7 @@ class PersistentDrawerLeft extends React.Component {
             </ListItemIcon>
             <ListItemText primary="Inicio" />
           </ListItem>
-          <ListItem button onClick={this.onClickProfileUser}>
+          <ListItem button onClick={this.onClickProfileDriver}>
             <ListItemIcon>
               <Person />
             </ListItemIcon>
