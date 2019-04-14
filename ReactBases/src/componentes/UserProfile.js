@@ -170,7 +170,7 @@ class PersistentDrawerLeft extends React.Component {
     const email = this.state.email;
     const tarjeta = this.state.tarjeta;
 
-    axios.patch(`http://localhost:5000/user/${phone}/${contrasenia}/${nombre}/${apellido}/${email}/${tarjeta}`).then(res => {
+    axios.put(`http://localhost:5000/user/${phone}/${contrasenia}/${nombre}/${apellido}/${email}/${tarjeta}`).then(res => {
 
       this.props.history.push({pathname:"/ProfileUser/", state:{phone:phone, nombre:nombre, apellido: apellido, email: email, tarjeta: tarjeta, contrasenia: contrasenia}})    })
       this.setState({lock: !this.state.lock})

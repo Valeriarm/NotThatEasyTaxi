@@ -212,7 +212,6 @@ class PersistentDrawerLeft extends React.Component {
 
   checkForCanceledRequest = () => {
     const idsolicitud = this.state.idsolicitud;
-    console.log(this.state.idsolicitud);
     axios.get(`http://localhost:5000/request/canceled/user/${idsolicitud}`).then(res => {
       const response = res.data;
       console.log(`on checkForCanceledRequest`,response)

@@ -6,6 +6,7 @@ var createService = (req, res, validationResult, db) => {
   const errors = validationResult(req);
   console.log(req.params)
   if (!errors.isEmpty()) {
+    console.log("error in createService")
     console.log(`Error`, errors.array())
     return res.send(`Error en Crear servicio`);
   }
@@ -29,6 +30,7 @@ var createService = (req, res, validationResult, db) => {
 var readServiceUser = (req, res, validationResult, db) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log("error in readServiceUser")
     console.log({ errors: errors.array() })
     return res.send(JSON.stringify("Credenciales invalidas"));
   }
@@ -48,6 +50,7 @@ var readServiceUser = (req, res, validationResult, db) => {
 var readServiceFinished = (req, res, validationResult, db) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log("error in readServiceFinished")
     console.log({errors: errors.array()})
     return res.send(JSON.stringify("Credenciales invalidas"));
   }
@@ -68,6 +71,7 @@ var readServiceFinished = (req, res, validationResult, db) => {
 var readServicesUser = (req, res, validationResult, db) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log("error in readServicesUser")
     console.log({ errors: errors.array() })
     return res.status(422).json({ errors: errors.array() });
   }
@@ -88,6 +92,7 @@ var readServicesUser = (req, res, validationResult, db) => {
 var readServicesDriver = (req, res, validationResult, db) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log("error in readServicesDriver")
     console.log({ errors: errors.array() })
     return res.status(422).json({ errors: errors.array() });
   }
@@ -108,6 +113,7 @@ var readServicesDriver = (req, res, validationResult, db) => {
 var updateServiceUserScore = (req, res, validationResult, db) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log("error in updateServiceUserScore")
     console.log({ errors: errors.array() })
     return res.status(422).json({ errors: errors.array() });
   }
@@ -129,6 +135,7 @@ var updateServiceUserScore = (req, res, validationResult, db) => {
 var updateServiceDriverScore = (req, res, validationResult, db) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log("error in updateServiceDriverScore")
     console.log({ errors: errors.array() })
     return res.status(422).json({ errors: errors.array() });
   }
@@ -149,6 +156,7 @@ var updateServiceDriverScore = (req, res, validationResult, db) => {
 var updateServiceFinshed = (req, res, validationResult, db) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log("error in updateServiceFinshed")
     console.log({ errors: errors.array() })
     return res.status(422).json({ errors: errors.array() });
   }

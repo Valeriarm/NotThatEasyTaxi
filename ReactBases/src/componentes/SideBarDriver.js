@@ -280,7 +280,7 @@ class PersistentDrawerLeft extends React.Component {
   rejectRequest = () => {
     console.log(this.state.phone);
     const phone=this.state.phone;
-    axios.patch(`http://localhost:5000/reject/request/user/${phone}`).then(res => {
+    axios.put(`http://localhost:5000/reject/request/user/${phone}`).then(res => {
       const respuesta = res.data;
       console.log(respuesta)
       if (respuesta === 'Solicitud cancelada'){
@@ -296,7 +296,7 @@ class PersistentDrawerLeft extends React.Component {
     const enServicio = this.state.iniciarServicio;
     if(enServicio === true){
       const phone=this.state.phone;
-      axios.patch(`http://localhost:5000/service/end/drivers/${phone}`).then(res => {
+      axios.put(`http://localhost:5000/service/end/${phone}`).then(res => {
       const respuesta = res.data;
       if (respuesta === 'El servicio ha terminado'){
         alert(`Servicio terminado`);

@@ -48,11 +48,11 @@ var readRequestUser = (req, res, validationResult, db) => {
 var readCanceledRequestUser = (req, res, validationResult, db) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log(`Error readRequestUser`, errors.array())
+    console.log(`Error readCanceledRequestUser`, errors.array())
     return res.send(JSON.stringify("Credenciales invalidas"));
   }
-  const phone = req.params.phone
-  db.one(`SELECT buscar_solicitudes_canceladas_usuario($1)`, [escape(phone)])
+  const idrequest = req.params.idrequest
+  db.one(`SELECT buscar_solicitudes_canceladas_usuario($1)`, escape(idrequest))
     .then(function (data) {
       console.log(`crudRequest readRequestUser `, data.buscar_solicitudes_canceladas_usuario)
       res.send(JSON.stringify(data.buscar_solicitudes_canceladas_usuario))
