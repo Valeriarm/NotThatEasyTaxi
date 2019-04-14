@@ -7,17 +7,17 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import HomeIcon from '@material-ui/icons/Home';
 import Person from '@material-ui/icons/Person';
-import Check from '@material-ui/icons/Check';
-import Money from '@material-ui/icons/AttachMoney';
-import LocalTaxi from '@material-ui/icons/LocalTaxi';
 import { purple, deepPurple } from '@material-ui/core/colors';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 import {
   ListItemIcon, ListItemText,
   Divider, ListItem, Typography, IconButton, CssBaseline, Drawer, AppBar,
-  Toolbar, withStyles, FormControl, InputLabel, Input, Fab
+  Toolbar, withStyles, FormControl, Fab
 } from '@material-ui/core';
-import CustonMapDriver from './MapaDriver'
-import axios from 'axios';
 import fondo from './images/fondo.png';
 import Search from '@material-ui/icons/Search';
 import Paper from '@material-ui/core/Paper';
@@ -158,11 +158,7 @@ const styles = theme => ({
 class PersistentDrawerLeft extends React.Component {
   state = {
     phone: this.props.location.state.phone,
-    placa: true,
-    posicionActual: { lat: true, lng: true },
-    idrequest: true,
-    iniciarServicio: false,
-    interval:null,
+    travels : this.props.location.state.travels,
   };
 
   handleDrawerOpen = () => {
@@ -173,134 +169,11 @@ class PersistentDrawerLeft extends React.Component {
     this.setState({ open: false });
   };
 
-  onClickProfileUser = (e) => {
-    e.preventDefault()
-    const phone = this.state.phone;
-    axios.get(`http://localhost:5000/driver/${phone}/`).then(res => {
-      const driver = res.data;
-      const nombre = driver.nombreconductor;
-      const apellido = driver.apellidoconductor;
-      const email = driver.email;
-      const numcuenta = driver.numcuenta;
-      const contrasenia = driver.contrasenia;
-      console.log(driver)
-      this.props.history.push({ pathname: "/ProfileDriver/", state: { phone: phone, nombre: nombre, apellido: apellido, email: email, numcuenta: numcuenta, contrasenia: contrasenia } })
-    })
-  };
-  onClickTrips = (e) => {
-    e.preventDefault()
-    this.props.history.push({ pathname: "/TripsDriver/", state: { phone: this.state.phone } })
-  }
-  onClickSideBar = (e) => {
-    e.preventDefault()
-    this.props.history.push({ pathname: "/SideBarDriver/", state: { phone: this.state.phone } })
-  };
-
-  onClickTaxi = (e) => {
-    e.preventDefault()
-    this.props.history.push({ pathname: "/Taxi/", state: { phone: this.state.phone } })
-  };
-
-  onClickTrips = (e) => {
-    e.preventDefault()
-    this.props.history.push({ pathname: "/TripsDriver/", state: { phone: this.state.phone } })
-  }
-
-  onChangePlaca = (e) => {
-    this.setState({ placa: e.target.value })
-    console.log(e.target.value)
-  }
-  onClickCustomMap = (origen) => {
-    this.setState({ posicionActual: origen })
-    console.log(this.state.posicionActual.lat);
-  }
-
-  selectTaxi = (e) => {
-    e.preventDefault();
-    const phone = this.state.phone;
-    const placa = this.state.placa;
-    const lat = this.state.posicionActual.lat;
-    const lng = this.state.posicionActual.lng;
-    axios.get(`http://localhost:5000/drivers/taxi/${phone}/${placa}`).then(res => {
-      const placa_taxi = res.data;
-      if (placa_taxi === placa) {
-        this.setState({ placa: placa_taxi });
-        alert(`Taxi seleccionado con exito`);
-        axios.post(`http://localhost:5000/users/taxi/report/${placa}/${lat}/${lng}`).then(res => {
-        const respuesta = res.data;
-        if (respuesta === `Solicitud de servicio creada`) {
-          alert(`Reportada la posicion`);
-          this.setState({interval:setInterval(this.findRequest,3000)});
-        } else if (respuesta === `Error, por favor intentelo de nuevo`) {
-          alert(`Error en la seleccion del taxi`)
-          return;
-        }
-      })
-      } else if (placa_taxi === 'Credenciales invalidas') {
-        alert(`El taxi no esta disponible`);
-        return;
-      } else {
-        alert(`Error en la seleccion del taxi`)
-        return;
-      }
-    })
-  }
-
-  findRequest = () => {
-    const phone = this.state.phone;
-    const placa = this.state.placa;
-
-      axios.get(`http://localhost:5000/drivers/taxi/request/${phone}/${placa}`).then(res => {
-        const respuesta = res.data;
-        if (respuesta === 'Buscando Solicitudes') {
-          console.log('buscando...');
-        } else{
-          this.setState({idrequest: respuesta});
-          console.log(respuesta);
-          clearInterval(this.state.interval);
-          this.createService();
-        } 
-      })
-    }
-
-  createService = () => {
-    console.log(this.state.idrequest);
-    const idSolicitud=this.state.idrequest;
-    axios.post(`http://localhost:5000/users/add/services/${idSolicitud}`).then(res => {
-      const respuesta = res.data;
-      console.log(respuesta)
-      if (respuesta === 'Servicio creado'){
-        this.setState({iniciarServicio:true});
-        alert(`Servicio creado`);
-      } else {
-        alert(`Error creando el servicio`)
-      }
-    })
-  }
-
-  terminarServicio = () => {
-    const enServicio = this.state.iniciarServicio;
-    if(enServicio === true){
-      const phone=this.state.phone;
-      axios.put(`http://localhost:5000/services/drivers/end/${phone}`).then(res => {
-      const respuesta = res.data;
-      if (respuesta === 'El servicio ha terminado'){
-        alert(`Servicio terminado`);
-        this.setState({iniciarServicio:false});
-      } else {
-        alert(`Error terminando el servicio`)
-      }
-    })
-    }else{
-      alert(`No se encuentra en servicio`)
-    }
-  }
 
   render() {
 
     const { classes, theme } = this.props;
     const { open } = this.state;
-    const { posicionActual } = this.state;
 
     return (
       <div className={classes.root}>
@@ -353,7 +226,7 @@ class PersistentDrawerLeft extends React.Component {
             </ListItemIcon>
             <ListItemText primary="Inicio" />
           </ListItem>
-          <ListItem button onClick={this.onClickProfileUser}>
+          <ListItem button onClick={this.onClickProfileDriver}>
             <ListItemIcon>
               <Person />
             </ListItemIcon>
@@ -394,12 +267,28 @@ class PersistentDrawerLeft extends React.Component {
           <FormControl className={classes.form}>
            
           </FormControl>
-          <Fab
-            type="submit" variant="extended" color="primary"
-            className={classes.submit}
-          >
-            Cosultar
-          </Fab>
+          <Table className={classes.table}>
+          <TableHead>
+            <TableRow>
+              <TableCell>Services</TableCell>
+              <TableCell align="right">User</TableCell>
+              <TableCell align="right">Init Point</TableCell>
+              <TableCell align="right">Arrive point</TableCell>
+              <TableCell align="right">Charged</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {this.state.travels.map(travel => (
+              <TableRow key={travel.idservicio}>
+                <TableCell component="th" scope="row">{travel.usuario}</TableCell>
+                <TableCell align="right">{travel.usuario}</TableCell>
+                <TableCell align="right">{travel.puntopartida}</TableCell>
+                <TableCell align="right">{travel.puntollegada}</TableCell>
+                <TableCell align="right">{travel.conductor_pago}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
         </Paper>
           <div>
 

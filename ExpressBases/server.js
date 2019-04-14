@@ -11,7 +11,7 @@ const crudReport = require('./src/crudReport.js')
 const validations = require('./src/customValidators.js');
 
 const connectionAdminOptions = {
-  host: 'localhost', port: 5432, database: 'ProyectoBases',
+  host: 'localhost', port: 5433, database: 'proyectobases',
   user: 'postgres', password: 'postgres', poolSize: 20, poolIdleTimeout: 10000
 };
 const db = pgp(connectionAdminOptions);
@@ -43,8 +43,8 @@ app.use(express.json());
 
 
 
-//Crea un usuario recibiendo, phone, password, name
-//lastname, birthday, mail y creditcard
+//Crea un usuario recibiendo, telefono, contrasenia, nombre
+//apellido, fecha de nacimiento, correo y tarjeta de credito 
 app.post(`/user/:phone/:psword/:name/:lastname/:birthday/:mail/:credcard`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`psword`).isLength({ min: 8 }),
@@ -62,9 +62,9 @@ app.get(`/user/:phone/`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
 ], (req, res) => crudUser.readUser(req, res, validationResult, db))
 
-//Actualiza un usuario recibiendo, phone, password, name
-//lastname, birthday, mail y creditcard
-app.patch(`/user/:phone/:psword/:name/:lastname/:mail/:credcard`, [
+//Actualiza un usuario recibiendo, telefono, contrasenia, nombre
+//apellido, correo y tarjeta de credito 
+app.put(`/user/:phone/:psword/:name/:lastname/:mail/:credcard`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`psword`).isLength({ min: 8 }),
   check(`name`).isAlpha(),
@@ -73,19 +73,19 @@ app.patch(`/user/:phone/:psword/:name/:lastname/:mail/:credcard`, [
   check(`credcard`).isNumeric(),
 ], (req, res) => crudUser.updateUser(req, res, validationResult, db))
 
-//Borra un usuario recibiendo su phone
+//Borra un usuario recibiendo su telefono
 app.delete(`/user/:phone`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
 ], (req, res) => crudUser.deleteUser(req, res, validationResult, db))
 
-//Valida los usuario recibiendo telefono y password
+//Valida los usuario recibiendo telefono y contrasenia
 app.get(`/user/:phone/:psword`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`psword`).isLength({ min: 8 })
 ], (req, res) => crudUser.validateUser(req, res, validationResult, db))
 
 //Paga los servicios de un usuario recibiendo su telefono
-app.patch(`/user/:phone/`, [
+app.put(`/user/:phone/`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`psword`).isLength({ min: 8 })
 ],(req,res) => crudUser.payUser(req, res, validationResult, db))
@@ -100,8 +100,8 @@ app.patch(`/user/:phone/`, [
 
 
 
-//Crea un Conductor recibiendo, phone, password, name
-//lastname, birthday, mail y numero de bankacc
+//Crea un Conductor recibiendo, telefono, contrasenia, nombre
+//apellido, birthday, mail y numero de cuenta
 app.post(`/driver/:phone/:psword/:name/:lastname/:birthday/:mail/:bankacc`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`psword`).isLength({ min: 8 }),
@@ -119,9 +119,9 @@ app.get(`/driver/:phone/`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
 ], (req, res) => crudDriver.readDriver(req, res, validationResult, db))
 
-//Actualiza un Conductor recibiendo, phone, password, name
-//lastname, birthday, mail y numero de bankacc
-app.patch(`/driver/:phone/:psword/:name/:lastname/:mail/:bankacc`, [
+//Actualiza un Conductor recibiendo, telefono, contrasenia, nombre
+//apellido, mail y numero de cuenta
+app.put(`/driver/:phone/:psword/:name/:lastname/:mail/:bankacc`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`psword`).isLength({ min: 8 }),
   check(`name`).isAlpha(),
@@ -130,12 +130,12 @@ app.patch(`/driver/:phone/:psword/:name/:lastname/:mail/:bankacc`, [
   check(`bankacc`).isNumeric(),
 ], (req, res) => crudDriver.updateDriver(req, res, validationResult, db))
 
-//Borra un conductor recibiendo su phone
+//Borra un conductor recibiendo su telefono
 app.delete(`/driver/:phone`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
 ], (req, res) => crudDriver.deleteDriver(req, res, validationResult, db))
 
-//Valida los Conductores recibiendo telefono y password
+//Valida los Conductores recibiendo telefono y contrasenia
 app.get(`/driver/:phone/:psword`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`psword`).isLength({ min: 8 })
@@ -148,8 +148,8 @@ app.get(`/driver/taxi/:phone/:placa`, [
   check(`placa`).custom(value => validations.validatePlaque(value)),
 ], (req, res) => crudDriver.validateManejar(req, res, validationResult, db))
 
-//Redime los kilometros de un conductor recibiendo su phone
-app.patch(`/driver/:phone`, [
+//Redime los kilometros de un conductor recibiendo su telefono
+app.put(`/driver/:phone`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
 ], (req, res) => crudDriver.redeemDriver(req, res, validationResult, db))
 
@@ -166,7 +166,7 @@ app.patch(`/driver/:phone`, [
 
 //Crea un Taxi recibiendo, placa, marca, modelo, anio
 //baul, soat y, ocupado
-app.post('/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocupado', [
+app.post('/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat', [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`placa`).custom(value => validations.validatePlaque(value)),
   check(`contrasenia`).isLength({ min: 8 }),
@@ -174,9 +174,7 @@ app.post('/taxi/:phone/:placa/:contrasenia/:marca/:modelo/:anio/:baul/:soat/:ocu
   check(`modelo`).isAlphanumeric(),
   check(`anio`).isNumeric().isLength({ min: 4 }),
   check(`baul`).isAlpha(),
-  check(`soat`).isLength({ min: 10 }),
   check(`soat`).custom(value => validations.validateFecha(value)),
-  check(`ocupado`).isBoolean(),
 ], (req, res) => crudTaxi.createTaxi(req, res, validationResult, db))
 
 //Obtiene los datos de un taxi para cargarlos en su perfil recibiendo
@@ -187,7 +185,7 @@ app.get(`/taxi/:placa/`, [
 
 //Actualiza un Taxi recibiendo, placa, marca, modelo, anio
 //baul, soat y, ocupado
-app.patch(`/taxi/:placa/:soat`, [
+app.put(`/taxi/:placa/:soat`, [
   check(`placa`).custom(value => validations.validatePlaque(value)),
   check(`soat`).custom(value => validations.validateFecha(value)),
 ])
@@ -228,11 +226,21 @@ app.get(`/request/user/:phone`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 })
 ], (req, res) => crudRequest.readRequestUser(req, res, validationResult, db))
 
+//Revisa solicitudes canceladas
+app.get(`/request/canceled/user/:idrequest`, [
+  check(`idrequest`).isNumeric()
+], (req, res) => crudRequest.readCanceledRequestUser(req, res, validationResult, db))
+
 //Busca por solicitudes activas conductor
 app.get(`/request/drivers/taxi/:phone/:placa`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
-  check(`placa`).custom(value => validations.validateFecha(value)),
-], (req, res) => crudRequest.readRequesDriver(req, res, validationResult, db))
+  check(`placa`).custom(value => validations.validatePlaque(value)),
+], (req, res) => crudRequest.readRequestDriver(req, res, validationResult, db))
+
+//Cancela solicitud
+app.put(`/reject/request/user/:phone`, [
+  check(`phone`).isNumeric().isLength({ min: 10, max: 10 })
+], (req, res) => crudRequest.cancelRequest(req, res, validationResult, db))
 
 
 
@@ -248,8 +256,8 @@ app.get(`/request/drivers/taxi/:phone/:placa`, [
 //placa del taxi, hora de inicio, hora de llegada, comprobante de pago usuario y 
 //comprobante de pago conductor
 //El encargado de crear un servicio es el conductor
-app.post(`/service/user/add/:idsolicitud`, [
-  check(`idsolicitud`).isNumeric(),
+app.post(`/service/user/add/:idrequest`, [
+  check(`idrequest`).isNumeric(),
 ], (req, res) => crudService.createService(req, res, validationResult, db))
 
 //Busca por servicios activos usuario
@@ -260,26 +268,26 @@ app.get(`/service/user/:phone`, [
 ], (req, res) => crudService.readServiceUser(req, res, validationResult, db))
 
 //Busca por servicios terminados
-app.get(`/service/finished/:idservicio`, [
-  check(`idservicio`).isNumeric()
+app.get(`/service/finished/:idservice`, [
+  check(`idservice`).isNumeric()
 ], (req, res) => crudService.readServiceFinished(req, res, validationResult, db))
 
 //El Usuario modifica el servicio para ponerle la calificacion al conductor
-app.put(`/service/user/:phone/:calificacion`, [
+app.put(`/service/user/:phone/:score`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
-  check(`calificacion`).isFloat().custom(value => validations.validateScore(value)),
-], (req, res ) => crudService.updateServiceUsercore(req, res, validationResult, db))
+  check(`score`).isFloat().custom(value => validations.validateScore(value)),
+], (req, res) => crudService.updateServiceUsercore(req, res, validationResult, db))
 
 //El Conductor modifica el servicio para ponerle la calificacion al usuario
-app.put(`/service/drivers/:phone/:calificacion`, [
+app.put(`/service/drivers/:phone/:score`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
-  check(`calificacion`).isFloat().custom(value => validations.validateScore(value)),
-])
+  check(`score`).isFloat().custom(value => validations.validateScore(value)),
+], (req, res) => crudService.updateServiceDriverScore(req, res, validationResult, db))
 
 //Terminar un servicio
-app.put(`/service/drivers/end/:phone`, [
+app.put(`/service/end/:phone`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
-], (req, res) => crudService.updateServiceFinsh(req, res, validationResult, db))
+], (req, res) => crudService.updateServiceFinshed(req, res, validationResult, db))
 
 //Obtiene todos los servicios que ha tenido un usuario
 app.get(`/services/user/all/:phone`,[
@@ -287,7 +295,7 @@ app.get(`/services/user/all/:phone`,[
 ], (req, res) => crudService.readServicesUser(req, res, validationResult, db))
 
 //Obtiene todos los servicios que ha tenido un conductor
-app.get(`/services/user/all/:phone`,[
+app.get(`/services/driver/all/:phone`,[
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
 ], (req, res) => crudService.readServicesDriver(req, res, validationResult, db))
 
@@ -324,7 +332,7 @@ app.delete(`/favorites/user/:phone/:name`, [
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-///////////////////////////// CRUD FAVORITES /////////////////////////////
+///////////////////////////// CRUD REPORTS ///////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 

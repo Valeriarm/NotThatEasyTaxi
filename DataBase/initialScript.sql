@@ -1,3 +1,6 @@
+CREATE DATABASE proyectobases;
+GRANT ALL PRIVILEGES ON DATABASE proyectobases TO postgres;
+\c proyectobases;
 DROP TABLE IF EXISTS usuario CASCADE;
 DROP TABLE IF EXISTS origenesFav CASCADE;
 DROP TABLE IF EXISTS telefono CASCADE;
@@ -272,18 +275,47 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
-
-
-/*Buscar por solicitudes activas por telefono*/
-CREATE OR REPLACE FUNCTION buscar_solicitudes_usuario(VARCHAR(15)) RETURNS Text AS $$
+/*Cancela una solicitud por telefono*/
+CREATE OR REPLACE FUNCTION cancelar_solicitud(VARCHAR(15)) RETURNS Text AS $$
 DECLARE
 	phone ALIAS FOR $1;
 BEGIN
 	IF EXISTS (
 		SELECT * FROM solicitud WHERE usuario=phone AND activa=TRUE
-	)THEN RETURN 'Solicitud encontrada';
+	)THEN 
+		UPDATE solicitud SET activa=false WHERE usuario=phone;
+		RETURN 'Solicitud cancelada';
+	END IF;
+	RETURN 'Solicitud no cancelada';
+END;
+$$
+LANGUAGE plpgsql;
+/*Buscar por solicitudes activas por telefono*/
+CREATE OR REPLACE FUNCTION buscar_solicitudes_usuario(VARCHAR(15)) RETURNS Text AS $$
+DECLARE
+	phone ALIAS FOR $1;
+	id_solicitud INTEGER:=(
+		SELECT idsolicitud FROM solicitud WHERE usuario=phone AND activa=TRUE
+	);
+BEGIN
+	IF EXISTS (
+		SELECT * FROM solicitud WHERE usuario=phone AND activa=TRUE
+	)THEN RETURN id_solicitud;
 	END IF;
 	RETURN 'Buscando Solicitudes';
+END;
+$$
+LANGUAGE plpgsql;
+/*Buscar por solicitudes activas por idsolicitud*/
+CREATE OR REPLACE FUNCTION buscar_solicitudes_canceladas_usuario(INTEGER) RETURNS Text AS $$
+DECLARE
+	id_solicitud ALIAS FOR $1;
+BEGIN
+	IF EXISTS (
+		SELECT * FROM solicitud WHERE idsolicitud=id_solicitud AND activa=false
+	)THEN RETURN id_solicitud;
+	END IF;
+	RETURN 'Su solicitud ha sido cancelada';
 END;
 $$
 LANGUAGE plpgsql;

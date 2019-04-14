@@ -142,6 +142,7 @@ class PersistentDrawerLeft extends React.Component {
     idrequest: true,
     iniciarServicio: false,
     interval:null,
+    onService:false,
   };
 
   handleDrawerOpen = () => {
@@ -152,7 +153,7 @@ class PersistentDrawerLeft extends React.Component {
     this.setState({ open: false });
   };
 
-  onClickProfileUser = (e) => {
+  onClickProfileDriver = (e) => {
     e.preventDefault()
     const phone = this.state.phone;
     axios.get(`http://localhost:5000/driver/${phone}/`).then(res => {
@@ -179,8 +180,25 @@ class PersistentDrawerLeft extends React.Component {
 
   onClickTrips = (e) => {
     e.preventDefault()
-    this.props.history.push({ pathname: "/TripsDriver/", state: { phone: this.state.phone } })
+    const phone = this.state.phone;
+    axios.get(`http://localhost:5000/services/driver/all/${phone}/`).then(res => {
+      const travels = res.data;
+      console.log("on onClickTripUser ", travels)
+      this.props.history.push({ pathname: "/TripsUser/", state: { phone: phone, travels:travels}})})
   }
+
+  onClickCloseSession = (e) => {
+    e.preventDefault()
+      this.setState({
+        phone: this.props.location.state.phone,
+        placa: true,
+        posicionActual: { lat: true, lng: true },
+        idrequest: true,
+        iniciarServicio: false,
+        interval:null,
+        onService:false,})
+      this.props.history.push({ pathname: "/"})
+  };
 
   onChangePlaca = (e) => {
     this.setState({ placa: e.target.value })
@@ -192,49 +210,64 @@ class PersistentDrawerLeft extends React.Component {
   }
 
   selectTaxi = (e) => {
-    e.preventDefault();
-    const phone = this.state.phone;
-    const placa = this.state.placa;
-    const lat = this.state.posicionActual.lat;
-    const lng = this.state.posicionActual.lng;
-    axios.get(`http://localhost:5000/driver/taxi/${phone}/${placa}`).then(res => {
-      const placa_taxi = res.data;
-      if (placa_taxi === placa) {
-        this.setState({ placa: placa_taxi });
-        alert(`Taxi seleccionado con exito`);
-        axios.post(`http://localhost:5000/users/taxi/report/${placa}/${lat}/${lng}`).then(res => {
-        const respuesta = res.data;
-        if (respuesta === `Solicitud de servicio creada`) {
-          alert(`Reportada la posicion`);
-          this.setState({interval:setInterval(this.findRequest,3000)});
-        } else if (respuesta === `Error, por favor intentelo de nuevo`) {
+    if(this.state.onService === true){
+      alert('No puede cambiar de taxi mientras esta en servicio')
+    } else{
+      e.preventDefault();
+      const phone = this.state.phone;
+      const placa = this.state.placa;
+      const lat = this.state.posicionActual.lat;
+      const lng = this.state.posicionActual.lng;
+      axios.get(`http://localhost:5000/driver/taxi/${phone}/${placa}`).then(res => {
+        const placa_taxi = res.data;
+        if (placa_taxi === placa) {
+          this.setState({ placa: placa_taxi });
+          alert(`Taxi seleccionado con exito`);
+          axios.post(`http://localhost:5000/report/user/taxi/${placa}/${lat}/${lng}`).then(res => {
+          const respuesta = res.data;
+          if (respuesta === `Solicitud de servicio creada`) {
+            alert(`Reportada la posicion`);
+            this.setState({interval:setInterval(this.findRequest,3000)});
+          } else if (respuesta === `Error, por favor intentelo de nuevo`) {
+            alert(`Error en la seleccion del taxi`)
+            return;
+          }
+        })
+        } else if (placa_taxi === 'Credenciales invalidas') {
+          alert(`El taxi no esta disponible`);
+          return;
+        } else {
           alert(`Error en la seleccion del taxi`)
           return;
         }
       })
-      } else if (placa_taxi === 'Credenciales invalidas') {
-        alert(`El taxi no esta disponible`);
-        return;
-      } else {
-        alert(`Error en la seleccion del taxi`)
-        return;
-      }
-    })
+    }
   }
 
   findRequest = () => {
     const phone = this.state.phone;
     const placa = this.state.placa;
 
-      axios.get(`http://localhost:5000/drivers/taxi/request/${phone}/${placa}`).then(res => {
+      axios.get(`http://localhost:5000/request/drivers/taxi/${phone}/${placa}`).then(res => {
         const respuesta = res.data;
         if (respuesta === 'Buscando Solicitudes') {
           console.log('buscando...');
         } else{
-          this.setState({idrequest: respuesta});
-          console.log(respuesta);
-          clearInterval(this.state.interval);
-          this.createService();
+          // eslint-disable-next-line no-restricted-globals
+          var accept = window.confirm('Desea aceptar el sevicio?')
+          if (accept === true){
+            this.setState({idrequest: respuesta});
+            console.log(respuesta);
+            clearInterval(this.state.interval);
+            this.createService();
+            axios.put(`http://localhost:5000/reject/request/user/${phone}`)
+          }else{
+            this.setState({idrequest: respuesta});
+            console.log(respuesta);
+            clearInterval(this.state.interval);
+            this.rejectRequest()
+          }
+          
         } 
       })
     }
@@ -242,14 +275,32 @@ class PersistentDrawerLeft extends React.Component {
   createService = () => {
     console.log(this.state.idrequest);
     const idSolicitud=this.state.idrequest;
-    axios.post(`http://localhost:5000/users/add/services/${idSolicitud}`).then(res => {
+    axios.post(`http://localhost:5000/service/user/add/${idSolicitud}`).then(res => {
       const respuesta = res.data;
       console.log(respuesta)
       if (respuesta === 'Servicio creado'){
         this.setState({iniciarServicio:true});
         alert(`Servicio creado`);
+      } else if (respuesta === 'No puede inicar un servicio si tiene otro activo'){
+        this.setState({iniciarServicio:true});
+        alert(`No puede inicar un servicio si tiene otro activo`);
       } else {
         alert(`Error creando el servicio`)
+      }
+    })
+  }
+
+  rejectRequest = () => {
+    console.log(this.state.phone);
+    const phone=this.state.phone;
+    axios.put(`http://localhost:5000/reject/request/user/${phone}`).then(res => {
+      const respuesta = res.data;
+      console.log(respuesta)
+      if (respuesta === 'Solicitud cancelada'){
+        this.setState({iniciarServicio:true});
+        alert(`Solicitud cancelada`);
+      } else {
+        alert(`Solicitud no cancelada`)
       }
     })
   }
@@ -258,7 +309,7 @@ class PersistentDrawerLeft extends React.Component {
     const enServicio = this.state.iniciarServicio;
     if(enServicio === true){
       const phone=this.state.phone;
-      axios.put(`http://localhost:5000/services/drivers/end/${phone}`).then(res => {
+      axios.put(`http://localhost:5000/service/end/${phone}`).then(res => {
       const respuesta = res.data;
       if (respuesta === 'El servicio ha terminado'){
         alert(`Servicio terminado`);
@@ -329,7 +380,7 @@ class PersistentDrawerLeft extends React.Component {
             </ListItemIcon>
             <ListItemText primary="Inicio" />
           </ListItem>
-          <ListItem button onClick={this.onClickProfileUser}>
+          <ListItem button onClick={this.onClickProfileDriver}>
             <ListItemIcon>
               <Person />
             </ListItemIcon>
@@ -346,6 +397,12 @@ class PersistentDrawerLeft extends React.Component {
               <NavigationIcon />
             </ListItemIcon>
             <ListItemText primary="Viajes" />
+          </ListItem>
+          <ListItem button onClick={this.onClickCloseSession}>
+            <ListItemIcon>
+              <ExitToApp/>
+            </ListItemIcon>
+            <ListItemText primary="Log Out" />
           </ListItem>
         </Drawer>
         <main
