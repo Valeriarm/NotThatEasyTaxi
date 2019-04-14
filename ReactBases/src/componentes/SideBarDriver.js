@@ -329,6 +329,11 @@ class PersistentDrawerLeft extends React.Component {
     axios.put(`http://localhost:5000/driver/${phone}`).then(res => {
         const paid = res.data;
         console.log(paid);
+        if (paid==='Kilometros redimidos con exito'){
+          alert('Kilometros redimidos con exito')
+        }else{
+          alert('No hay viajes a redimir')
+        }
       })
   }
 

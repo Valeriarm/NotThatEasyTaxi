@@ -324,6 +324,11 @@ class PersistentDrawerLeft extends React.Component {
     axios.put(`http://localhost:5000/user/${phone}`).then(res => {
         const paid = res.data;
         console.log(paid);
+        if(paid === `Kilometros pagados con exito`){
+          alert(`Ha pagado los viajes`)
+        } else {
+          alert(`No hay viajes a pagar`)
+        }
       })
   }
 
@@ -398,13 +403,13 @@ class PersistentDrawerLeft extends React.Component {
           </ListItemIcon>
           <ListItemText primary="Viajes" />
         </ListItem>
-        <ListItem button onClick={this.onClickTripUser}>
+        <ListItem button onClick={this.onClickPaidTravels}>
           <ListItemIcon>
           <Money/>
           </ListItemIcon>
           <ListItemText primary="Paid Travels" />
         </ListItem>
-        <ListItem button onClick={this.onClickPaidTravels}>
+        <ListItem button onClick={this.onClickCloseSession}>
             <ListItemIcon>
               <ExitToApp/>
             </ListItemIcon>
