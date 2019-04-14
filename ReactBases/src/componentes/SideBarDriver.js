@@ -180,11 +180,23 @@ class PersistentDrawerLeft extends React.Component {
 
   onClickTrips = (e) => {
     e.preventDefault()
-    this.props.history.push({ pathname: "/TripsDriver/", state: { phone: this.state.phone } })
+    const phone = this.state.phone;
+    axios.get(`http://localhost:5000/services/driver/all/${phone}/`).then(res => {
+      const travels = res.data;
+      console.log("on onClickTripUser ", travels)
+      this.props.history.push({ pathname: "/TripsUser/", state: { phone: phone, travels:travels}})})
   }
 
   onClickCloseSession = (e) => {
     e.preventDefault()
+      this.setState({
+        phone: this.props.location.state.phone,
+        placa: true,
+        posicionActual: { lat: true, lng: true },
+        idrequest: true,
+        iniciarServicio: false,
+        interval:null,
+        onService:false,})
       this.props.history.push({ pathname: "/"})
   };
 
@@ -248,6 +260,7 @@ class PersistentDrawerLeft extends React.Component {
             console.log(respuesta);
             clearInterval(this.state.interval);
             this.createService();
+            axios.put(`http://localhost:5000/reject/request/user/${phone}`)
           }else{
             this.setState({idrequest: respuesta});
             console.log(respuesta);
@@ -384,6 +397,12 @@ class PersistentDrawerLeft extends React.Component {
               <NavigationIcon />
             </ListItemIcon>
             <ListItemText primary="Viajes" />
+          </ListItem>
+          <ListItem button onClick={this.onClickCloseSession}>
+            <ListItemIcon>
+              <ExitToApp/>
+            </ListItemIcon>
+            <ListItemText primary="Log Out" />
           </ListItem>
         </Drawer>
         <main

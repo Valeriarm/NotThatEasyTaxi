@@ -299,9 +299,9 @@ class PersistentDrawerLeft extends React.Component {
     e.preventDefault()
     const phone = this.state.phone;
     axios.get(`http://localhost:5000/services/user/all/${phone}/`).then(res => {
-      const user = res.data;
-      console.log("on onClickTripUser ", user)
-      this.props.history.push({ pathname: "/TripsUser/", state: { phone: phone}})})
+      const travels = res.data;
+      console.log("on onClickTripUser ", travels)
+      this.props.history.push({ pathname: "/TripsUser/", state: { phone: phone, travels:travels}})})
   };
 
   onClickCloseSession = (e) => {
@@ -401,7 +401,13 @@ class PersistentDrawerLeft extends React.Component {
           <NavigationIcon/>
           </ListItemIcon>
           <ListItemText primary="Viajes" />
-        </ListItem>           
+        </ListItem>
+        <ListItem button onClick={this.onClickCloseSession}>
+            <ListItemIcon>
+              <ExitToApp/>
+            </ListItemIcon>
+            <ListItemText primary="Log Out" />
+          </ListItem>        
         </Drawer>
         <main
           className={classNames(classes.content, {

@@ -76,7 +76,7 @@ var readServicesUser = (req, res, validationResult, db) => {
     return res.status(422).json({ errors: errors.array() });
   }
   const phone = req.params.phone;
-  db.any(`SELECT * FROM servicio WHERE usuario=$1 AND terminado=false`,
+  db.any(`SELECT * FROM servicio WHERE usuario=$1 AND terminado=true`,
     [escape(phone)])
     .then((data) => {
       console.log(`DATA: readServicesUser `, data)
@@ -97,7 +97,7 @@ var readServicesDriver = (req, res, validationResult, db) => {
     return res.status(422).json({ errors: errors.array() });
   }
   const phone = req.params.phone;
-  db.any(`SELECT * FROM servicio WHERE conductor=$1 AND terminado=false`,
+  db.any(`SELECT * FROM servicio WHERE conductor=$1 AND terminado=true`,
     [escape(phone)])
     .then((data) => {
       console.log(`DATA: readServicesDriver `, data)
