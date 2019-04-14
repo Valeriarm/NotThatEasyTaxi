@@ -159,7 +159,7 @@ class PersistentDrawerLeft extends React.Component {
       this.props.history.push({ pathname: "/ProfileUser/", state: { phone: phone, nombre: nombre, apellido: apellido, email: email, tarjeta: tarjeta, contrasenia: contrasenia } })
     })
   };
-  
+
   onClickSideBar = (e) => {
     e.preventDefault()
     this.props.history.push({ pathname: "/SideBar/", state: { phone: this.state.phone } })
@@ -201,10 +201,11 @@ class PersistentDrawerLeft extends React.Component {
     e.preventDefault()
     const phone = this.state.phone;
     axios.get(`http://localhost:5000/services/user/all/${phone}/`).then(res => {
-      const user = res.data;
-      console.log(user)
-      this.props.history.push({ pathname: "/TripsUser/", state: { phone: phone}})})
+      const travels = res.data;
+      console.log("on onClickTripUser ", travels)
+      this.props.history.push({ pathname: "/TripsUser/", state: { phone: phone, travels:travels}})})
   };
+
   render() {
 
     const { classes, theme } = this.props;
