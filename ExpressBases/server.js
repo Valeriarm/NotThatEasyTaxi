@@ -226,11 +226,21 @@ app.get(`/request/user/:phone`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 })
 ], (req, res) => crudRequest.readRequestUser(req, res, validationResult, db))
 
+//Revisa solicitudes canceladas
+app.get(`/request/canceled/user/:idrequest`, [
+  check(`idrequest`).isNumeric()
+], (req, res) => crudRequest.readCanceledRequestUser(req, res, validationResult, db))
+
 //Busca por solicitudes activas conductor
 app.get(`/request/drivers/taxi/:phone/:placa`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
-  check(`placa`).custom(value => validations.validateFecha(value)),
-], (req, res) => crudRequest.readRequesDriver(req, res, validationResult, db))
+  check(`placa`).custom(value => validations.validatePlaque(value)),
+], (req, res) => crudRequest.readRequestDriver(req, res, validationResult, db))
+
+//Cancela solicitud
+app.patch(`/reject/request/user/:phone`, [
+  check(`phone`).isNumeric().isLength({ min: 10, max: 10 })
+], (req, res) => crudRequest.cancelRequest(req, res, validationResult, db))
 
 
 
@@ -275,7 +285,7 @@ app.patch(`/service/drivers/:phone/:score`, [
 ], (req, res) => crudService.updateServiceDriverScore(req, res, validationResult, db))
 
 //Terminar un servicio
-app.patch(`/service/drivers/end/:phone`, [
+app.patch(`/service/end/drivers/:phone`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
 ], (req, res) => crudService.updateServiceFinsh(req, res, validationResult, db))
 

@@ -126,8 +126,8 @@ var payUser = (req, res, validationResult, db) => {
   console.log(phone + "-" + psword)
   db.one(`SELECT pagar_kilometros($1)`, [escape(phone)])
     .then(function (data) {
-      console.log(`DATA:`, data.validar_usuario)
-      res.send(JSON.stringify(data.validar_usuario))
+      console.log(`DATA:`, data.pagar_kilometros)
+      res.send(JSON.stringify(data.pagar_kilometros))
     })
     .catch(function (error) {
       console.log(`ERROR:`, error)

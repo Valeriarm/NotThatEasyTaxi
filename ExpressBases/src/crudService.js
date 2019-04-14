@@ -12,8 +12,7 @@ var createService = (req, res, validationResult, db) => {
   const idrequest = parseInt(req.params.idrequest);
   const inithour = new Date();
   console.log(idrequest)
-  db.one(`SELECT insertar_servicio($1, $2)`,
-    [idrequest, inithour])
+  db.one(`SELECT insertar_servicio($1, $2)`,[idrequest, inithour])
     .then((data) => {
       console.log(`DATA: estoy creando el servicio`, data)
       res.send(`Servicio creado`)
@@ -34,9 +33,9 @@ var readServiceUser = (req, res, validationResult, db) => {
     return res.send(JSON.stringify("Credenciales invalidas"));
   }
   const phone = req.params.phone
-  db.one(`SELECT buscar_servicios($1)`, [escape(phone)])
+  db.one(`SELECT buscar_servicios($1)`, escape(phone))
     .then(function (data) {
-      console.log(`DATA:`, data.buscar_servicios)
+      console.log(`DATA: readServiceUser `, data.buscar_servicios)
       res.send(JSON.stringify(data.buscar_servicios))
     })
     .catch(function (error) {
@@ -53,10 +52,10 @@ var readServiceFinished = (req, res, validationResult, db) => {
     return res.send(JSON.stringify("Credenciales invalidas"));
   }
   const idservice = req.params.idservice
-  db.one(`SELECT buscar_servicios_terminados($1)`, 
-    [escape(idservice)])
+  console.log(idservice)
+  db.one(`SELECT buscar_servicios_terminados($1)`, escape(idservice))
     .then(function (data) {
-      console.log(`DATA: en terminando servicio`, data.buscar_servicios_terminados)
+      console.log(`DATA: en readServiceFinished ${idservice}`, data.buscar_servicios_terminados)
       res.send(JSON.stringify(data.buscar_servicios_terminados))
     })
     .catch(function (error) {
@@ -76,7 +75,7 @@ var readServicesUser = (req, res, validationResult, db) => {
   db.any(`SELECT * FROM servicio WHERE usuario=$1 AND terminado=false`,
     [escape(phone)])
     .then((data) => {
-      console.log(`DATA: `, data)
+      console.log(`DATA: readServicesUser `, data)
       res.send(data)
     })
     .catch((error) => {
@@ -96,7 +95,7 @@ var readServicesDriver = (req, res, validationResult, db) => {
   db.any(`SELECT * FROM servicio WHERE conductor=$1 AND terminado=false`,
     [escape(phone)])
     .then((data) => {
-      console.log(`DATA: `, data)
+      console.log(`DATA: readServicesDriver `, data)
       res.send(data)
     })
     .catch((error) => {
@@ -117,7 +116,7 @@ var updateServiceUserScore = (req, res, validationResult, db) => {
   db.none(`SELECT calificar_conductor ($1, $2)`,
     [escape(phone), escape(score)])
     .then((data) => {
-      console.log(`DATA: `, data)
+      console.log(`DATA: updateServiceUserScore `, data)
       res.send(`El servicio ha sido calificado`)
     })
     .catch((error) => {
@@ -138,7 +137,7 @@ var updateServiceDriverScore = (req, res, validationResult, db) => {
   db.none(`SELECT calificar_usuario ($1, $2)`,
     [escape(phone), escape(score)])
     .then((data) => {
-      console.log(`DATA: `, data)
+      console.log(`DATA: updateServiceDriverScore `, data)
       res.send(`El servicio ha sido calificado`)
     })
     .catch((error) => {
@@ -157,7 +156,7 @@ var updateServiceFinshed = (req, res, validationResult, db) => {
   db.none(`UPDATE servicio SET terminado=true WHERE conductor=$1 AND terminado=false`,
     [escape(phone)])
     .then((data) => {
-      console.log(`DATA: `, data)
+      console.log(`DATA: updateServiceFinshed `, data)
       res.send(`El servicio ha terminado`)
     })
     .catch((error) => {
