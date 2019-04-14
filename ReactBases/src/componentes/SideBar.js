@@ -139,7 +139,10 @@ class PersistentDrawerLeft extends React.Component {
     searching:false,
     interval: null,
     interval2: null,
+    interval3: null,
     idservicio: null,
+    onService: false,
+    idsolicitud: null,
   };
 
   handleDrawerOpen = () => {
@@ -167,15 +170,20 @@ class PersistentDrawerLeft extends React.Component {
     this.setState({destino: destino, origen: origen})
   }
 
+  initCheck = () => {
+    this.setState({interval:setInterval(this.checkForService,3000)})
+    this.setState({interval3:setInterval(this.checkForCanceledRequest,3000)})
+  }
+
   checkForService = () => {
     const phone = this.state.phone;
-    axios.get(`http://localhost:5000/services/users/${phone}`).then(res => {
+    axios.get(`http://localhost:5000/service/user/${phone}`).then(res => {
       const response = res.data;
       if (response === `Buscando Servicio`){
-        console.log(`Buscando Servicio`)
+        console.log(`on check for service : Buscando Servicio`)
       }
       else {
-        this.setState({idservicio:response})
+        this.setState({idservicio:response, onService:true, searching:false})
         alert(`Servicio encontrado`)
         clearInterval(this.state.interval)
         this.finishedService()
@@ -185,23 +193,39 @@ class PersistentDrawerLeft extends React.Component {
 
   checkForFinishedService = () => {
     const idservicio = this.state.idservicio;
-    axios.get(`http://localhost:5000/services/users/finished/${idservicio}`).then(res => {
+    console.log( "on check for finished service",this.state);
+    axios.get(`http://localhost:5000/service/finished/${idservicio}`).then(res => {
       const response = res.data;
-      console.log(response)
+      console.log("on check for finished service", response)
       if (response === `Servicio en curso`){
-        console.log(`Servicio en curso`)
+        console.log(`on check for finished service :Servicio en curso`)
       }
       else {
         alert(`EL servicio con id ${this.state.idservicio} ha terminado`)
-        this.setState({searching:false})
+        this.setState({onService:false, idservicio:null})
+        clearInterval(this.state.interval)
         clearInterval(this.state.interval2)
+        clearInterval(this.state.interval3)
       }
     })
   }
-  initCheck = () => {
-    this.setState({interval:setInterval(this.checkForService,3000)})
-  }
 
+  checkForCanceledRequest = () => {
+    const idsolicitud = this.state.idsolicitud;
+    axios.get(`http://localhost:5000/request/canceled/user/${idsolicitud}`).then(res => {
+      const response = res.data;
+      console.log(`on checkForCanceledRequest`,response)
+      if (response === `Su solicitud ha sido cancelada`){
+        console.log(` on checkForCanceledRequest Su solicitud ha sido cancelada`)
+        this.setState({onService:false, idservicio:null, idsolicitud:null})
+        clearInterval(this.state.interval3)
+      }
+      else {
+        console.log(`on checkForCanceledRequest Servicio en curso`)
+      }
+    })
+  }
+  
   finishedService = () =>{
     this.setState({interval2:setInterval(this.checkForFinishedService, 3000)})
   }
@@ -212,10 +236,23 @@ class PersistentDrawerLeft extends React.Component {
     const lng = this.state.destino.lng;
     console.log(lat);
     console.log(lat);
-    axios.post(`http://localhost:5000/users/favorites/${phone}/${lat}/${lng}`).then(res => {
+    axios.post(`http://localhost:5000/favorites/user/${phone}/${lat}/${lng}`).then(res => {
         const persons = res.data;
         console.log(persons);
       })
+  }
+  searchActiveRequest = () => {
+    const phone=this.state.phone
+    axios.get(`http://localhost:5000/request/user/${phone}`).then(res => {
+      const idsolicitud = res.data;
+      console.log("on search Active Request", idsolicitud);
+      if(idsolicitud==='Buscando Solicitudes'){
+        alert('No se encontro una solicitud activa con su numero de telefono')
+      } else {
+        this.setState({idsolicitud:idsolicitud})
+        this.initCheck()
+      }
+    })
   }
   /*Crea una solicitud*/
   onClickConfirmar = () => {
@@ -228,21 +265,21 @@ class PersistentDrawerLeft extends React.Component {
     console.log(lngIn);
     console.log(latFin);
     console.log(lngFin);
-    axios.post(`http://localhost:5000/users/request/${phone}/${latIn}/${lngIn}/${latFin}/${lngFin}`).then(res => {
+    axios.post(`http://localhost:5000/request/user/${phone}/${latIn}/${lngIn}/${latFin}/${lngFin}`).then(res => {
         const persons = res.data;
-        console.log(persons);
+        console.log("en onClickConfirmar ",persons);
         if (persons===`En este momento no hay conductores disponibles, por favor intentelo de nuevo mas tarde`) {
           alert(`En este momento no hay conductores disponibles, por favor intentelo de nuevo mas tarde`);
         }else if (persons === `Solicitud de servicio creada`) {
           alert(`Su solicitud fue realizada con exito`);
           this.setState({searching:true})
-          this.initCheck()
+          this.searchActiveRequest()
         } else {
           alert(`Ocurrio un error`);
         }
       })
   }
-
+  
   onClickProfileUser = (e) => {
     e.preventDefault()
     const phone = this.state.phone;
@@ -253,7 +290,7 @@ class PersistentDrawerLeft extends React.Component {
       const email = user.email;
       const tarjeta = user.numtarjeta;
       const contrasenia = user.contrasenia;
-      console.log(user)
+      console.log("on onClickProfileUser ",user)
       this.props.history.push({ pathname: "/ProfileUser/", state: { phone: phone, nombre: nombre, apellido: apellido, email: email, tarjeta: tarjeta, contrasenia: contrasenia } })
     })
   };
@@ -261,10 +298,24 @@ class PersistentDrawerLeft extends React.Component {
   onClickTripUser = (e) => {
     e.preventDefault()
     const phone = this.state.phone;
-    axios.get(`http://localhost:5000/user/${phone}/`).then(res => {
+    axios.get(`http://localhost:5000/services/user/all/${phone}/`).then(res => {
       const user = res.data;
-      console.log(user)
+      console.log("on onClickTripUser ", user)
       this.props.history.push({ pathname: "/TripsUser/", state: { phone: phone}})})
+  };
+
+  onClickCloseSession = (e) => {
+    e.preventDefault()
+      this.setState({
+        phone: this.props.location.state.phone,
+        origen: {lat:true, lng:true},
+        destino: {lat:true, lng:true},
+        searching:false,
+        interval: null,
+        interval2: null,
+        idservicio: null,
+        onService: false,})
+      this.props.history.push({ pathname: "/"})
   };
 
   /*Check for a request*/ 

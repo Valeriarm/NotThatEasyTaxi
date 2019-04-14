@@ -64,7 +64,7 @@ app.get(`/user/:phone/`, [
 
 //Actualiza un usuario recibiendo, telefono, contrasenia, nombre
 //apellido, correo y tarjeta de credito 
-app.patch(`/user/:phone/:psword/:name/:lastname/:mail/:credcard`, [
+app.put(`/user/:phone/:psword/:name/:lastname/:mail/:credcard`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`psword`).isLength({ min: 8 }),
   check(`name`).isAlpha(),
@@ -85,7 +85,7 @@ app.get(`/user/:phone/:psword`, [
 ], (req, res) => crudUser.validateUser(req, res, validationResult, db))
 
 //Paga los servicios de un usuario recibiendo su telefono
-app.patch(`/user/:phone/`, [
+app.put(`/user/:phone/`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`psword`).isLength({ min: 8 })
 ],(req,res) => crudUser.payUser(req, res, validationResult, db))
@@ -121,7 +121,7 @@ app.get(`/driver/:phone/`, [
 
 //Actualiza un Conductor recibiendo, telefono, contrasenia, nombre
 //apellido, mail y numero de cuenta
-app.patch(`/driver/:phone/:psword/:name/:lastname/:mail/:bankacc`, [
+app.put(`/driver/:phone/:psword/:name/:lastname/:mail/:bankacc`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`psword`).isLength({ min: 8 }),
   check(`name`).isAlpha(),
@@ -149,7 +149,7 @@ app.get(`/driver/taxi/:phone/:placa`, [
 ], (req, res) => crudDriver.validateManejar(req, res, validationResult, db))
 
 //Redime los kilometros de un conductor recibiendo su telefono
-app.patch(`/driver/:phone`, [
+app.put(`/driver/:phone`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
 ], (req, res) => crudDriver.redeemDriver(req, res, validationResult, db))
 
@@ -185,7 +185,7 @@ app.get(`/taxi/:placa/`, [
 
 //Actualiza un Taxi recibiendo, placa, marca, modelo, anio
 //baul, soat y, ocupado
-app.patch(`/taxi/:placa/:soat`, [
+app.put(`/taxi/:placa/:soat`, [
   check(`placa`).custom(value => validations.validatePlaque(value)),
   check(`soat`).custom(value => validations.validateFecha(value)),
 ])
@@ -226,11 +226,21 @@ app.get(`/request/user/:phone`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 })
 ], (req, res) => crudRequest.readRequestUser(req, res, validationResult, db))
 
+//Revisa solicitudes canceladas
+app.get(`/request/canceled/user/:idrequest`, [
+  check(`idrequest`).isNumeric()
+], (req, res) => crudRequest.readCanceledRequestUser(req, res, validationResult, db))
+
 //Busca por solicitudes activas conductor
 app.get(`/request/drivers/taxi/:phone/:placa`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
-  check(`placa`).custom(value => validations.validateFecha(value)),
-], (req, res) => crudRequest.readRequesDriver(req, res, validationResult, db))
+  check(`placa`).custom(value => validations.validatePlaque(value)),
+], (req, res) => crudRequest.readRequestDriver(req, res, validationResult, db))
+
+//Cancela solicitud
+app.put(`/reject/request/user/:phone`, [
+  check(`phone`).isNumeric().isLength({ min: 10, max: 10 })
+], (req, res) => crudRequest.cancelRequest(req, res, validationResult, db))
 
 
 
@@ -263,21 +273,21 @@ app.get(`/service/finished/:idservice`, [
 ], (req, res) => crudService.readServiceFinished(req, res, validationResult, db))
 
 //El Usuario modifica el servicio para ponerle la calificacion al conductor
-app.patch(`/service/user/:phone/:score`, [
+app.put(`/service/user/:phone/:score`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`score`).isFloat().custom(value => validations.validateScore(value)),
 ], (req, res) => crudService.updateServiceUsercore(req, res, validationResult, db))
 
 //El Conductor modifica el servicio para ponerle la calificacion al usuario
-app.patch(`/service/drivers/:phone/:score`, [
+app.put(`/service/drivers/:phone/:score`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
   check(`score`).isFloat().custom(value => validations.validateScore(value)),
 ], (req, res) => crudService.updateServiceDriverScore(req, res, validationResult, db))
 
 //Terminar un servicio
-app.put(`/service/drivers/end/:phone`, [
+app.put(`/service/end/:phone`, [
   check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
-], (req, res) => crudService.updateServiceFinsh(req, res, validationResult, db))
+], (req, res) => crudService.updateServiceFinshed(req, res, validationResult, db))
 
 //Obtiene todos los servicios que ha tenido un usuario
 app.get(`/services/user/all/:phone`,[

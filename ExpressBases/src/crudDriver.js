@@ -115,7 +115,7 @@ var validateDriver =(req, res, validationResult, db) => {
 };
 
 //Valida si un conductor puede manejar un taxi
-var validateManejar = (req, res, validationResultm, db) => {
+var validateManejar = (req, res, validationResult, db) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log({ errors: errors.array() })
@@ -145,8 +145,8 @@ var redeemDriver =(req, res, validationResult, db) => {
 	const phone = req.params.phone;
 	db.one(`SELECT redimir_kilometros($1)`, [escape(phone)])
 		.then(function (data) {
-		console.log(`DATA:`, data.validar_conductor)
-		res.send(JSON.stringify(data.validar_conductor))
+		console.log(`DATA:`, data.redimir_kilometros)
+		res.send(JSON.stringify(data.redimir_kilometros))
 		})
 		.catch(function (error) {
 		console.log(`ERROR:`, error)
