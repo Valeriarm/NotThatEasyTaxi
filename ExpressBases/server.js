@@ -86,8 +86,7 @@ app.get(`/user/:phone/:psword`, [
 
 //Paga los servicios de un usuario recibiendo su telefono
 app.put(`/user/:phone/`, [
-  check(`phone`).isNumeric().isLength({ min: 10, max: 10 }),
-  check(`psword`).isLength({ min: 8 })
+  check(`phone`).isNumeric().isLength({ min: 10, max: 10 })
 ],(req,res) => crudUser.payUser(req, res, validationResult, db))
 
 

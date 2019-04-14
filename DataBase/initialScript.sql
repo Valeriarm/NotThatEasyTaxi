@@ -180,19 +180,13 @@ BEGIN
     WITH kilometros_por_servicio AS (
             SELECT telefonoConductor, ST_Distance(puntoPartida, puntoLlegada) AS kilometros FROM
             conductor INNER JOIN servicio ON conductor = telefonoConductor
-            WHERE telefonoConductor = phone AND conductor_pago = FALSE), 
-        kilometros_totales_conductor AS (
-            SELECT telefonoConductor, SUM(kilometros) AS kilometros_totales FROM kilometros_por_servicio 
-            WHERE telefonoConductor = phone),
-        kilometros_redimir AS(
-            SELECT telefonoConductor, kilometros_totales FROM kilometros_totales_conductor 
-            WHERE kilometros_totales >= 20 AND telefonoConductor = phone)
-        SELECT * FROM kilometros_redimir)
+            WHERE telefonoConductor = phone AND conductor_pago = FALSE)
+		SELECT * FROM kilometros_por_servicio)
 		THEN UPDATE servicio SET conductor_pago = TRUE 
-        WHERE conductor = telefonoConductor AND conductor_pago = FALSE;
+        WHERE conductor = phone AND conductor_pago = FALSE;
         RETURN 'Kilometros redimidos con exito';
     END IF;
-    RETURN 'Kilometros insuficientes, debe tener un minimo de 20 km para redimirlos';
+    RETURN 'No tiene kilometros a redimir';
 END;
 $$
 LANGUAGE plpgsql;
@@ -203,15 +197,12 @@ DECLARE
 BEGIN
     IF EXISTS(
     WITH kilometros_por_servicio AS (
-            SELECT telefonoConductor, ST_Distance(puntoPartida, puntoLlegada) AS kilometros FROM
-            conductor INNER JOIN servicio ON conductor = telefonoConductor
-            WHERE telefonoConductor = phone AND usuario_pago = FALSE), 
-        kilometros_totales_usuario AS (
-            SELECT telefonoConductor, SUM(kilometros) AS kilometros_totales FROM kilometros_por_servicio 
-            WHERE telefonoConductor = phone)
-        SELECT * FROM kilometros_totales_usuario)
+            SELECT telefonoconductor, ST_Distance(puntoPartida, puntoLlegada) AS kilometros FROM
+            conductor INNER JOIN servicio ON conductor = telefonoconductor
+            WHERE telefonoconductor = phone AND usuario_pago = FALSE)
+        SELECT * FROM kilometros_por_servicio)
 		THEN UPDATE servicio SET usuario_pago = TRUE 
-        WHERE conductor = telefonoConductor AND usuario_pago = FALSE;
+        WHERE conductor = phone AND usuario_pago = FALSE;
         RETURN 'Kilometros pagados con exito';
     END IF;
     RETURN 'No tiene deudas con la empresa para pagar';
