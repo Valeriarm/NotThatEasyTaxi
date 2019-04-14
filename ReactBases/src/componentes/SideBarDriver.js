@@ -9,6 +9,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import Person from '@material-ui/icons/Person';
 import Check from '@material-ui/icons/Check';
 import Money from '@material-ui/icons/AttachMoney';
+import BankAcc from '@material-ui/icons/AccountBalance'
 import LocalTaxi from '@material-ui/icons/LocalTaxi';
 import { purple, deepPurple } from '@material-ui/core/colors';
 import {
@@ -323,6 +324,14 @@ class PersistentDrawerLeft extends React.Component {
     }
   }
 
+  onClickPaidTravels = () => {
+    const phone = this.state.phone;
+    axios.put(`http://localhost:5000/driver/${phone}`).then(res => {
+        const paid = res.data;
+        console.log(paid);
+      })
+  }
+
   render() {
 
     const { classes, theme } = this.props;
@@ -397,6 +406,12 @@ class PersistentDrawerLeft extends React.Component {
               <NavigationIcon />
             </ListItemIcon>
             <ListItemText primary="Viajes" />
+          </ListItem>
+          <ListItem button onClick={this.onClickPaidTravels}>
+            <ListItemIcon>
+              <BankAcc />
+            </ListItemIcon>
+            <ListItemText primary="Redeem Travels" />
           </ListItem>
           <ListItem button onClick={this.onClickCloseSession}>
             <ListItemIcon>

@@ -7,6 +7,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import CustomMap from './Mapa';
 import HomeIcon from'@material-ui/icons/Home';
+import Money from '@material-ui/icons/CreditCard';
 import Person from '@material-ui/icons/Person';
 import Check from '@material-ui/icons/Check';
 import Add from '@material-ui/icons/Add';
@@ -318,18 +319,13 @@ class PersistentDrawerLeft extends React.Component {
       this.props.history.push({ pathname: "/"})
   };
 
-  /*Check for a request*/ 
-  /*
-     checkForDriver = setInterval(()=>{
+  onClickPaidTravels = () => {
     const phone = this.state.phone;
-    axios.get(`http://localhost:5000/users/request/${phone}`).then(res => {
-        const persons = res.data;
-        console.log(persons);
+    axios.put(`http://localhost:5000/user/${phone}`).then(res => {
+        const paid = res.data;
+        console.log(paid);
       })
-  }, 1000)
-
-  */
- 
+  }
 
   handleItemClick = (e) => {console.log(e.target.innerHTML)}
 
@@ -402,7 +398,13 @@ class PersistentDrawerLeft extends React.Component {
           </ListItemIcon>
           <ListItemText primary="Viajes" />
         </ListItem>
-        <ListItem button onClick={this.onClickCloseSession}>
+        <ListItem button onClick={this.onClickTripUser}>
+          <ListItemIcon>
+          <Money/>
+          </ListItemIcon>
+          <ListItemText primary="Paid Travels" />
+        </ListItem>
+        <ListItem button onClick={this.onClickPaidTravels}>
             <ListItemIcon>
               <ExitToApp/>
             </ListItemIcon>
