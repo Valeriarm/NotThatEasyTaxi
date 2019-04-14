@@ -36,7 +36,7 @@ var readUser = (req, res, validationResult, db) => {
     return res.send(JSON.stringify("Credenciales invalidas"));
   }
   const phone = req.params.phone;
-  db.one(`SELECT * FROM conductor WHERE telefonousuario= $1`, [escape(phone)])
+  db.one(`SELECT * FROM usuario WHERE telefonousuario= $1`, [escape(phone)])
     .then(function (data) {
       console.log(data)
       res.send(JSON.stringify(data))
