@@ -9,6 +9,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import Person from '@material-ui/icons/Person';
 import Check from '@material-ui/icons/Check';
 import Money from '@material-ui/icons/AttachMoney';
+import BankAcc from '@material-ui/icons/AccountBalance'
 import LocalTaxi from '@material-ui/icons/LocalTaxi';
 import { purple, deepPurple } from '@material-ui/core/colors';
 import {
@@ -184,7 +185,7 @@ class PersistentDrawerLeft extends React.Component {
     axios.get(`http://localhost:5000/services/driver/all/${phone}/`).then(res => {
       const travels = res.data;
       console.log("on onClickTripUser ", travels)
-      this.props.history.push({ pathname: "/TripsUser/", state: { phone: phone, travels:travels}})})
+      this.props.history.push({ pathname: "/TripsDriver/", state: { phone: phone, travels:travels}})})
   }
 
   onClickCloseSession = (e) => {
@@ -323,6 +324,19 @@ class PersistentDrawerLeft extends React.Component {
     }
   }
 
+  onClickPaidTravels = () => {
+    const phone = this.state.phone;
+    axios.put(`http://localhost:5000/driver/${phone}`).then(res => {
+        const paid = res.data;
+        console.log(paid);
+        if (paid==='Kilometros redimidos con exito'){
+          alert('Kilometros redimidos con exito')
+        }else{
+          alert('No hay viajes a redimir')
+        }
+      })
+  }
+
   render() {
 
     const { classes, theme } = this.props;
@@ -397,6 +411,12 @@ class PersistentDrawerLeft extends React.Component {
               <NavigationIcon />
             </ListItemIcon>
             <ListItemText primary="Viajes" />
+          </ListItem>
+          <ListItem button onClick={this.onClickPaidTravels}>
+            <ListItemIcon>
+              <BankAcc />
+            </ListItemIcon>
+            <ListItemText primary="Redeem Travels" />
           </ListItem>
           <ListItem button onClick={this.onClickCloseSession}>
             <ListItemIcon>

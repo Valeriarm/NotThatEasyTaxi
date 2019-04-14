@@ -123,7 +123,6 @@ var payUser = (req, res, validationResult, db) => {
     return res.send(JSON.stringify("Credenciales invalidas"));
   }
   const phone = req.params.phone;
-  console.log(phone + "-" + psword)
   db.one(`SELECT pagar_kilometros($1)`, [escape(phone)])
     .then(function (data) {
       console.log(`DATA:`, data.pagar_kilometros)

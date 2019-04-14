@@ -285,7 +285,7 @@ class PersistentDrawerLeft extends React.Component {
           })}
         >
           <div className={classes.drawerHeader} />
-          <img src={fondo} className={classes.background} />
+          <img src={fondo} alt="" className={classes.background} />
         <CssBaseline />
         <Paper className={classes.paper}>
           <Avatar className={classes.avatar}>
