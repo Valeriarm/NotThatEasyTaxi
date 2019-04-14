@@ -185,7 +185,7 @@ class PersistentDrawerLeft extends React.Component {
     axios.get(`http://localhost:5000/services/driver/all/${phone}/`).then(res => {
       const travels = res.data;
       console.log("on onClickTripUser ", travels)
-      this.props.history.push({ pathname: "/TripsUser/", state: { phone: phone, travels:travels}})})
+      this.props.history.push({ pathname: "/TripsDriver/", state: { phone: phone, travels:travels}})})
   }
 
   onClickCloseSession = (e) => {
