@@ -24,7 +24,7 @@ import fondo from './images/fondo.png';
 import Search from '@material-ui/icons/Search';
 import Avatar from '@material-ui/core/Avatar';
 import NavigationIcon from '@material-ui/icons/Navigation';
-
+import axios from 'axios';
 
 
 const drawerWidth = 240;
@@ -170,6 +170,39 @@ class PersistentDrawerLeft extends React.Component {
     this.setState({ open: false });
   };
 
+  onClickProfileUser = (e) => {
+    e.preventDefault()
+    const phone = this.state.phone;
+    axios.get(`http://localhost:5000/user/${phone}/`).then(res => {
+      const user = res.data;
+      const nombre = user.nombreusuario;
+      const apellido = user.apellidousuario;
+      const email = user.email;
+      const tarjeta = user.numtarjeta;
+      const contrasenia = user.contrasenia;
+      console.log("on onClickProfileUser ",user)
+      this.props.history.push({ pathname: "/ProfileUser/", state: { phone: phone, nombre: nombre, apellido: apellido, email: email, tarjeta: tarjeta, contrasenia: contrasenia } })
+    })
+  };
+
+  onClickSideBar = (e) => {
+    e.preventDefault()
+    this.props.history.push({ pathname: "/SideBar/", state: { phone: this.state.phone } })
+  }
+
+  onClickCloseSession = (e) => {
+    e.preventDefault()
+      this.setState({
+        phone: this.props.location.state.phone,
+        origen: {lat:true, lng:true},
+        destino: {lat:true, lng:true},
+        searching:false,
+        interval: null,
+        interval2: null,
+        idservicio: null,
+        onService: false,})
+      this.props.history.push({ pathname: "/"})
+  };
 
   render() {
 
@@ -227,23 +260,23 @@ class PersistentDrawerLeft extends React.Component {
             </ListItemIcon>
             <ListItemText primary="Inicio" />
           </ListItem>
-          <ListItem button onClick={this.onClickProfileDriver}>
+          <ListItem button onClick={this.onClickProfileUser}>
             <ListItemIcon>
               <Person />
             </ListItemIcon>
             <ListItemText primary="Perfil" />
-          </ListItem>
-          <ListItem button onClick={this.onClickTaxi}>
-            <ListItemIcon>
-              <NavigationIcon />
-            </ListItemIcon>
-            <ListItemText primary="Taxi" />
           </ListItem>
           <ListItem button onClick={this.onClickTrips}>
             <ListItemIcon>
               <NavigationIcon />
             </ListItemIcon>
             <ListItemText primary="Viajes" />
+          </ListItem>
+          <ListItem button onClick={this.onClickCloseSession}>
+            <ListItemIcon>
+              <ExitToApp />
+            </ListItemIcon>
+            <ListItemText primary="Log Out" />
           </ListItem>
         </Drawer>
         <main

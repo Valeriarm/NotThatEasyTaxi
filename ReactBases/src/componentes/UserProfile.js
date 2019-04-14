@@ -20,12 +20,12 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import { Paper, Fab } from '@material-ui/core';
-import SimpleCard from './uploadImage';
 import EditIcon from '@material-ui/icons/Edit';
 import ExitToApp from '@material-ui/icons/ExitToApp';
 import perfilUsuario from './images/businessman.png';
 import axios from 'axios';
 import NavigationIcon from '@material-ui/icons/Navigation';
+import Check from '@material-ui/icons/Check';
 
 
 const drawerWidth = 240;
@@ -145,21 +145,42 @@ class PersistentDrawerLeft extends React.Component {
     this.setState({ open: false });
   };
 
-  handleClick = () => {
-    this.console.log("funciona");
-
-  };
-
   onClickProfileUser = (e) => {
     e.preventDefault()
-    this.props.history.push({ pathname: "/ProfileUser/", state: { phone: this.state.phone } })
-  }
-
+    const phone = this.state.phone;
+    axios.get(`http://localhost:5000/user/${phone}/`).then(res => {
+      const user = res.data;
+      const nombre = user.nombreusuario;
+      const apellido = user.apellidousuario;
+      const email = user.email;
+      const tarjeta = user.numtarjeta;
+      const contrasenia = user.contrasenia;
+      console.log("on onClickProfileUser ",user)
+      this.props.history.push({ pathname: "/ProfileUser/", state: { phone: phone, nombre: nombre, apellido: apellido, email: email, tarjeta: tarjeta, contrasenia: contrasenia } })
+    })
+  };
+  
   onClickSideBar = (e) => {
     e.preventDefault()
     this.props.history.push({ pathname: "/SideBar/", state: { phone: this.state.phone } })
   }
+  onHandleChange = name => event => {
+    this.setState({ [name]: event.target.value })
+  }
 
+  onClickCloseSession = (e) => {
+    e.preventDefault()
+      this.setState({
+        phone: this.props.location.state.phone,
+        origen: {lat:true, lng:true},
+        destino: {lat:true, lng:true},
+        searching:false,
+        interval: null,
+        interval2: null,
+        idservicio: null,
+        onService: false,})
+      this.props.history.push({ pathname: "/"})
+  };
 
   onClickModify = (e) => {
     e.preventDefault()
@@ -251,6 +272,12 @@ class PersistentDrawerLeft extends React.Component {
           </ListItemIcon>
           <ListItemText primary="Viajes" />
         </ListItem> 
+        <ListItem button onClick={this.onClickCloseSession}>
+            <ListItemIcon>
+              <ExitToApp />
+            </ListItemIcon>
+            <ListItemText primary="Log Out" />
+          </ListItem>
         </Drawer>
         <main
           className={classNames(classes.content, {
@@ -272,6 +299,7 @@ class PersistentDrawerLeft extends React.Component {
                   readOnly: this.state.lock,
                 }}
                 defaultValue={this.state.nombre}
+                onChange={this.onHandleChange('nombre')}
               />
               <TextField
                 id="standard-error"
@@ -282,6 +310,7 @@ class PersistentDrawerLeft extends React.Component {
                   readOnly:  this.state.lock,
                 }}
                 defaultValue={this.state.apellido}
+                onChange={this.onHandleChange('apellido')}
               />
               <TextField
                 id="standard-error"
@@ -304,6 +333,7 @@ class PersistentDrawerLeft extends React.Component {
                   readOnly:  this.state.lock,
                 }}
                 defaultValue={this.state.tarjeta}
+                onChange={this.onHandleChange('tarjeta')}
               />
               <TextField
                 id="standard-error"
@@ -316,8 +346,8 @@ class PersistentDrawerLeft extends React.Component {
                 defaultValue={this.state.email}
               />
             </div> 
-              <Fab color="primary" aria-label="Edit" className={classes.textField} >
-                <EditIcon />
+              <Fab color="primary" aria-label="Edit" className={classes.textField} onClick={this.onClickModify}>
+              {this.state.lock ? <EditIcon/> : <Check/> }
               </Fab>
           </Paper>
 
