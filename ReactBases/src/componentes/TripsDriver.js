@@ -24,6 +24,8 @@ import Search from '@material-ui/icons/Search';
 import Paper from '@material-ui/core/Paper';
 import Avatar from '@material-ui/core/Avatar';
 import NavigationIcon from '@material-ui/icons/Navigation';
+import BankAcc from '@material-ui/icons/AccountBalance';
+import LocalTaxi  from '@material-ui/icons/LocalTaxi';
 
 
 
@@ -235,7 +237,7 @@ class PersistentDrawerLeft extends React.Component {
           </ListItem>
           <ListItem button onClick={this.onClickTaxi}>
             <ListItemIcon>
-              <NavigationIcon />
+              <LocalTaxi />
             </ListItemIcon>
             <ListItemText primary="Taxi" />
           </ListItem>
@@ -244,6 +246,18 @@ class PersistentDrawerLeft extends React.Component {
               <NavigationIcon />
             </ListItemIcon>
             <ListItemText primary="Viajes" />
+          </ListItem>
+          <ListItem button onClick={this.onClickPaidTravels}>
+            <ListItemIcon>
+              <BankAcc />
+            </ListItemIcon>
+            <ListItemText primary="Redeem Travels" />
+          </ListItem>
+          <ListItem button onClick={this.onClickCloseSession}>
+            <ListItemIcon>
+              <ExitToApp/>
+            </ListItemIcon>
+            <ListItemText primary="Log Out" />
           </ListItem>
         </Drawer>
         <main
