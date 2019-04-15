@@ -16,7 +16,8 @@ Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar ,
 Toolbar, withStyles } from '@material-ui/core';
 import fondo from './images/fondo.png';
 import NavigationIcon from '@material-ui/icons/Navigation';
-
+import BankAcc from '@material-ui/icons/AccountBalance';
+import axios from 'axios';
 
 
 const drawerWidth = 240;
@@ -175,19 +176,64 @@ class PersistentDrawerLeft extends React.Component {
     this.setState({ open: false });
   };
 
-  onClickProfileUser = (e) => {
+  onClickProfileDriver = (e) => {
     e.preventDefault()
-      this.props.history.push({pathname:"/ProfileDriver/", state:{phone: this.state.phone}})
+    const phone = this.state.phone;
+    axios.get(`http://localhost:5000/driver/${phone}/`).then(res => {
+      const driver = res.data;
+      const nombre = driver.nombreconductor;
+      const apellido = driver.apellidoconductor;
+      const email = driver.email;
+      const numcuenta = driver.numcuenta;
+      const contrasenia = driver.contrasenia;
+      console.log(driver)
+      this.props.history.push({ pathname: "/ProfileDriver/", state: { phone: phone, nombre: nombre, apellido: apellido, email: email, numcuenta: numcuenta, contrasenia: contrasenia } })
+    })
   };
+
+  onClickPaidTravels = () => {
+    const phone = this.state.phone;
+    axios.put(`http://localhost:5000/driver/${phone}`).then(res => {
+        const paid = res.data;
+        console.log(paid);
+        if (paid==='Kilometros redimidos con exito'){
+          alert('Kilometros redimidos con exito')
+        }else{
+          alert('No hay viajes a redimir')
+        }
+      })
+  }
 
   onClickSideBar = (e) => {
     e.preventDefault()
-    this.props.history.push({pathname:"/SideBarDriver/", state:{phone: this.state.phone}})
+    this.props.history.push({ pathname: "/SideBarDriver/", state: { phone: this.state.phone } })
   };
 
   onClickTaxi = (e) => {
     e.preventDefault()
-    this.props.history.push({pathname:"/Taxi/", state:{phone: this.state.phone}})
+    this.props.history.push({ pathname: "/Taxi/", state: { phone: this.state.phone } })
+  };
+
+  onClickTrips = (e) => {
+    e.preventDefault()
+    const phone = this.state.phone;
+    axios.get(`http://localhost:5000/services/driver/all/${phone}/`).then(res => {
+      const travels = res.data;
+      console.log("on onClickTripUser ", travels)
+      this.props.history.push({ pathname: "/TripsDriver/", state: { phone: phone, travels:travels}})})
+  }
+
+  onClickCloseSession = (e) => {
+    e.preventDefault()
+      this.setState({
+        phone: this.props.location.state.phone,
+        placa: true,
+        posicionActual: { lat: true, lng: true },
+        idrequest: true,
+        iniciarServicio: false,
+        interval:null,
+        onService:false,})
+      this.props.history.push({ pathname: "/"})
   };
 
   onClickAddTaxi = (e) => {
@@ -199,10 +245,7 @@ class PersistentDrawerLeft extends React.Component {
     e.preventDefault()
     this.props.history.push({pathname:"/RegisterTaxi/", state:{phone: this.state.phone}})
   };
-  onClickTrips = (e) => {
-    e.preventDefault()
-    this.props.history.push({ pathname: "/TripsDriver/", state: { phone: this.state.phone } })
-  }
+
   onClickSearchTaxi = (e) => {
     e.preventDefault()
     this.props.history.push({pathname:"/SearchTaxi/", state:{phone: this.state.phone}})
@@ -236,12 +279,6 @@ class PersistentDrawerLeft extends React.Component {
             <Typography variant="h6" color="inherit" noWrap className={classes.titleLabel}>
               Not That Easy Taxi
             </Typography>
-            <IconButton
-              color = "inherit"
-              className={classes.logOutButton}
-            >
-              <ExitToApp/>
-            </IconButton>
           </Toolbar>
         </AppBar>
         <Drawer
@@ -261,28 +298,40 @@ class PersistentDrawerLeft extends React.Component {
           </div>
           <Divider />
           <ListItem button onClick={this.onClickSideBar}>
-          <ListItemIcon>
-          <HomeIcon/>
-          </ListItemIcon>
-          <ListItemText primary="Inicio" />
-        </ListItem>
-        <ListItem button onClick={this.onClickProfileUser}>
-          <ListItemIcon>
-          <Person/>
-          </ListItemIcon>
-          <ListItemText primary="Perfil" />
-        </ListItem>
-        <ListItem button  onClick = {this.onClickTaxi}>
-          <ListItemIcon>
-          <LocalTaxi/>
-          </ListItemIcon>
-          <ListItemText primary="Taxi" />
-        </ListItem>
-        <ListItem button onClick={this.onClickTrips}>
+            <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
+            <ListItemText primary="Inicio" />
+          </ListItem>
+          <ListItem button onClick={this.onClickProfileDriver}>
+            <ListItemIcon>
+              <Person />
+            </ListItemIcon>
+            <ListItemText primary="Perfil" />
+          </ListItem>
+          <ListItem button onClick={this.onClickTaxi}>
+            <ListItemIcon>
+              <LocalTaxi />
+            </ListItemIcon>
+            <ListItemText primary="Taxi" />
+          </ListItem>
+          <ListItem button onClick={this.onClickTrips}>
             <ListItemIcon>
               <NavigationIcon />
             </ListItemIcon>
             <ListItemText primary="Viajes" />
+          </ListItem>
+          <ListItem button onClick={this.onClickPaidTravels}>
+            <ListItemIcon>
+              <BankAcc />
+            </ListItemIcon>
+            <ListItemText primary="Redeem Travels" />
+          </ListItem>
+          <ListItem button onClick={this.onClickCloseSession}>
+            <ListItemIcon>
+              <ExitToApp/>
+            </ListItemIcon>
+            <ListItemText primary="Log Out" />
           </ListItem>
         </Drawer>
         <main

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -23,7 +24,9 @@ import Search from '@material-ui/icons/Search';
 import Paper from '@material-ui/core/Paper';
 import Avatar from '@material-ui/core/Avatar';
 import NavigationIcon from '@material-ui/icons/Navigation';
-
+import BankAcc from '@material-ui/icons/AccountBalance';
+import LocalTaxi  from '@material-ui/icons/LocalTaxi';
+import axios from 'axios';
 
 
 const drawerWidth = 240;
@@ -169,6 +172,65 @@ class PersistentDrawerLeft extends React.Component {
     this.setState({ open: false });
   };
 
+  onClickProfileDriver = (e) => {
+    e.preventDefault()
+    const phone = this.state.phone;
+    axios.get(`http://localhost:5000/driver/${phone}/`).then(res => {
+      const driver = res.data;
+      const nombre = driver.nombreconductor;
+      const apellido = driver.apellidoconductor;
+      const email = driver.email;
+      const numcuenta = driver.numcuenta;
+      const contrasenia = driver.contrasenia;
+      console.log(driver)
+      this.props.history.push({ pathname: "/ProfileDriver/", state: { phone: phone, nombre: nombre, apellido: apellido, email: email, numcuenta: numcuenta, contrasenia: contrasenia } })
+    })
+  };
+
+  onClickPaidTravels = () => {
+    const phone = this.state.phone;
+    axios.put(`http://localhost:5000/driver/${phone}`).then(res => {
+        const paid = res.data;
+        console.log(paid);
+        if (paid==='Kilometros redimidos con exito'){
+          alert('Kilometros redimidos con exito')
+        }else{
+          alert('No hay viajes a redimir')
+        }
+      })
+  }
+
+  onClickSideBar = (e) => {
+    e.preventDefault()
+    this.props.history.push({ pathname: "/SideBarDriver/", state: { phone: this.state.phone } })
+  };
+
+  onClickTaxi = (e) => {
+    e.preventDefault()
+    this.props.history.push({ pathname: "/Taxi/", state: { phone: this.state.phone } })
+  };
+
+  onClickTrips = (e) => {
+    e.preventDefault()
+    const phone = this.state.phone;
+    axios.get(`http://localhost:5000/services/driver/all/${phone}/`).then(res => {
+      const travels = res.data;
+      console.log("on onClickTripUser ", travels)
+      this.props.history.push({ pathname: "/TripsDriver/", state: { phone: phone, travels:travels}})})
+  }
+
+  onClickCloseSession = (e) => {
+    e.preventDefault()
+      this.setState({
+        phone: this.props.location.state.phone,
+        placa: true,
+        posicionActual: { lat: true, lng: true },
+        idrequest: true,
+        iniciarServicio: false,
+        interval:null,
+        onService:false,})
+      this.props.history.push({ pathname: "/"})
+  };
 
   render() {
 
@@ -196,12 +258,6 @@ class PersistentDrawerLeft extends React.Component {
             <Typography variant="h6" color="inherit" noWrap className={classes.titleLabel}>
               Not That Easy Taxi
             </Typography>
-            <IconButton
-              color="inherit"
-              className={classes.logOutButton}
-            >
-              <ExitToApp />
-            </IconButton>
           </Toolbar>
         </AppBar>
         <Drawer
@@ -234,7 +290,7 @@ class PersistentDrawerLeft extends React.Component {
           </ListItem>
           <ListItem button onClick={this.onClickTaxi}>
             <ListItemIcon>
-              <NavigationIcon />
+              <LocalTaxi />
             </ListItemIcon>
             <ListItemText primary="Taxi" />
           </ListItem>
@@ -243,6 +299,18 @@ class PersistentDrawerLeft extends React.Component {
               <NavigationIcon />
             </ListItemIcon>
             <ListItemText primary="Viajes" />
+          </ListItem>
+          <ListItem button onClick={this.onClickPaidTravels}>
+            <ListItemIcon>
+              <BankAcc />
+            </ListItemIcon>
+            <ListItemText primary="Redeem Travels" />
+          </ListItem>
+          <ListItem button onClick={this.onClickCloseSession}>
+            <ListItemIcon>
+              <ExitToApp/>
+            </ListItemIcon>
+            <ListItemText primary="Log Out" />
           </ListItem>
         </Drawer>
         <main

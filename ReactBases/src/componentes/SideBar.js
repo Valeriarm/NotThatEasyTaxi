@@ -14,7 +14,7 @@ import Add from '@material-ui/icons/Add';
 import {purple, deepPurple} from '@material-ui/core/colors';
 import { InputLabel, FormControl, Input, Fab, ListItemIcon, ListItemText ,
 Divider, ListItem, Typography, IconButton , CssBaseline, Drawer, AppBar , 
-Toolbar, withStyles } from '@material-ui/core';
+Toolbar, withStyles, Select } from '@material-ui/core';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import axios from 'axios';
 import NavigationIcon from '@material-ui/icons/Navigation';
@@ -99,6 +99,7 @@ const styles = theme => ({
   },
   submit: {
     marginTop: theme.spacing.unit * 2,
+    width: 200,
   },
   cssLabel: {
     '&$cssFocused': {
@@ -121,7 +122,10 @@ const styles = theme => ({
     marginTop: theme.spacing.unit*-13,
     marginLeft: theme.spacing.unit*45,
   },
-
+  favoritosD: {
+    marginTop: theme.spacing.unit*-6,
+    marginLeft: theme.spacing.unit*85,
+  },
   menuFavoritos:{
     marginTop: theme.spacing.unit*-2,
     marginLeft: theme.spacing.unit*90,
@@ -353,11 +357,6 @@ class PersistentDrawerLeft extends React.Component {
             <Typography variant="h6" color="inherit" noWrap className={classes.titleLabel}>
               Not That Easy Taxi
             </Typography>
-            <IconButton
-              color = "inherit"
-            >
-              <ExitToApp/>
-            </IconButton>
           </Toolbar>
         </AppBar>
         <Drawer
@@ -459,6 +458,20 @@ class PersistentDrawerLeft extends React.Component {
                 <Add />
             </Fab>
         </div>
+        <FormControl className={classes.favoritosD}>
+          <InputLabel htmlFor="">Destinos Favoritos</InputLabel>
+          <Select
+            value={this.state.age}
+            onChange={this.handleChange}
+            inputProps={{
+              name: 'favoritos',
+              id: 'Favoritos',
+            }}
+            margin = "dense"
+            className={classes.submit}
+          >
+          </Select>
+        </FormControl>
         </form>
         
         </main>

@@ -25,6 +25,7 @@ import Search from '@material-ui/icons/Search';
 import Avatar from '@material-ui/core/Avatar';
 import NavigationIcon from '@material-ui/icons/Navigation';
 import axios from 'axios';
+import Money from '@material-ui/icons/CreditCard';
 
 
 const drawerWidth = 240;
@@ -185,10 +186,14 @@ class PersistentDrawerLeft extends React.Component {
     })
   };
 
-  onClickSideBar = (e) => {
+  onClickTripUser = (e) => {
     e.preventDefault()
-    this.props.history.push({ pathname: "/SideBar/", state: { phone: this.state.phone } })
-  }
+    const phone = this.state.phone;
+    axios.get(`http://localhost:5000/services/user/all/${phone}/`).then(res => {
+      const travels = res.data;
+      console.log("on onClickTripUser ", travels)
+      this.props.history.push({ pathname: "/TripsUser/", state: { phone: phone, travels:travels}})})
+  };
 
   onClickCloseSession = (e) => {
     e.preventDefault()
@@ -203,6 +208,19 @@ class PersistentDrawerLeft extends React.Component {
         onService: false,})
       this.props.history.push({ pathname: "/"})
   };
+
+  onClickPaidTravels = () => {
+    const phone = this.state.phone;
+    axios.put(`http://localhost:5000/user/${phone}`).then(res => {
+        const paid = res.data;
+        console.log(paid);
+        if(paid === `Kilometros pagados con exito`){
+          alert(`Ha pagado los viajes`)
+        } else {
+          alert(`No hay viajes a pagar`)
+        }
+      })
+  }
 
   render() {
 
@@ -230,12 +248,6 @@ class PersistentDrawerLeft extends React.Component {
             <Typography variant="h6" color="inherit" noWrap className={classes.titleLabel}>
               Not That Easy Taxi
             </Typography>
-            <IconButton
-              color="inherit"
-              className={classes.logOutButton}
-            >
-              <ExitToApp />
-            </IconButton>
           </Toolbar>
         </AppBar>
         <Drawer
@@ -272,6 +284,12 @@ class PersistentDrawerLeft extends React.Component {
             </ListItemIcon>
             <ListItemText primary="Viajes" />
           </ListItem>
+          <ListItem button onClick={this.onClickPaidTravels}>
+          <ListItemIcon>
+          <Money/>
+          </ListItemIcon>
+          <ListItemText primary="Paid Travels" />
+        </ListItem>
           <ListItem button onClick={this.onClickCloseSession}>
             <ListItemIcon>
               <ExitToApp />
