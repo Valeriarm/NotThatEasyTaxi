@@ -26,7 +26,7 @@ import perfilUsuario from './images/businessman.png';
 import axios from 'axios';
 import NavigationIcon from '@material-ui/icons/Navigation';
 import Check from '@material-ui/icons/Check';
-
+import Money from '@material-ui/icons/CreditCard';
 
 const drawerWidth = 240;
 
@@ -160,6 +160,20 @@ class PersistentDrawerLeft extends React.Component {
     })
   };
 
+  onClickPaidTravels = () => {
+    const phone = this.state.phone;
+    axios.put(`http://localhost:5000/user/${phone}`).then(res => {
+        const paid = res.data;
+        console.log(paid);
+        if(paid === `Kilometros pagados con exito`){
+          alert(`Ha pagado los viajes`)
+        } else {
+          alert(`No hay viajes a pagar`)
+        }
+      })
+  }
+
+
   onClickSideBar = (e) => {
     e.preventDefault()
     this.props.history.push({ pathname: "/SideBar/", state: { phone: this.state.phone } })
@@ -232,11 +246,6 @@ class PersistentDrawerLeft extends React.Component {
             <Typography variant="h6" color="inherit" noWrap className={classes.titleLabel}>
               Not That Easy Taxi
             </Typography>
-            <IconButton
-              color="inherit"
-            >
-              <ExitToApp />
-            </IconButton>
           </Toolbar>
         </AppBar>
         <Drawer
@@ -273,6 +282,12 @@ class PersistentDrawerLeft extends React.Component {
           </ListItemIcon>
           <ListItemText primary="Viajes" />
         </ListItem> 
+        <ListItem button onClick={this.onClickPaidTravels}>
+          <ListItemIcon>
+          <Money/>
+          </ListItemIcon>
+          <ListItemText primary="Paid Travels" />
+        </ListItem>
         <ListItem button onClick={this.onClickCloseSession}>
             <ListItemIcon>
               <ExitToApp />
