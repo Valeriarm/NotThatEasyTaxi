@@ -27,6 +27,7 @@ import Check from '@material-ui/icons/Check';
 import axios from 'axios';
 import driver from './images/taxi-driver.png'
 import NavigationIcon from '@material-ui/icons/Navigation';
+import BankAcc from '@material-ui/icons/AccountBalance';
 
 const drawerWidth = 240;
 
@@ -162,11 +163,29 @@ class PersistentDrawerLeft extends React.Component {
     })
   };
 
+  onClickPaidTravels = () => {
+    const phone = this.state.phone;
+    axios.put(`http://localhost:5000/driver/${phone}`).then(res => {
+        const paid = res.data;
+        console.log(paid);
+        if (paid==='Kilometros redimidos con exito'){
+          alert('Kilometros redimidos con exito')
+        }else{
+          alert('No hay viajes a redimir')
+        }
+      })
+  }
 
   onClickSideBar = (e) => {
     e.preventDefault()
-    this.props.history.push({pathname:"/SideBarDriver/", state:{phone: this.state.phone}})
-  }
+    this.props.history.push({ pathname: "/SideBarDriver/", state: { phone: this.state.phone } })
+  };
+
+  onClickTaxi = (e) => {
+    e.preventDefault()
+    this.props.history.push({ pathname: "/Taxi/", state: { phone: this.state.phone } })
+  };
+
   onClickTrips = (e) => {
     e.preventDefault()
     const phone = this.state.phone;
@@ -174,12 +193,20 @@ class PersistentDrawerLeft extends React.Component {
       const travels = res.data;
       console.log("on onClickTripUser ", travels)
       this.props.history.push({ pathname: "/TripsDriver/", state: { phone: phone, travels:travels}})})
-  };
-
-  onClickTaxi = (e) => {
-    e.preventDefault()
-    this.props.history.push({pathname:"/Taxi/", state:{phone: this.state.phone}})
   }
+
+  onClickCloseSession = (e) => {
+    e.preventDefault()
+      this.setState({
+        phone: this.props.location.state.phone,
+        placa: true,
+        posicionActual: { lat: true, lng: true },
+        idrequest: true,
+        iniciarServicio: false,
+        interval:null,
+        onService:false,})
+      this.props.history.push({ pathname: "/"})
+  };
 
   onClickModify = (e) => {
     e.preventDefault()
@@ -248,28 +275,40 @@ class PersistentDrawerLeft extends React.Component {
           </div>
           <Divider />
           <ListItem button onClick={this.onClickSideBar}>
-          <ListItemIcon>
-          <HomeIcon/>
-          </ListItemIcon>
-          <ListItemText primary="Inicio" />
-        </ListItem>
-        <ListItem button onClick={this.onClickProfileDriver}>
-          <ListItemIcon>
-          <Person/>
-          </ListItemIcon>
-          <ListItemText primary="Perfil" />
-        </ListItem>
-        <ListItem button  onClick = {this.onClickTaxi}>
-          <ListItemIcon>
-          <LocalTaxi/>
-          </ListItemIcon>
-          <ListItemText primary="Taxi" />
-        </ListItem>
-        <ListItem button onClick={this.onClickTrips}>
+            <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
+            <ListItemText primary="Inicio" />
+          </ListItem>
+          <ListItem button onClick={this.onClickProfileDriver}>
+            <ListItemIcon>
+              <Person />
+            </ListItemIcon>
+            <ListItemText primary="Perfil" />
+          </ListItem>
+          <ListItem button onClick={this.onClickTaxi}>
+            <ListItemIcon>
+              <LocalTaxi />
+            </ListItemIcon>
+            <ListItemText primary="Taxi" />
+          </ListItem>
+          <ListItem button onClick={this.onClickTrips}>
             <ListItemIcon>
               <NavigationIcon />
             </ListItemIcon>
             <ListItemText primary="Viajes" />
+          </ListItem>
+          <ListItem button onClick={this.onClickPaidTravels}>
+            <ListItemIcon>
+              <BankAcc />
+            </ListItemIcon>
+            <ListItemText primary="Redeem Travels" />
+          </ListItem>
+          <ListItem button onClick={this.onClickCloseSession}>
+            <ListItemIcon>
+              <ExitToApp/>
+            </ListItemIcon>
+            <ListItemText primary="Log Out" />
           </ListItem>
         </Drawer>
         <main
