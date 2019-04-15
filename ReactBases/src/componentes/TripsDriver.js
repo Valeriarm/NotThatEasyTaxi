@@ -352,6 +352,7 @@ class PersistentDrawerLeft extends React.Component {
             </TableRow>
           </TableHead>
           <TableBody>
+            {console.log(this.state.travels)}
             {this.state.travels.map(travel => (
               <TableRow key={travel.idservicio}>
                 <TableCell component="th" scope="row">{travel.usuario}</TableCell>

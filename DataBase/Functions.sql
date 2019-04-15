@@ -231,15 +231,11 @@ DECLARE
 	tel_conductor VARCHAR(15) := (SELECT conductor FROM solicitud WHERE idsolicitud=id_solicitud AND activa=true);
 BEGIN
 	IF EXISTS (
-		SELECT * FROM servicio WHERE usuario = tel_usuario OR conductor = tel_conductor AND terminado=false
-	)THEN
-		RETURN 'No puede inicar un servicio si tiene otro activo';
-	END IF;
-	IF EXISTS (
 		SELECT * FROM solicitud WHERE idsolicitud=id_solicitud AND activa=true
 	)THEN 
 		INSERT INTO servicio VALUES (DEFAULT, tel_usuario, tel_conductor, placa_taxi,
 		NULL, NULL, origen, destino, horainicio, NULL, false, false, false);
+		UPDATE solicitud SET activa=false;
 		RETURN 'Servicio iniciado';
 	END IF;
 	RETURN 'No hay servicios activos';
