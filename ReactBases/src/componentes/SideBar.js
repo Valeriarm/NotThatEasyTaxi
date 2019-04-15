@@ -142,8 +142,8 @@ class PersistentDrawerLeft extends React.Component {
     interval2: null,
     interval3: null,
     idservicio: null,
-    onService: false,
     idsolicitud: null,
+    onService: false,
   };
 
   handleDrawerOpen = () => {
@@ -171,40 +171,50 @@ class PersistentDrawerLeft extends React.Component {
     this.setState({destino: destino, origen: origen})
   }
 
-  initCheck = () => {
-    this.setState({interval:setInterval(this.checkForService,3000)})
-    this.setState({interval3:setInterval(this.checkForCanceledRequest,3000)})
-  }
-
   checkForService = () => {
     const phone = this.state.phone;
     axios.get(`http://localhost:5000/service/user/${phone}`).then(res => {
       const response = res.data;
       if (response === `Buscando Servicio`){
-        console.log(`on check for service : Buscando Servicio`)
+        console.log(`Buscando Servicio`)
       }
       else {
-        this.setState({idservicio:response, onService:true, searching:false})
+        this.setState({idservicio:response})
         alert(`Servicio encontrado`)
         clearInterval(this.state.interval)
-        clearInterval(this.state.interval3)
         this.finishedService()
+      }
+    })
+  }
+
+  checkCanceledRequest = () => {
+    const idsolicitud = this.state.idsolicitud;
+    axios.get(`http://localhost:5000/request/canceled/user/${idsolicitud}`).then(res => {
+      const response = res.data;
+      console.log(response)
+      if (response === `Servicio en curso`){
+        console.log(`Servicio en curso`)
+      }
+      else {
+        alert(`La solicitud con id ${this.state.idsolicitud} ha terminado`)
+        this.setState({searching:false})
+        clearInterval(this.state.interval)
+        clearInterval(this.state.interval3)
       }
     })
   }
 
   checkForFinishedService = () => {
     const idservicio = this.state.idservicio;
-    console.log( "on check for finished service",this.state);
     axios.get(`http://localhost:5000/service/finished/${idservicio}`).then(res => {
       const response = res.data;
-      console.log("on check for finished service", response)
+      console.log(response)
       if (response === `Servicio en curso`){
-        console.log(`on check for finished service :Servicio en curso`)
+        console.log(`Servicio en curso`)
       }
       else {
         alert(`EL servicio con id ${this.state.idservicio} ha terminado`)
-        this.setState({onService:false, idservicio:null})
+        this.setState({searching:false})
         clearInterval(this.state.interval)
         clearInterval(this.state.interval2)
         clearInterval(this.state.interval3)
@@ -212,49 +222,13 @@ class PersistentDrawerLeft extends React.Component {
     })
   }
 
-  checkForCanceledRequest = () => {
-    const idsolicitud = this.state.idsolicitud;
-    axios.get(`http://localhost:5000/request/canceled/user/${idsolicitud}`).then(res => {
-      const response = res.data;
-      console.log(`on checkForCanceledRequest`,response)
-      if (response === `Su solicitud ha sido cancelada`){
-        console.log(` on checkForCanceledRequest Su solicitud ha sido cancelada`)
-        this.setState({onService:false, idservicio:null, idsolicitud:null})
-        clearInterval(this.state.interval3)
-      }
-      else {
-        console.log(`on checkForCanceledRequest Servicio en curso`)
-      }
-    })
-  }
-  
-  finishedService = () =>{
-    this.setState({interval2:setInterval(this.checkForFinishedService, 3000)})
+  initCheck = () => {
+    this.setState({interval:setInterval(this.checkForService,3000)})
+    this.setState({interval3:setInterval(this.checkCanceledRequest,3000)})
   }
 
-  onClickAgregar = () => {
-    const phone = this.state.phone;
-    const lat = this.state.destino.lat;
-    const lng = this.state.destino.lng;
-    console.log(lat);
-    console.log(lat);
-    axios.post(`http://localhost:5000/favorites/user/${phone}/${lat}/${lng}`).then(res => {
-        const persons = res.data;
-        console.log(persons);
-      })
-  }
-  searchActiveRequest = () => {
-    const phone=this.state.phone
-    axios.get(`http://localhost:5000/request/user/${phone}`).then(res => {
-      const idsolicitud = res.data;
-      console.log("on search Active Request", idsolicitud);
-      if(idsolicitud==='Buscando Solicitudes'){
-        alert('No se encontro una solicitud activa con su numero de telefono')
-      } else {
-        this.setState({idsolicitud:idsolicitud})
-        this.initCheck()
-      }
-    })
+  finishedService = () =>{
+    this.setState({interval2:setInterval(this.checkForFinishedService, 3000)})
   }
   /*Crea una solicitud*/
   onClickConfirmar = () => {
@@ -269,16 +243,32 @@ class PersistentDrawerLeft extends React.Component {
     console.log(lngFin);
     axios.post(`http://localhost:5000/request/user/${phone}/${latIn}/${lngIn}/${latFin}/${lngFin}`).then(res => {
         const persons = res.data;
-        console.log("en onClickConfirmar ",persons);
+        console.log(persons);
         if (persons===`En este momento no hay conductores disponibles, por favor intentelo de nuevo mas tarde`) {
           alert(`En este momento no hay conductores disponibles, por favor intentelo de nuevo mas tarde`);
         }else if (persons === `Solicitud de servicio creada`) {
-          alert(`Su solicitud fue realizada con exito`);
-          this.setState({searching:true})
-          this.searchActiveRequest()
+          axios.get(`http://localhost:5000/request/user/${phone}`).then(res => {
+            const idsolicitud = res.data;
+            this.setState({idsolicitud:idsolicitud})
+            alert(`Su solicitud con id ${idsolicitud} fue realizada con exito`);
+            this.setState({searching:true})
+            this.initCheck()
+          })
         } else {
           alert(`Ocurrio un error`);
         }
+      })
+  }
+
+  onClickAgregar = () => {
+    const phone = this.state.phone;
+    const lat = this.state.destino.lat;
+    const lng = this.state.destino.lng;
+    console.log(lat);
+    console.log(lat);
+    axios.post(`http://localhost:5000/favorites/user/${phone}/${lat}/${lng}`).then(res => {
+        const persons = res.data;
+        console.log(persons);
       })
   }
   
