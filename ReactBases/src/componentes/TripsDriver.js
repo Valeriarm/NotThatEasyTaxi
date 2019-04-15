@@ -26,7 +26,7 @@ import Avatar from '@material-ui/core/Avatar';
 import NavigationIcon from '@material-ui/icons/Navigation';
 import BankAcc from '@material-ui/icons/AccountBalance';
 import LocalTaxi  from '@material-ui/icons/LocalTaxi';
-
+import axios from 'axios';
 
 
 const drawerWidth = 240;
@@ -172,6 +172,65 @@ class PersistentDrawerLeft extends React.Component {
     this.setState({ open: false });
   };
 
+  onClickProfileDriver = (e) => {
+    e.preventDefault()
+    const phone = this.state.phone;
+    axios.get(`http://localhost:5000/driver/${phone}/`).then(res => {
+      const driver = res.data;
+      const nombre = driver.nombreconductor;
+      const apellido = driver.apellidoconductor;
+      const email = driver.email;
+      const numcuenta = driver.numcuenta;
+      const contrasenia = driver.contrasenia;
+      console.log(driver)
+      this.props.history.push({ pathname: "/ProfileDriver/", state: { phone: phone, nombre: nombre, apellido: apellido, email: email, numcuenta: numcuenta, contrasenia: contrasenia } })
+    })
+  };
+
+  onClickPaidTravels = () => {
+    const phone = this.state.phone;
+    axios.put(`http://localhost:5000/driver/${phone}`).then(res => {
+        const paid = res.data;
+        console.log(paid);
+        if (paid==='Kilometros redimidos con exito'){
+          alert('Kilometros redimidos con exito')
+        }else{
+          alert('No hay viajes a redimir')
+        }
+      })
+  }
+
+  onClickSideBar = (e) => {
+    e.preventDefault()
+    this.props.history.push({ pathname: "/SideBarDriver/", state: { phone: this.state.phone } })
+  };
+
+  onClickTaxi = (e) => {
+    e.preventDefault()
+    this.props.history.push({ pathname: "/Taxi/", state: { phone: this.state.phone } })
+  };
+
+  onClickTrips = (e) => {
+    e.preventDefault()
+    const phone = this.state.phone;
+    axios.get(`http://localhost:5000/services/driver/all/${phone}/`).then(res => {
+      const travels = res.data;
+      console.log("on onClickTripUser ", travels)
+      this.props.history.push({ pathname: "/TripsDriver/", state: { phone: phone, travels:travels}})})
+  }
+
+  onClickCloseSession = (e) => {
+    e.preventDefault()
+      this.setState({
+        phone: this.props.location.state.phone,
+        placa: true,
+        posicionActual: { lat: true, lng: true },
+        idrequest: true,
+        iniciarServicio: false,
+        interval:null,
+        onService:false,})
+      this.props.history.push({ pathname: "/"})
+  };
 
   render() {
 
