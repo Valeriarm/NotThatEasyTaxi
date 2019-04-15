@@ -261,11 +261,9 @@ class PersistentDrawerLeft extends React.Component {
             console.log(respuesta);
             clearInterval(this.state.interval);
             this.createService();
-            axios.put(`http://localhost:5000/reject/request/user/${phone}`)
           }else{
             this.setState({idrequest: respuesta});
             console.log(respuesta);
-            clearInterval(this.state.interval);
             this.rejectRequest()
           }
           
@@ -314,6 +312,7 @@ class PersistentDrawerLeft extends React.Component {
       const respuesta = res.data;
       if (respuesta === 'El servicio ha terminado'){
         alert(`Servicio terminado`);
+        this.setState({interval:setInterval(this.findRequest,3000)});
         this.setState({iniciarServicio:false});
       } else {
         alert(`Error terminando el servicio`)
