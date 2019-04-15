@@ -157,8 +157,13 @@ class PersistentDrawerLeft extends React.Component {
   }
   onClickTrips = (e) => {
     e.preventDefault()
-    this.props.history.push({ pathname: "/TripsDriver/", state: { phone: this.state.phone } })
-  }
+    const phone = this.state.phone;
+    axios.get(`http://localhost:5000/services/driver/all/${phone}/`).then(res => {
+      const travels = res.data;
+      console.log("on onClickTripUser ", travels)
+      this.props.history.push({ pathname: "/TripsDriver/", state: { phone: phone, travels:travels}})})
+  };
+
   onClickTaxi = (e) => {
     e.preventDefault()
     this.props.history.push({pathname:"/Taxi/", state:{phone: this.state.phone}})
