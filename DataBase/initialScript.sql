@@ -306,7 +306,7 @@ BEGIN
 		SELECT * FROM solicitud WHERE idsolicitud=id_solicitud AND activa=false
 	)THEN RETURN id_solicitud;
 	END IF;
-	RETURN 'Su solicitud ha sido cancelada';
+	RETURN 'Su solicitud sigue en curso';
 END;
 $$
 LANGUAGE plpgsql;
