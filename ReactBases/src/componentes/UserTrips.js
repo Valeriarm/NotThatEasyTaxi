@@ -25,6 +25,7 @@ import Search from '@material-ui/icons/Search';
 import Avatar from '@material-ui/core/Avatar';
 import NavigationIcon from '@material-ui/icons/Navigation';
 import axios from 'axios';
+import Money from '@material-ui/icons/CreditCard';
 
 
 const drawerWidth = 240;
