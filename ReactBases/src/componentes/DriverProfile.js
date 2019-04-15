@@ -250,12 +250,6 @@ class PersistentDrawerLeft extends React.Component {
             <Typography variant="h6" color="inherit" noWrap className={classes.titleLabel}>
               Not That Easy Taxi
             </Typography>
-            <IconButton
-              color = "inherit"
-              className={classes.logOutButton}
-            >
-              <ExitToApp/>
-            </IconButton>
           </Toolbar>
         </AppBar>
         <Drawer
