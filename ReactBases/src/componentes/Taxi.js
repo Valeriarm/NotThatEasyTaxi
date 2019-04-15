@@ -127,10 +127,10 @@ const styles = theme => ({
   },
 
     submit: {
-    marginTop: theme.spacing.unit * 17,
+    marginTop: theme.spacing.unit * 20,
     width: 150,
-    height: 140,
-    margin: 15,
+    height: 150,
+    margin: 50,
     
   },
   main: {
@@ -246,10 +246,6 @@ class PersistentDrawerLeft extends React.Component {
     this.props.history.push({pathname:"/RegisterTaxi/", state:{phone: this.state.phone}})
   };
 
-  onClickSearchTaxi = (e) => {
-    e.preventDefault()
-    this.props.history.push({pathname:"/SearchTaxi/", state:{phone: this.state.phone}})
-  };
 
   render() {
 
@@ -361,16 +357,6 @@ class PersistentDrawerLeft extends React.Component {
               className={classes.submit}
             >
             <Add className={classes.icon}/>
-            </Fab>
-
-            <Fab
-              onClick={e=>this.onClickSearchTaxi(e)}
-              type="button"
-              variant="round"
-              color="secondary"
-              className={classes.submit}
-            >
-            <Search className={classes.icon}/>
             </Fab>
           </div>
                   

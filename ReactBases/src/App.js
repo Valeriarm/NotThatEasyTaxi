@@ -11,7 +11,6 @@ import DriverProfile from './componentes/DriverProfile';
 import Taxi from './componentes/Taxi';
 import AddTaxi from './componentes/AddTaxi';
 import RegisterTaxi from './componentes/RegisterTaxi';
-import SearchTaxi from './componentes/SearchTaxi';
 import UserTrips from './componentes/UserTrips';
 import TripsDriver from './componentes/TripsDriver';
 
@@ -32,7 +31,6 @@ function AppRouter() {
           <Route path="/Taxi/" exact component={Taxi}/>
           <Route path="/CreateTaxi/" exact component={AddTaxi}/>
           <Route path="/RegisterTaxi/" exact component={RegisterTaxi}/>
-          <Route path="/SearchTaxi/" exact component={SearchTaxi}/>
           <Route path="/TripsUser/" exact component={UserTrips}/>
           <Route path="/TripsDriver/" exact component={TripsDriver}/>
 
